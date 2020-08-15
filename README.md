@@ -1,7 +1,7 @@
 Functional Linear Algebra in Agda
 =================================
 
-![CI](https://github.com/ryanorendorff/functional-linear-algebra/workflows/Test/badge.svg)
+![CI](https://github.com/ryanorendorff/functional-linear-algebra/workflows/build/badge.svg)
 
 This library attempts to formalize the matrix-free implementation of linear
 algebra, where a matrix is represented as a linear map from one vector space to
