@@ -5,6 +5,9 @@ MAlonzo/**
 # Nix
 result
 
+# direnv
+.direnv/
+
 # Created by https://www.toptal.com/developers/gitignore/api/emacs,vim,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=emacs,vim,visualstudiocode
 
