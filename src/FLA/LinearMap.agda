@@ -492,32 +492,39 @@ I = ⟦ idₗₘ , idₗₘ , id-transpose  ⟧
 --                                Proofs on M                                --
 -------------------------------------------------------------------------------
 
-sym-sym : {x y : A} (p : x ≡ y) → sym (sym p) ≡ p
-sym-sym refl = refl
+-- The thought here is that maybe I can copy the proof once I prove the
+-- first two components are the same.
 
--- I'd like to prove this but don't know how! T_T
--- Actually I'd like to say all proofs of type p are equivalent.
--- z : ⦃ F : Field A ⦄
---   → (M : LinearMap A n m ) → (Mᵀ : LinearMap A m n )
---   → (p : (x : Vec A m) → (y : Vec A n) → ⟨ x , M ·ˡᵐ y ⟩ ≡ ⟨ y , Mᵀ ·ˡᵐ x ⟩)
---   → (λ x y → sym (sym (p x y))) ≡ (λ x y → p x y)
--- z M Mᵀ p = {!!}
+data M↓_∶_×_ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
+  ⟦_,_⟧ : (M : LinearMap A n m ) → (Mᵀ : LinearMap A m n ) → M↓ A ∶ m × n
 
--- Hmm, maybe adding the proof into the constructor was a poor idea, as
--- these proofs seem tricky. Although I need the proofs to construct *ᴹ and
--- +ᴹ proofs correct.
+_·↓_ : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → Vec A n → Vec A m
+⟦ f , a ⟧ ·↓ x = f ·ˡᵐ x
 
--- ᵀᵀ : {A : Set} ⦃ F : Field A ⦄ → (B : M A ∶ m × n) → B ᵀ ᵀ ≡ B
--- ᵀᵀ ⟦ M , Mᵀ , p ⟧ = {!!}
+_ᵀ↓ : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → M↓ A ∶ n × m
+⟦ f , a ⟧ ᵀ↓ = ⟦ a , f ⟧
 
--- ᵀ-distr-* : {A : Set} ⦃ F : Field A ⦄ → (L : M A ∶ m × n) (R : M A ∶ n × p)
---           → (L *ᴹ R) ᵀ ≡ (R ᵀ *ᴹ L ᵀ)
--- ᵀ-distr-* L R = {!!}
+infixr 20 _·↓_
+infixl 25 _ᵀ↓
 
--- ᵀ-distr-+ : {A : Set} ⦃ F : Field A ⦄
---           → (L : M A ∶ m × n) (R : M A ∶ m × n)
---           → (L +ᴹ R) ᵀ ≡ (L ᵀ +ᴹ R ᵀ)
--- ᵀ-distr-+ L R = {!!}
+M→M↓ : ⦃ F : Field A ⦄ → M A ∶ m × n → M↓ A ∶ m × n
+M→M↓ ⟦ M , Mᵀ , p ⟧ = ⟦ M , Mᵀ ⟧
 
--- I-idempotent : {A : Set} {n : ℕ} ⦃ F : Field A ⦄ → (I {A} {n} ⦃ F ⦄) *ᴹ I ≡ I
--- I-idempotent = {!!}
+M↓→M : ⦃ F : Field A ⦄
+      → (M↓ : M↓ A ∶ m × n)
+      → (p : (x : Vec A m) → (y : Vec A n)
+            → ⟨ x , M↓ ·↓ y ⟩ ≡ ⟨ y , M↓ ᵀ↓ ·↓ x ⟩ )
+      → M A ∶ m × n
+M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
+
+ᵀᵀ : {A : Set} ⦃ F : Field A ⦄ → (B : M A ∶ m × n) → M→M↓ (B ᵀ ᵀ) ≡ M→M↓ B
+ᵀᵀ ⟦ M , Mᵀ , p ⟧ = refl
+
+ᵀ-distr-* : {A : Set} ⦃ F : Field A ⦄ → (L : M A ∶ m × n) (R : M A ∶ n × p)
+          → M→M↓ ((L *ᴹ R) ᵀ) ≡ M→M↓ (R ᵀ *ᴹ L ᵀ)
+ᵀ-distr-* ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ₁ , q ⟧ = refl
+
+ᵀ-distr-+ : {A : Set} ⦃ F : Field A ⦄
+          → (L : M A ∶ m × n) (R : M A ∶ m × n)
+          → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
+ᵀ-distr-+ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
