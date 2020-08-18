@@ -7,6 +7,7 @@ open import Data.Empty
 
 open import Data.Vec using (Vec; foldr; zipWith; map)
                      renaming ([] to []ⱽ; _∷_ to _∷ⱽ_)
+-- open import Data.Product hiding (map)
 
 open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
@@ -498,6 +499,12 @@ I = ⟦ idₗₘ , idₗₘ , id-transpose  ⟧
 data M↓_∶_×_ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
   ⟦_,_⟧ : (M : LinearMap A n m ) → (Mᵀ : LinearMap A m n ) → M↓ A ∶ m × n
 
+exF : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → LinearMap A n m
+exF ⟦ M , Mᵀ ⟧ = M
+
+exA : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → LinearMap A m n
+exA ⟦ M , Mᵀ ⟧ = Mᵀ
+
 _·↓_ : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → Vec A n → Vec A m
 ⟦ f , a ⟧ ·↓ x = f ·ˡᵐ x
 
@@ -517,6 +524,12 @@ M↓→M : ⦃ F : Field A ⦄
       → M A ∶ m × n
 M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
 
+-- forwardAjointProofs : ⦃ F : Field A ⦄
+--                     → (C D : M↓ A ∶ m × n)
+--                     → C ≡ D
+--                     → ( exF C ≡ exF D  , exA C ≡ exA D )
+-- forwardAjointProofs C D C≡D = ?
+
 ᵀᵀ : {A : Set} ⦃ F : Field A ⦄ → (B : M A ∶ m × n) → M→M↓ (B ᵀ ᵀ) ≡ M→M↓ B
 ᵀᵀ ⟦ M , Mᵀ , p ⟧ = refl
 
@@ -528,3 +541,7 @@ M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
           → (L : M A ∶ m × n) (R : M A ∶ m × n)
           → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
 ᵀ-distr-+ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
+
+
+-- z : ⦃ F : Field A ⦄ → (C D : M A ∶ m × n) → (M→M↓ C ≡ M→M↓ D) → C ≡ D
+-- z ⟦ C , Cᵀ , p ⟧ ⟦ D , Dᵀ , q ⟧ C↓≡D↓ = {!!}
