@@ -7,9 +7,9 @@ open import Data.Empty
 
 open import Data.Vec using (Vec; foldr; zipWith; map)
                      renaming ([] to []ⱽ; _∷_ to _∷ⱽ_)
--- open import Data.Product hiding (map)
+open import Data.Product hiding (map; _,_)
 
-open import Relation.Binary.PropositionalEquality
+open import Relation.Binary.PropositionalEquality hiding (∀-extensionality)
 open ≡-Reasoning
 
 open import Function using (id)
@@ -490,20 +490,11 @@ I = ⟦ idₗₘ , idₗₘ , id-transpose  ⟧
 
 
 -------------------------------------------------------------------------------
---                                Proofs on M                                --
+--                   M without the inner product proof: M↓                   --
 -------------------------------------------------------------------------------
-
--- The thought here is that maybe I can copy the proof once I prove the
--- first two components are the same.
 
 data M↓_∶_×_ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
   ⟦_,_⟧ : (M : LinearMap A n m ) → (Mᵀ : LinearMap A m n ) → M↓ A ∶ m × n
-
-exF : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → LinearMap A n m
-exF ⟦ M , Mᵀ ⟧ = M
-
-exA : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → LinearMap A m n
-exA ⟦ M , Mᵀ ⟧ = Mᵀ
 
 _·↓_ : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → Vec A n → Vec A m
 ⟦ f , a ⟧ ·↓ x = f ·ˡᵐ x
@@ -524,24 +515,44 @@ M↓→M : ⦃ F : Field A ⦄
       → M A ∶ m × n
 M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
 
--- forwardAjointProofs : ⦃ F : Field A ⦄
---                     → (C D : M↓ A ∶ m × n)
---                     → C ≡ D
---                     → ( exF C ≡ exF D  , exA C ≡ exA D )
--- forwardAjointProofs C D C≡D = ?
+postulate
+  ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP : ⦃ F : Field A ⦄
+                     → (C : LinearMap A n m) → (Cᵀ : LinearMap A m n)
+                     → (p q : (x : Vec A m) (y : Vec A n)
+                             → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
+                     → p ≡ q
 
-ᵀᵀ : {A : Set} ⦃ F : Field A ⦄ → (B : M A ∶ m × n) → M→M↓ (B ᵀ ᵀ) ≡ M→M↓ B
-ᵀᵀ ⟦ M , Mᵀ , p ⟧ = refl
+-- The proofs are much easier without inner product proof, which should be
+-- transferrable if ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP is provable.
+M↓≡→M≡ : ⦃ F : Field A ⦄ → (C D : M A ∶ m × n) → (M→M↓ C ≡ M→M↓ D) → C ≡ D
+M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ l@refl rewrite
+  ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP C Cᵀ p q = refl
+
+
+-------------------------------------------------------------------------------
+--                                Proofs on M                                --
+-------------------------------------------------------------------------------
+
+ᵀᵀ : {A : Set} ⦃ F : Field A ⦄ → (B : M A ∶ m × n) → B ᵀ ᵀ ≡ B
+ᵀᵀ B = M↓≡→M≡ (B ᵀ ᵀ) B (ᵀᵀ↓ B)
+  where
+    ᵀᵀ↓ : {A : Set} ⦃ F : Field A ⦄ → (B : M A ∶ m × n) → M→M↓ (B ᵀ ᵀ) ≡ M→M↓ B
+    ᵀᵀ↓ ⟦ M , Mᵀ , p ⟧ = refl
 
 ᵀ-distr-* : {A : Set} ⦃ F : Field A ⦄ → (L : M A ∶ m × n) (R : M A ∶ n × p)
-          → M→M↓ ((L *ᴹ R) ᵀ) ≡ M→M↓ (R ᵀ *ᴹ L ᵀ)
-ᵀ-distr-* ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ₁ , q ⟧ = refl
+          → (L *ᴹ R) ᵀ ≡ R ᵀ *ᴹ L ᵀ
+ᵀ-distr-* L R = M↓≡→M≡ ((L *ᴹ R) ᵀ) (R ᵀ *ᴹ L ᵀ) (ᵀ-distr-*↓ L R)
+  where
+    ᵀ-distr-*↓ : {A : Set} ⦃ F : Field A ⦄ → (L : M A ∶ m × n) (R : M A ∶ n × p)
+               → M→M↓ ((L *ᴹ R) ᵀ) ≡ M→M↓ (R ᵀ *ᴹ L ᵀ)
+    ᵀ-distr-*↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ₁ , q ⟧ = refl
 
 ᵀ-distr-+ : {A : Set} ⦃ F : Field A ⦄
-          → (L : M A ∶ m × n) (R : M A ∶ m × n)
-          → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
-ᵀ-distr-+ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
-
-
--- z : ⦃ F : Field A ⦄ → (C D : M A ∶ m × n) → (M→M↓ C ≡ M→M↓ D) → C ≡ D
--- z ⟦ C , Cᵀ , p ⟧ ⟦ D , Dᵀ , q ⟧ C↓≡D↓ = {!!}
+           → (L : M A ∶ m × n) (R : M A ∶ m × n)
+           → (L +ᴹ R) ᵀ ≡ L ᵀ +ᴹ R ᵀ
+ᵀ-distr-+ L R = M↓≡→M≡ ((L +ᴹ R) ᵀ) (L ᵀ +ᴹ R ᵀ) (ᵀ-distr-+↓ L R)
+  where
+    ᵀ-distr-+↓ : {A : Set} ⦃ F : Field A ⦄
+               → (L : M A ∶ m × n) (R : M A ∶ m × n)
+               → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
+    ᵀ-distr-+↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
