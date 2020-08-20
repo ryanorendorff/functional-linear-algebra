@@ -1,3 +1,5 @@
+{-# OPTIONS --without-K #-}
+
 module FLA.LinearMap where
 
 open import Level using (Level)
@@ -14,117 +16,15 @@ open ≡-Reasoning
 
 open import Function using (id)
 
+open import FLA.Algebra.Structures
+open import FLA.Algebra.Properties.Field
+
 private
   variable
     ℓ : Level
     A : Set ℓ
     m n p q : ℕ
-
-
--- TODO: Can this be replaced with something like the List⁺ definition so that
--- the proofs from Vec can be transferred? This definition is convenient because
--- the size is correct (it is not n - 1).
-data Vec⁺ (A : Set ℓ) : ℕ → Set ℓ where
-  [_] : A → Vec⁺ A 1
-  _∷_ : ∀ {n} (x : A) (xs : Vec⁺ A n) → Vec⁺ A (suc n)
-
-infixr 5 _∷_
-
--- Want to prove that is it not possible to construct an empty vector
-emptyVecImpossible : Vec⁺ A 0 → ⊥
-emptyVecImpossible = λ ()
-
-Vec⁺→Vec : Vec⁺ A n → Vec A n
-Vec⁺→Vec [ v ] = v ∷ⱽ []ⱽ
-Vec⁺→Vec (v ∷ vs⁺) = v ∷ⱽ Vec⁺→Vec vs⁺
-
-Vec⁺→n≢0 : Vec⁺ A n → n ≢ 0
-Vec⁺→n≢0 {ℓ} {A} {suc n} v = suc≢0
-  where
-    suc≢0 : {n : ℕ} → suc n ≢ 0
-    suc≢0 {zero} ()
-    suc≢0 {suc n} = λ ()
-
--- Closer maybe but still buggered
--- Vec→Vec⁺ : ∀ {ℓ} → {A : Set ℓ} {n : ℕ} → (n ≢ 0) → Vec A n → Vec⁺ A n
--- Vec→Vec⁺ {ℓ} {A} {0} p []ⱽ = ⊥-elim (p refl)
--- Vec→Vec⁺ {ℓ} {A} {1} p (x ∷ⱽ []ⱽ) = [ x ]
--- Vec→Vec⁺ {ℓ} {A} {suc n} p (x ∷ⱽ xs) = x ∷ (Vec→Vec⁺ {!!} xs)
-
-record Field (A : Set ℓ) : Set ℓ where
-
-  infixl 6 _+_
-  infixl 7 _*_
-  infixl 9 -_
-  infixl 10 _⁻¹
-
-  field
-    _+_ : A → A → A
-    _*_ : A → A → A
-
-    0ᶠ   : A
-    1ᶠ   : A
-    -_   : A → A -- + inverse
-    _⁻¹  : A → A -- * inverse
-
-    +-assoc   : (a b c : A) → a + (b + c) ≡ (a + b) + c
-    +-comm    : (a b : A)   → a + b ≡ b + a
-    +-0       : (a : A)     → a + 0ᶠ ≡ a
-    +-inv     : (a : A)     → - a + a ≡ 0ᶠ
-    *-assoc   : (a b c : A) → a * (b * c) ≡ (a * b) * c
-    *-comm    : (a b : A)   → a * b ≡ b * a
-    *-1       : (a : A)     → a * 1ᶠ ≡ a
-    *-inv     : (a : A)     → (a ≢ 0ᶠ) → a ⁻¹ * a ≡ 1ᶠ
-    *-distr-+ : (a b c : A) → a * (b + c) ≡ a * b + a * c
-
-private
-  variable
     ⦃ F ⦄ : Field A
-
-
-module FieldProperties ⦃ F : Field A ⦄ where
-  open Field {{...}}
-
-  0ᶠ+0ᶠ≡0ᶠ : 0ᶠ + 0ᶠ ≡ 0ᶠ
-  0ᶠ+0ᶠ≡0ᶠ = +-0 0ᶠ
-
-open FieldProperties
-
-{-
-If we want the reals, we need a few things
-
-Linearly ordered set on F, ∀ x, y, z ∈ F
-  Totality : x ≤ y or y ≤ x
-  Transitivity : if x ≤ y and y ≤ z then x ≤ z
-  Anti-symmetry : if x ≤ y and y ≤ x, then x ≡ y
-
-Linearly ordered field (F, +, *, ≤) if
-  x ≤ y then z + x ≤ z + y
-  0 ≤ x and 0 ≤ y then 0 ≤ x*y
-
-Complete ordered field (F, +, *, ≤) if
-  (F, +, *, ≤) is a linearly ordered field
-  Completeness : every non-empty subset of F, bounded above, has a supremum in F
-
-Archimedian property:
-  (F, +, *, ≤) is a complete ordered field
-  r, s ∈ F. r > 0 ∃ n ∈ ℕ. s < r + ... + r (n times)
-
-  Roughly speaking, it is the property of having no infinitely large or
-  infinitely small elements
-
-  Axiom of Archimedies is a formulation of this property for ordered fields:
-    ∀ ε ∈ F. ε > 0 → ∃ n ∈ ℕ . 1/n < ε
-
-Cauchy sequences representation of the reals and the Dedekind representation
-of the reals are both Archimedian completely ordered fields and hence
-isomorphic to the reals. Note there is a proof that all Archimedian complete
-ordered fields are isomorphic.
-
-References:
-[1]: https://www.cs.swan.ac.uk/~csetzer/articlesFromOthers/chiMing/chiMingChuangExtractionOfProgramsForExactRealNumberComputation.pdf
-[2]: https://en.wikipedia.org/wiki/Axiomatic_theory_of_real_numbers
--}
 
 
 -- Binary operators on vectors ------------------------------------------------
