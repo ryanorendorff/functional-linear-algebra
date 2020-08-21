@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K #-}
+{-# OPTIONS --with-K #-}
 
 module FLA.LinearMap where
 
@@ -415,12 +415,30 @@ M↓→M : ⦃ F : Field A ⦄
       → M A ∶ m × n
 M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
 
+
+uip : ∀ {α} {A : Set α} {x y : A} (p : x ≡ y) (q : x ≡ y) → p ≡ q
+uip refl refl = refl
+
 postulate
-  ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP : ⦃ F : Field A ⦄
+  extensionality : ∀ {A B : Set ℓ} {f g : A → B}
+    → (∀ (x : A) → f x ≡ g x)
+      -----------------------
+    → f ≡ g
+
+part₁ :
+  ⦃ F : Field A ⦄ →
+  (C : LinearMap A n m) → (Cᵀ : LinearMap A m n) →
+  (p q : (x : Vec A m) (y : Vec A n) → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩) →
+  ∀ x y → p x y ≡ q x y
+part₁ C Cᵀ p q (x) (y) = uip (p x y) (q x y)
+
+postulate
+  ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP : {ℓ : Level} → {A : Set ℓ} → ⦃ F : Field A ⦄
                      → (C : LinearMap A n m) → (Cᵀ : LinearMap A m n)
                      → (p q : (x : Vec A m) (y : Vec A n)
                              → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
                      → p ≡ q
+-- ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP {n} {m} {ℓ} {A} C Cᵀ p q = extensionality {ℓ} {Vec A m} {?} {?} {?} (λ x → extensionality (λ y → part₁ C Cᵀ p q x y))
 
 -- The proofs are much easier without inner product proof, which should be
 -- transferrable if ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP is provable.
