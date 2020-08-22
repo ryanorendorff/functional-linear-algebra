@@ -465,12 +465,16 @@ M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ l@refl rewrite
                → M→M↓ ((L *ᴹ R) ᵀ) ≡ M→M↓ (R ᵀ *ᴹ L ᵀ)
     ᵀ-distr-*↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ₁ , q ⟧ = refl
 
-ᵀ-distr-+ : {A : Set} ⦃ F : Field A ⦄
-           → (L : M A ∶ m × n) (R : M A ∶ m × n)
+ᵀ-distr-+ : {A : Set} ⦃ F : Field A ⦄ → (L R : M A ∶ m × n)
            → (L +ᴹ R) ᵀ ≡ L ᵀ +ᴹ R ᵀ
 ᵀ-distr-+ L R = M↓≡→M≡ ((L +ᴹ R) ᵀ) (L ᵀ +ᴹ R ᵀ) (ᵀ-distr-+↓ L R)
   where
-    ᵀ-distr-+↓ : {A : Set} ⦃ F : Field A ⦄
-               → (L : M A ∶ m × n) (R : M A ∶ m × n)
+    ᵀ-distr-+↓ : {A : Set} ⦃ F : Field A ⦄ → (L R : M A ∶ m × n)
                → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
     ᵀ-distr-+↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
+
+-- May need to do prove distribution over LinearMap first
+-- *ᴹ-distr-+ᴹ↓ : {A : Set} ⦃ F : Field A ⦄
+--              → (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
+--              → M→M↓ (X *ᴹ (Y +ᴹ Z)) ≡ M→M↓ (X *ᴹ Y +ᴹ X *ᴹ Z)
+-- *ᴹ-distr-+ᴹ↓ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ = {!!}
