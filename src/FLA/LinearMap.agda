@@ -273,6 +273,22 @@ g *ˡᵐ h = record
 infixl 6 _+ˡᵐ_
 infixl 7 _*ˡᵐ_
 
+-- If I can prove these two I can prove the distributive property on
+-- matrices below.
+-- +ˡᵐ-comm : ⦃ F : Field A ⦄ → (L R : LinearMap A m n)
+--          → L +ˡᵐ R ≡ R +ˡᵐ L
+-- +ˡᵐ-comm L R = {!!}
+
+-- *ˡᵐ-distr-+ˡᵐₗ : ⦃ F : Field A ⦄
+--                → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
+--                → X *ˡᵐ (Y +ˡᵐ Z) ≡ X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z
+-- *ˡᵐ-distr-+ˡᵐₗ X Y Z = {!!}
+
+-- *ˡᵐ-distr-+ˡᵐᵣ : ⦃ F : Field A ⦄
+--                → (X Y : LinearMap A n m) → (Z : LinearMap A p n)
+--                → (X +ˡᵐ Y) *ˡᵐ Z ≡ X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z
+-- *ˡᵐ-distr-+ˡᵐᵣ X Y Z = {!!}
+
 -- Example LinearMap values ---------------------------------------------------
 
 idₗₘ : ⦃ F : Field A ⦄ → LinearMap A n n
@@ -308,14 +324,6 @@ _·_ : ⦃ F : Field A ⦄ → M A ∶ m × n → Vec A n → Vec A m
 
 module MProperties ⦃ F : Field A ⦄ where
   open Field F
-
-  ·-distr-+ⱽ : (M : M A ∶ m × n) → (u v : Vec A n)
-            → M · (u +ⱽ v) ≡ M · u +ⱽ M · v
-  ·-distr-+ⱽ ⟦ M , _ , _ ⟧ u v = LinearMap.f[u+v]≡f[u]+f[v] M u v
-
-  ·-comm-*ᶜ : (M : M A ∶ m × n) → (c : A) (v : Vec A n)
-            → M · (c *ᶜ v) ≡ c *ᶜ (M · v)
-  ·-comm-*ᶜ ⟦ M , _ , _ ⟧ c v = LinearMap.f[c*v]≡c*f[v] M c v
 
   _+ᴹ_ : M A ∶ m × n → M A ∶ m × n → M A ∶ m × n
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ +ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
@@ -473,8 +481,8 @@ M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ l@refl rewrite
                → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
     ᵀ-distr-+↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
 
--- May need to do prove distribution over LinearMap first
+-- Must prove the distribution proofs on LinearMap first.
 -- *ᴹ-distr-+ᴹ↓ : {A : Set} ⦃ F : Field A ⦄
 --              → (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
 --              → M→M↓ (X *ᴹ (Y +ᴹ Z)) ≡ M→M↓ (X *ᴹ Y +ᴹ X *ᴹ Z)
--- *ᴹ-distr-+ᴹ↓ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ = {!!}
+-- *ᴹ-distr-+ᴹ↓ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ rewrite *ˡᵐ-distr-+ˡᵐₗ X Y Z | *ˡᵐ-distr-+ˡᵐᵣ Yᵀ Zᵀ Xᵀ = refl
