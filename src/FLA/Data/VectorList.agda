@@ -1,4 +1,6 @@
-module FLA.VectorList where
+{-# OPTIONS --without-K --safe #-}
+
+module FLA.Data.VectorList where
 
 open import Data.List using (List; sum) renaming ([] to []ᴸ; _∷_ to _∷ᴸ_)
 open import Data.Nat using (ℕ; _+_; zero; suc)
