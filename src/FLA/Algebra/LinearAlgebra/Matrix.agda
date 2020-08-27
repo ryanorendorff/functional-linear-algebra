@@ -12,7 +12,9 @@ open import Data.Vec using (Vec; foldr; zipWith; map)
 open import Data.Product hiding (map; _,_)
 
 open import Axiom.UniquenessOfIdentityProofs.WithK using (uip)
-open import Relation.Binary.PropositionalEquality hiding (∀-extensionality)
+open import Axiom.Extensionality.Propositional
+open import Relation.Binary.PropositionalEquality hiding (Extensionality)
+
 open ≡-Reasoning
 
 open import Function using (id)
@@ -151,10 +153,7 @@ M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
 
 
 postulate
-  extensionality : ∀ {A B : Set ℓ} {f g : A → B}
-    → (∀ (x : A) → f x ≡ g x)
-      -----------------------
-    → f ≡ g
+  extensionality : ∀ {α β} → Extensionality α β
 
 part₁ :
   ⦃ F : Field A ⦄ →
@@ -163,18 +162,14 @@ part₁ :
   (x : Vec A m) →  (y : Vec A n) → p x y ≡ q x y
 part₁ C Cᵀ p q (x) (y) = uip (p x y) (q x y)
 
-postulate
-  ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP : {ℓ : Level} → {A : Set ℓ} → ⦃ F : Field A ⦄
-                     → (C : LinearMap A n m) → (Cᵀ : LinearMap A m n)
-                     → (p q : (x : Vec A m) (y : Vec A n)
-                             → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
-                     → p ≡ q
--- ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP : {ℓ : Level} → {A : Set ℓ} → ⦃ F : Field A ⦄
---                    → (C : LinearMap A n m) → (Cᵀ : LinearMap A m n)
---                    → (p q : (x : Vec A m) (y : Vec A n)
---                            → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
---                    → p ≡ q
--- ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP {n} {m} {ℓ} {A} C Cᵀ p q = {!!}
+⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP : {ℓ : Level} → {A : Set ℓ} → ⦃ F : Field A ⦄
+                   → (C : LinearMap A n m) → (Cᵀ : LinearMap A m n)
+                   → (p q : (x : Vec A m) (y : Vec A n)
+                           → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
+                   → p ≡ q
+⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP {m} {n} {ℓ} {A} C Cᵀ p q = extensionality (λ x → extensionality (λ y → part₁ C Cᵀ p q x y))
+
+
 
 -- The proofs are much easier without inner product proof, which should be
 -- transferrable if ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP is provable.
