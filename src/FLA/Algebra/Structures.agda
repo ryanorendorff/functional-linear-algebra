@@ -5,7 +5,7 @@
 
 module FLA.Algebra.Structures where
 
-open import Level using (Level)
+open import Level using (Level) renaming (suc to lsuc)
 open import Relation.Binary.PropositionalEquality using (_≡_; _≢_)
 
 private
@@ -38,6 +38,33 @@ record Field (A : Set ℓ) : Set ℓ where
     *-1       : (a : A)     → a * 1ᶠ ≡ a
     *-inv     : (a : A)     → (a ≢ 0ᶠ) → a ⁻¹ * a ≡ 1ᶠ
     *-distr-+ : (a b c : A) → a * (b + c) ≡ a * b + a * c
+
+
+record LinearlyOrdered (A : Set ℓ) : Set (lsuc ℓ) where
+
+  infixl 5 _≤_
+
+  field
+    _≤_ : A → A → Set ℓ
+
+    -- TODO: find the standard library way to represent a sum
+    -- total : x ≤ y or y ≤ x
+    trans : (x y z : A) → x ≤ y → y ≤ z → x ≤ z
+    anti-sym : (x y : A) → x ≤ y → y ≤ x → x ≡ y
+
+
+-- record LinearlyOrderedField (A : Set ℓ) : Set ℓ where
+--   open Field
+--   open LinearlyOrdered
+
+--   field
+--     x≤y→z+x≤z+y : (x y z : A) → x ≤ y → z + x ≤ z + y
+--     0≤x→0≤y→0≤x*y : (x y : A) → 0 ≤ x → 0 ≤ y → 0 ≤ x * y
+
+-- record CompleteOrderedField (A : Set ℓ) : Set ℓ where
+--   open LinearlyOrderedField
+
+--   -- Proof of the supremum rule
 
 {-
 If we want the reals, we need a few things
