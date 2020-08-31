@@ -4,8 +4,9 @@
 -- for the fields that we want (real numbers)
 open import Level using (Level)
 
-open import Relation.Binary.PropositionalEquality hiding (∀-extensionality)
+open import Relation.Binary.PropositionalEquality hiding (Extensionality)
 open ≡-Reasoning
+
 
 open import Data.Nat using (ℕ; suc; zero)
 open import Data.Vec using (Vec; foldr; zipWith; map)
@@ -37,13 +38,8 @@ record LinearMap (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
     -- Homogeneity
     f[c*v]≡c*f[v] : (c : A) → (v : Vec A m) → f (c *ᶜ v) ≡ c *ᶜ (f v)
 
-
 _·ˡᵐ_ : ⦃ F : Field A ⦄ → LinearMap A m n → Vec A m → Vec A n
 _·ˡᵐ_ LM = LinearMap.f LM
-
--- Choose 20 since function application is assumed higher than almost anything
-infixr 20 _·ˡᵐ_
-
 
 _+ˡᵐ_ : ⦃ F : Field A ⦄ → LinearMap A m n → LinearMap A m n → LinearMap A m n
 g +ˡᵐ h = record
@@ -104,28 +100,9 @@ g *ˡᵐ h = record
 
 infixl 6 _+ˡᵐ_
 infixl 7 _*ˡᵐ_
+-- Choose 20 since function application is assumed higher than almost anything
+infixr 20 _·ˡᵐ_
 
-
--------------------------------------------------------------------------------
---                           LinearMap constructor                           --
--------------------------------------------------------------------------------
-
-
--- If I can prove these two I can prove the distributive property on
--- matrices below.
--- +ˡᵐ-comm : ⦃ F : Field A ⦄ → (L R : LinearMap A m n)
---          → L +ˡᵐ R ≡ R +ˡᵐ L
--- +ˡᵐ-comm L R = {!!}
-
--- *ˡᵐ-distr-+ˡᵐₗ : ⦃ F : Field A ⦄
---                → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
---                → X *ˡᵐ (Y +ˡᵐ Z) ≡ X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z
--- *ˡᵐ-distr-+ˡᵐₗ X Y Z = {!!}
-
--- *ˡᵐ-distr-+ˡᵐᵣ : ⦃ F : Field A ⦄
---                → (X Y : LinearMap A n m) → (Z : LinearMap A p n)
---                → (X +ˡᵐ Y) *ˡᵐ Z ≡ X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z
--- *ˡᵐ-distr-+ˡᵐᵣ X Y Z = {!!}
 
 -- Example LinearMap values ---------------------------------------------------
 
