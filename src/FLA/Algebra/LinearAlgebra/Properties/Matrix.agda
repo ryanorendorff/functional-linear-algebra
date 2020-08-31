@@ -72,7 +72,7 @@ M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
     f C Cᵀ p q (x) (y) = uip (p x y) (q x y)
 
 M↓≡→M≡ : ⦃ F : Field A ⦄ → (C D : M A ∶ m × n) → (M→M↓ C ≡ M→M↓ D) → C ≡ D
-M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ l@refl rewrite
+M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ refl rewrite
   ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP C Cᵀ p q = refl
 
 
@@ -106,4 +106,5 @@ M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ l@refl rewrite
 -- *ᴹ-distr-+ᴹ↓ : {A : Set} ⦃ F : Field A ⦄
 --              → (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
 --              → M→M↓ (X *ᴹ (Y +ᴹ Z)) ≡ M→M↓ (X *ᴹ Y +ᴹ X *ᴹ Z)
--- *ᴹ-distr-+ᴹ↓ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ rewrite *ˡᵐ-distr-+ˡᵐₗ X Y Z | *ˡᵐ-distr-+ˡᵐᵣ Yᵀ Zᵀ Xᵀ = refl
+-- *ᴹ-distr-+ᴹ↓ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ = {!!}
+-- rewrite *ˡᵐ-distr-+ˡᵐₗ X Y Z | *ˡᵐ-distr-+ˡᵐᵣ Yᵀ Zᵀ Xᵀ = refl
