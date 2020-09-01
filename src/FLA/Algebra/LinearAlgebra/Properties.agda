@@ -96,41 +96,42 @@ zipWith-comm f f-comm (x ∷ⱽ xs) (y ∷ⱽ ys) rewrite
 --   ∀ λ ∈ F, B(λv, w) ≡ B(v, λw) ≡ λB(v, w)
 --   B(v₁ + v₂, w) ≡ B(v₁, w) + B(v₂, w) ∧ B(v, w₁ + w₂) ≡ B(v, w₁) + B(v, w₂)
 -- Additivity in both arguments
-module ⟨⟩-Properties ⦃ F : Field A ⦄ where
-  open Field F
+private
+  module ⟨⟩-Properties ⦃ F : Field A ⦄ where
+    open Field F
 
-  ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ : (x y z : Vec A n)
-                      → ⟨ x +ⱽ y , z ⟩ ≡ (⟨ x , z ⟩) + (⟨ y , z ⟩)
-  ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ x y z = begin
-    ⟨ x +ⱽ y , z ⟩
-    ≡⟨⟩
-    sum ((x +ⱽ y) ∘ⱽ z )
-    ≡⟨ cong sum (∘ⱽ-comm (x +ⱽ y) z) ⟩
-    sum (z ∘ⱽ (x +ⱽ y))
-    ≡⟨ cong sum (∘ⱽ-distr-+ⱽ z x y) ⟩
-    sum (z ∘ⱽ x +ⱽ z ∘ⱽ y)
-    ≡⟨ sumProperties.sum-distr-+ⱽ (z ∘ⱽ x) (z ∘ⱽ y) ⟩
-    sum (z ∘ⱽ x) + sum (z ∘ⱽ y)
-    ≡⟨⟩
-    ⟨ z , x ⟩ + ⟨ z , y ⟩
-    ≡⟨ cong (_+ ⟨ z , y ⟩) (⟨⟩-comm z x) ⟩
-    ⟨ x , z ⟩ + ⟨ z , y ⟩
-    ≡⟨ cong (⟨ x , z ⟩ +_ ) (⟨⟩-comm z y) ⟩
-    ⟨ x , z ⟩ + ⟨ y , z ⟩
-    ∎
+    ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ : (x y z : Vec A n)
+                        → ⟨ x +ⱽ y , z ⟩ ≡ (⟨ x , z ⟩) + (⟨ y , z ⟩)
+    ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ x y z = begin
+      ⟨ x +ⱽ y , z ⟩
+      ≡⟨⟩
+      sum ((x +ⱽ y) ∘ⱽ z )
+      ≡⟨ cong sum (∘ⱽ-comm (x +ⱽ y) z) ⟩
+      sum (z ∘ⱽ (x +ⱽ y))
+      ≡⟨ cong sum (∘ⱽ-distr-+ⱽ z x y) ⟩
+      sum (z ∘ⱽ x +ⱽ z ∘ⱽ y)
+      ≡⟨ sumProperties.sum-distr-+ⱽ (z ∘ⱽ x) (z ∘ⱽ y) ⟩
+      sum (z ∘ⱽ x) + sum (z ∘ⱽ y)
+      ≡⟨⟩
+      ⟨ z , x ⟩ + ⟨ z , y ⟩
+      ≡⟨ cong (_+ ⟨ z , y ⟩) (⟨⟩-comm z x) ⟩
+      ⟨ x , z ⟩ + ⟨ z , y ⟩
+      ≡⟨ cong (⟨ x , z ⟩ +_ ) (⟨⟩-comm z y) ⟩
+      ⟨ x , z ⟩ + ⟨ y , z ⟩
+      ∎
 
-  ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ : (x y z : Vec A n)
-                      → ⟨ x , y +ⱽ z ⟩ ≡ (⟨ x , y ⟩) + (⟨ x , z ⟩)
-  ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x y z = begin
-    ⟨ x , y +ⱽ z ⟩
-    ≡⟨ ⟨⟩-comm x (y +ⱽ z) ⟩
-    ⟨ y +ⱽ z , x ⟩
-    ≡⟨ ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ y z x ⟩
-    ⟨ y , x ⟩ + ⟨ z , x ⟩
-    ≡⟨ cong (_+ ⟨ z , x ⟩) (⟨⟩-comm y x) ⟩
-    ⟨ x , y ⟩ + ⟨ z , x ⟩
-    ≡⟨ cong (⟨ x , y ⟩ +_ ) (⟨⟩-comm z x) ⟩
-    ⟨ x , y ⟩ + ⟨ x , z ⟩
-    ∎
+    ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ : (x y z : Vec A n)
+                        → ⟨ x , y +ⱽ z ⟩ ≡ (⟨ x , y ⟩) + (⟨ x , z ⟩)
+    ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x y z = begin
+      ⟨ x , y +ⱽ z ⟩
+      ≡⟨ ⟨⟩-comm x (y +ⱽ z) ⟩
+      ⟨ y +ⱽ z , x ⟩
+      ≡⟨ ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ y z x ⟩
+      ⟨ y , x ⟩ + ⟨ z , x ⟩
+      ≡⟨ cong (_+ ⟨ z , x ⟩) (⟨⟩-comm y x) ⟩
+      ⟨ x , y ⟩ + ⟨ z , x ⟩
+      ≡⟨ cong (⟨ x , y ⟩ +_ ) (⟨⟩-comm z x) ⟩
+      ⟨ x , y ⟩ + ⟨ x , z ⟩
+      ∎
 
-open ⟨⟩-Properties
+open ⟨⟩-Properties public
