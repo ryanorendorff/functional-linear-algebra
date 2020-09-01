@@ -110,21 +110,40 @@ private
          → L +ˡᵐ R ≡ R +ˡᵐ L
 +ˡᵐ-comm L R = L↓≡→L≡ (L +ˡᵐ R) (R +ˡᵐ L) (+ˡᵐ-comm↓ L R)
   where
-    z : ⦃ F : Field A ⦄
+    +ⱽ-comm-ext : ⦃ F : Field A ⦄
       → (f g : Vec A m → Vec A n)
       → (λ v → f v +ⱽ g v) ≡ (λ v → g v +ⱽ f v)
-    z f g = extensionality (λ v → +ⱽ-comm (f v) (g v))
+    +ⱽ-comm-ext f g = extensionality (λ v → +ⱽ-comm (f v) (g v))
 
     +ˡᵐ-comm↓ : ⦃ F : Field A ⦄ → (L R : LinearMap A m n)
              → L→L↓ (L +ˡᵐ R) ≡ L→L↓ (R +ˡᵐ L)
-    +ˡᵐ-comm↓ L R = cong LM↓ (z (LinearMap.f L) (LinearMap.f R))
+    +ˡᵐ-comm↓ L R = cong LM↓ (+ⱽ-comm-ext (LinearMap.f L) (LinearMap.f R))
 
--- *ˡᵐ-distr-+ˡᵐₗ : ⦃ F : Field A ⦄
---                → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
---                → X *ˡᵐ (Y +ˡᵐ Z) ≡ X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z
--- *ˡᵐ-distr-+ˡᵐₗ X Y Z = {!!}
+*ˡᵐ-distr-+ˡᵐₗ : ⦃ F : Field A ⦄
+               → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
+               → (X *ˡᵐ (Y +ˡᵐ Z)) ≡ (X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z)
+*ˡᵐ-distr-+ˡᵐₗ X Y Z = L↓≡→L≡ (X *ˡᵐ (Y +ˡᵐ Z)) ((X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z))
+                               (*ˡᵐ-distr-+ˡᵐₗ↓ X Y Z)
+  where
+    *-distr-+ⱽ : ⦃ F : Field A ⦄
+      → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
+      → (λ v → X ·ˡᵐ (Y ·ˡᵐ v +ⱽ Z ·ˡᵐ v)) ≡
+         (λ v → X ·ˡᵐ (Y ·ˡᵐ v) +ⱽ X ·ˡᵐ (Z ·ˡᵐ v))
+    *-distr-+ⱽ X Y Z = extensionality
+      (λ v → LinearMap.f[u+v]≡f[u]+f[v] X (Y ·ˡᵐ v) (Z ·ˡᵐ v))
 
--- *ˡᵐ-distr-+ˡᵐᵣ : ⦃ F : Field A ⦄
---                → (X Y : LinearMap A n m) → (Z : LinearMap A p n)
---                → (X +ˡᵐ Y) *ˡᵐ Z ≡ X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z
--- *ˡᵐ-distr-+ˡᵐᵣ X Y Z = {!!}
+    *ˡᵐ-distr-+ˡᵐₗ↓ : ⦃ F : Field A ⦄
+                    → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
+                    → L→L↓ (X *ˡᵐ (Y +ˡᵐ Z)) ≡ L→L↓ (X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z)
+    *ˡᵐ-distr-+ˡᵐₗ↓ X Y Z = cong LM↓ (*-distr-+ⱽ X Y Z)
+
+*ˡᵐ-distr-+ˡᵐᵣ : ⦃ F : Field A ⦄
+               → (X Y : LinearMap A n m) → (Z : LinearMap A p n)
+               → (X +ˡᵐ Y) *ˡᵐ Z ≡ X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z
+*ˡᵐ-distr-+ˡᵐᵣ X Y Z = L↓≡→L≡ ((X +ˡᵐ Y) *ˡᵐ Z) (X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z)
+                               (*ˡᵐ-distr-+ˡᵐᵣ↓ X Y Z)
+  where
+    *ˡᵐ-distr-+ˡᵐᵣ↓ : ⦃ F : Field A ⦄
+                    → (X Y : LinearMap A n m) → (Z : LinearMap A p n)
+                    → L→L↓ ((X +ˡᵐ Y) *ˡᵐ Z) ≡ L→L↓ (X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z)
+    *ˡᵐ-distr-+ˡᵐᵣ↓ X Y Z = cong LM↓ refl

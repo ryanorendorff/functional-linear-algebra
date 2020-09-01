@@ -14,12 +14,11 @@ open import FLA.Axiom.Extensionality.Propositional
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
 open import FLA.Algebra.LinearMap
+open import FLA.Algebra.LinearMap.Properties
 open import FLA.Algebra.LinearAlgebra
 open import FLA.Algebra.LinearAlgebra.Matrix
 
 module FLA.Algebra.LinearAlgebra.Properties.Matrix where
-
-open MProperties
 
 private
   variable
@@ -102,9 +101,30 @@ M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ refl rewrite
                → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
     ᵀ-distr-+↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
 
--- Must prove the distribution proofs on LinearMap first.
--- *ᴹ-distr-+ᴹ↓ : {A : Set} ⦃ F : Field A ⦄
---              → (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
---              → M→M↓ (X *ᴹ (Y +ᴹ Z)) ≡ M→M↓ (X *ᴹ Y +ᴹ X *ᴹ Z)
--- *ᴹ-distr-+ᴹ↓ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ = {!!}
--- rewrite *ˡᵐ-distr-+ˡᵐₗ X Y Z | *ˡᵐ-distr-+ˡᵐᵣ Yᵀ Zᵀ Xᵀ = refl
+*ᴹ-distr-+ᴹₗ : {A : Set} ⦃ F : Field A ⦄
+             → (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
+             → X *ᴹ (Y +ᴹ Z) ≡ X *ᴹ Y +ᴹ X *ᴹ Z
+*ᴹ-distr-+ᴹₗ X Y Z = M↓≡→M≡ (X *ᴹ (Y +ᴹ Z)) (X *ᴹ Y +ᴹ X *ᴹ Z)
+                             (*ᴹ-distr-+ᴹ↓ₗ X Y Z)
+  where
+    *ᴹ-distr-+ᴹ↓ₗ : {A : Set} ⦃ F : Field A ⦄
+                  → (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
+                  → M→M↓ (X *ᴹ (Y +ᴹ Z)) ≡ M→M↓ (X *ᴹ Y +ᴹ X *ᴹ Z)
+    *ᴹ-distr-+ᴹ↓ₗ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ rewrite
+        *ˡᵐ-distr-+ˡᵐₗ X Y Z
+      | *ˡᵐ-distr-+ˡᵐᵣ Yᵀ Zᵀ Xᵀ
+      = refl
+
+*ᴹ-distr-+ᴹᵣ : {A : Set} ⦃ F : Field A ⦄
+             → (X Y : M A ∶ m × n) (Z : M A ∶ n × p)
+             → (X +ᴹ Y) *ᴹ Z ≡ X *ᴹ Z +ᴹ Y *ᴹ Z
+*ᴹ-distr-+ᴹᵣ X Y Z = M↓≡→M≡ ((X +ᴹ Y) *ᴹ Z) (X *ᴹ Z +ᴹ Y *ᴹ Z)
+                             (*ᴹ-distr-+ᴹ↓ᵣ X Y Z)
+  where
+    *ᴹ-distr-+ᴹ↓ᵣ : {A : Set} ⦃ F : Field A ⦄
+                  → (X Y : M A ∶ m × n) (Z : M A ∶ n × p)
+                  → M→M↓ ((X +ᴹ Y) *ᴹ Z) ≡ M→M↓ (X *ᴹ Z +ᴹ Y *ᴹ Z)
+    *ᴹ-distr-+ᴹ↓ᵣ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ rewrite
+        *ˡᵐ-distr-+ˡᵐᵣ X Y Z
+      | *ˡᵐ-distr-+ˡᵐₗ Zᵀ Xᵀ Yᵀ
+      = refl
