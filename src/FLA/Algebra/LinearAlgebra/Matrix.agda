@@ -121,3 +121,17 @@ I = ⟦ idₗₘ , idₗₘ , id-transpose  ⟧
     id-transpose {{F}} x y rewrite
         zipWith-comm (Field._*_ F) (Field.*-comm F) x y
       = refl
+
+diag : ⦃ F : Field A ⦄ → Vec A n → M A ∶ n × n
+diag d = ⟦ diagₗₘ d , diagₗₘ d , diag-transpose d ⟧
+  where
+    diag-transpose : ⦃ F : Field A ⦄ → (d : Vec A n) → (x y : Vec A n)
+                   → ⟨ x , diagₗₘ d ·ˡᵐ y ⟩ ≡ ⟨ y , diagₗₘ d ·ˡᵐ x ⟩
+    diag-transpose {{F}} d x y =
+      begin
+        ⟨ x , diagₗₘ d ·ˡᵐ y ⟩ ≡⟨⟩
+        sum (x ∘ⱽ (d ∘ⱽ y))    ≡⟨ cong (sum) (∘ⱽ-comm x (d ∘ⱽ y)) ⟩
+        sum ((d ∘ⱽ y) ∘ⱽ x)    ≡⟨ cong (λ dy → sum (dy ∘ⱽ x)) (∘ⱽ-comm d y) ⟩
+        sum ((y ∘ⱽ d) ∘ⱽ x)    ≡⟨ cong sum (∘ⱽ-assoc y d x) ⟩
+        sum (y ∘ⱽ (d ∘ⱽ x))    ≡⟨⟩
+        ⟨ y , diagₗₘ d ·ˡᵐ x ⟩ ∎
