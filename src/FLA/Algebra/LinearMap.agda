@@ -7,14 +7,16 @@ open import Level using (Level)
 open import Relation.Binary.PropositionalEquality hiding (Extensionality)
 open ≡-Reasoning
 
-
-open import Data.Nat using (ℕ; suc; zero)
-open import Data.Vec using (Vec; foldr; zipWith; map)
+open import Data.Nat using (ℕ; suc; zero) renaming (_+_ to _+ᴺ_)
+open import Data.Nat.Properties
+open import Data.Vec using (Vec; foldr; zipWith; map; _++_; []; _∷_)
+open import Data.Vec.Properties
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
 open import FLA.Algebra.LinearAlgebra
 open import FLA.Algebra.LinearAlgebra.Properties
+open import FLA.Data.VectorList using (split)
 
 open import Function using (id)
 
@@ -96,6 +98,48 @@ g *ˡᵐ h = record
           | LinearMap.f[c*v]≡c*f[v] g c (h ·ˡᵐ v)
           = refl
 
+_|ˡᵐ_ : ⦃ F : Field A ⦄
+      → LinearMap A p m → LinearMap A p n → LinearMap A p (m +ᴺ n)
+T |ˡᵐ B =
+  record
+    { f = λ v →  T ·ˡᵐ v ++ B ·ˡᵐ v
+    ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v] T B
+    ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v] T B
+    }
+  where
+    f[u+v]≡f[u]+f[v] : {A : Set ℓ} ⦃ F : Field A ⦄
+                     → (T : LinearMap A p m) → (B : LinearMap A p n)
+                     → (u v : Vec A p)
+                     → T ·ˡᵐ (u +ⱽ v) ++ B ·ˡᵐ (u +ⱽ v) ≡
+                       (T ·ˡᵐ u ++ B ·ˡᵐ u) +ⱽ (T ·ˡᵐ v ++ B ·ˡᵐ v)
+    f[u+v]≡f[u]+f[v] T B u v rewrite
+        LinearMap.f[u+v]≡f[u]+f[v] T u v
+      | LinearMap.f[u+v]≡f[u]+f[v] B u v
+      | +ⱽ-flip-++ (T ·ˡᵐ u) (T ·ˡᵐ v) (B ·ˡᵐ u) (B ·ˡᵐ v)
+      = refl
+
+    f[c*v]≡c*f[v] : {A : Set ℓ} ⦃ F : Field A ⦄
+                  → (T : LinearMap A p m) → (B : LinearMap A p n)
+                  → (c : A) → (v : Vec A p)
+                  → T ·ˡᵐ (c *ᶜ v) ++ B ·ˡᵐ (c *ᶜ v) ≡
+                     c *ᶜ (T ·ˡᵐ v ++ B ·ˡᵐ v)
+    f[c*v]≡c*f[v] T B c v rewrite
+        LinearMap.f[c*v]≡c*f[v] T c v
+      | LinearMap.f[c*v]≡c*f[v] B c v
+      | *ᶜ-distr-++ c (T ·ˡᵐ v) (B ·ˡᵐ v)
+      = refl
+
+-- _—ˡᵐ_ : ⦃ F : Field A ⦄
+--       → LinearMap A m p → LinearMap A n p → LinearMap A (m +ᴺ n) p
+-- _—ˡᵐ_ {ℓ} {A} {m} {n} {p} T B =
+--   record
+--     { f = λ v → T ·ˡᵐ (take m v) +ⱽ B ·ˡᵐ (drop m v)
+--     ; f[u+v]≡f[u]+f[v] = {!f[u+v]≡f[u]+f[v] T B!}
+--     ; f[c*v]≡c*f[v] = {!!}
+--     }
+--     where
+
+infixl 3 _|ˡᵐ_
 infixl 6 _+ˡᵐ_
 infixl 7 _*ˡᵐ_
 -- Choose 20 since function application is assumed higher than almost anything

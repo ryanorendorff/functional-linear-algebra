@@ -1,11 +1,11 @@
 {-# OPTIONS --without-K --safe #-}
 
 open import Level using (Level)
-open import Data.Nat using (ℕ; suc; zero)
+open import Data.Nat using (ℕ; suc; zero) renaming (_+_ to _+ᴺ_)
 
 open import Data.Empty
 
-open import Data.Vec using (Vec; foldr; zipWith; map)
+open import Data.Vec using (Vec; foldr; zipWith; map; _++_)
 open import Data.Product hiding (map; _,_)
 
 open import Relation.Binary.PropositionalEquality hiding (Extensionality)
