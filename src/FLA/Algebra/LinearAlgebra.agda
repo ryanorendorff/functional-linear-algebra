@@ -21,29 +21,29 @@ private
     m n p q : ℕ
 
 
-_+ⱽ_ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → Vec A n
-_+ⱽ_ []ⱽ []ⱽ = []ⱽ
-_+ⱽ_ (x₁ ∷ⱽ xs₁) (x₂ ∷ⱽ xs₂) = x₁ + x₂ ∷ⱽ (xs₁ +ⱽ xs₂)
-  where open Field {{...}}
+module _ {ℓ : Level} {A : Set ℓ} ⦃ F : Field A ⦄ where
+  open Field F
 
--- Vector Hadamard product
-_∘ⱽ_ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → Vec A n
-_∘ⱽ_ = zipWith _*_
-  where open Field {{...}}
+  -- Vector addition
+  _+ⱽ_ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → Vec A n
+  _+ⱽ_ = zipWith _+_
 
--- Multiply vector by a constant
-_*ᶜ_ : ⦃ F : Field A ⦄ → A → Vec A n → Vec A n
-c *ᶜ v = map (c *_) v
-  where open Field {{...}}
+  -- Vector Hadamard product
+  _∘ⱽ_ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → Vec A n
+  _∘ⱽ_ = zipWith _*_
 
--- Match the fixity of Haskell
-infixl  6 _+ⱽ_
-infixl  7 _∘ⱽ_
-infixl 10 _*ᶜ_
+  -- Multiply vector by a constant
+  _*ᶜ_ : ⦃ F : Field A ⦄ → A → Vec A n → Vec A n
+  c *ᶜ v = map (c *_) v
 
-sum : ⦃ F : Field A ⦄ → Vec A n → A
-sum = foldr _ _+_ 0ᶠ
-  where open Field {{...}}
+  -- Match the fixity of Haskell
+  infixl  6 _+ⱽ_
+  infixl  7 _∘ⱽ_
+  infixl 10 _*ᶜ_
+
+  sum : Vec A n → A
+  sum = foldr _ _+_ 0ᶠ
+
 
 module sumProperties ⦃ F : Field A ⦄ where
   open Field F
@@ -63,4 +63,4 @@ open sumProperties
 
 -- Inner product
 ⟨_,_⟩ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → A
-⟨ v₁ , v₂ ⟩ =  sum (v₁ ∘ⱽ v₂)
+⟨ v₁ , v₂ ⟩ = sum (v₁ ∘ⱽ v₂)
