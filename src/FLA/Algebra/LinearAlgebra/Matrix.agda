@@ -6,7 +6,6 @@ open import Data.Nat using (ℕ; suc; zero)
 open import Data.Empty
 
 open import Data.Vec using (Vec; foldr; zipWith; map)
-                     renaming ([] to []ⱽ; _∷_ to _∷ⱽ_)
 open import Data.Product hiding (map; _,_)
 
 open import Relation.Binary.PropositionalEquality hiding (Extensionality)
@@ -28,7 +27,6 @@ private
     ℓ : Level
     A : Set ℓ
     m n p q : ℕ
-    ⦃ F ⦄ : Field A
 
 
 -------------------------------------------------------------------------------

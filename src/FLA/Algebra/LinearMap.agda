@@ -10,7 +10,6 @@ open ≡-Reasoning
 
 open import Data.Nat using (ℕ; suc; zero)
 open import Data.Vec using (Vec; foldr; zipWith; map)
-                     renaming ([] to []ⱽ; _∷_ to _∷ⱽ_)
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
@@ -26,7 +25,6 @@ private
     ℓ : Level
     A : Set ℓ
     m n p q : ℕ
-    ⦃ F ⦄ : Field A
 
 record LinearMap (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
   field
