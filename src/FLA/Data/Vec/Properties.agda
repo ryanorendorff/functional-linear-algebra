@@ -1,12 +1,17 @@
-{-# OPTIONS --with-K --safe #-}
+{-# OPTIONS --without-K --safe #-}
+
+
+-- open import Relation.Binary.HeterogeneousEquality using (_≅_; icong; ≅-to-≡)
+--   renaming (refl to hrefl; cong to hcong)
+-- ++-identityᵣ : (v : Vec A n) → v ++ [] ≅ v
+-- ++-identityᵣ [] = hrefl
+-- ++-identityᵣ {ℓ} {A} {suc n} (v ∷ vs) = icong (Vec A) (+-identityʳ n)
+--                                               (v ∷_) (++-identityᵣ vs)
 
 open import Level using (Level)
 
 open import Relation.Binary.PropositionalEquality hiding (Extensionality)
 open ≡-Reasoning
-
-open import Relation.Binary.HeterogeneousEquality using (_≅_; icong; ≅-to-≡)
-  renaming (refl to hrefl; cong to hcong)
 
 open import Data.Nat using (ℕ; suc; zero; _+_)
 open import Data.Nat.Properties
@@ -22,13 +27,20 @@ private
     A B C : Set ℓ
     m n : ℕ
 
-++-identityᵣ : (v : Vec A n) → v ++ [] ≅ v
-++-identityᵣ [] = hrefl
-++-identityᵣ {ℓ} {A} {suc n} (v ∷ vs) = icong (Vec A) (+-identityʳ n)
-                                              (v ∷_) (++-identityᵣ vs)
-
 ++-identityₗ : (v : Vec A n) → [] ++  v ≡ v
 ++-identityₗ _ = refl
+
+
+-------------------------------------------------------------------------------
+--                               zipWith proofs                              --
+-------------------------------------------------------------------------------
+
+zipWith-comm : (f : A → A → A) → (f-comm : (a b : A) → f a b ≡ f b a)
+             → (x y : Vec A n) → zipWith f x y ≡ zipWith f y x
+zipWith-comm f f-comm [] [] = refl
+zipWith-comm f f-comm (x ∷ xs) (y ∷ ys) rewrite
+    zipWith-comm f f-comm xs ys
+  | f-comm x y = refl
 
 -------------------------------------------------------------------------------
 --                              take/drop proofs                             --

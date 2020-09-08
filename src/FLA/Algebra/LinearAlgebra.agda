@@ -44,23 +44,6 @@ module _ {ℓ : Level} {A : Set ℓ} ⦃ F : Field A ⦄ where
   sum : Vec A n → A
   sum = foldr _ _+_ 0ᶠ
 
-
-module sumProperties ⦃ F : Field A ⦄ where
-  open Field F
-
-  sum-distr-+ⱽ : (v₁ v₂ : Vec A n) → sum (v₁ +ⱽ v₂) ≡ sum v₁ + sum v₂
-  sum-distr-+ⱽ []ⱽ []ⱽ = sym (0ᶠ+0ᶠ≡0ᶠ)
-  sum-distr-+ⱽ (v₁ ∷ⱽ vs₁) (v₂ ∷ⱽ vs₂) rewrite
-      sum-distr-+ⱽ vs₁ vs₂
-    | +-assoc (v₁ + v₂) (foldr (λ v → A) _+_ 0ᶠ vs₁) (foldr (λ v → A) _+_ 0ᶠ vs₂)
-    | sym (+-assoc v₁ v₂ (foldr (λ v → A) _+_ 0ᶠ vs₁))
-    | +-comm v₂ (foldr (λ v → A) _+_ 0ᶠ vs₁)
-    | +-assoc v₁ (foldr (λ v → A) _+_ 0ᶠ vs₁) v₂
-    | sym (+-assoc (v₁ + (foldr (λ v → A) _+_ 0ᶠ vs₁)) v₂ (foldr (λ v → A) _+_ 0ᶠ vs₂))
-    = refl
-
-open sumProperties
-
 -- Inner product
 ⟨_,_⟩ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → A
 ⟨ v₁ , v₂ ⟩ = sum (v₁ ∘ⱽ v₂)
