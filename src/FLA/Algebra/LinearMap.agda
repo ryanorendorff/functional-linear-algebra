@@ -9,16 +9,17 @@ open ≡-Reasoning
 
 open import Data.Nat using (ℕ; suc; zero) renaming (_+_ to _+ᴺ_)
 open import Data.Nat.Properties
-open import Data.Vec using (Vec; foldr; zipWith; map; _++_; []; _∷_)
+open import Data.Vec using (Vec; foldr; zipWith; map; _++_; []; _∷_; take; drop)
 open import Data.Vec.Properties
+
+open import Function using (id)
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
 open import FLA.Algebra.LinearAlgebra
 open import FLA.Algebra.LinearAlgebra.Properties
 open import FLA.Data.VectorList using (split)
-
-open import Function using (id)
+open import FLA.Data.Vec.Properties
 
 module FLA.Algebra.LinearMap where
 
@@ -129,15 +130,75 @@ T |ˡᵐ B =
       | *ᶜ-distr-++ c (T ·ˡᵐ v) (B ·ˡᵐ v)
       = refl
 
--- _—ˡᵐ_ : ⦃ F : Field A ⦄
---       → LinearMap A m p → LinearMap A n p → LinearMap A (m +ᴺ n) p
--- _—ˡᵐ_ {ℓ} {A} {m} {n} {p} T B =
---   record
---     { f = λ v → T ·ˡᵐ (take m v) +ⱽ B ·ˡᵐ (drop m v)
---     ; f[u+v]≡f[u]+f[v] = {!f[u+v]≡f[u]+f[v] T B!}
---     ; f[c*v]≡c*f[v] = {!!}
---     }
---     where
+module _ ⦃ F : Field A ⦄ where
+  open Field F
+  open LinearMap
+
+  _—ˡᵐ_ : LinearMap A m p → LinearMap A n p → LinearMap A (m +ᴺ n) p
+  _—ˡᵐ_ {m} {n} {p} T B =
+    record
+      { f = λ v → T ·ˡᵐ (take m v) +ⱽ B ·ˡᵐ (drop m v)
+      ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]' T B
+      ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' T B
+      }
+      where
+        f[u+v]≡f[u]+f[v]' : {m n p : ℕ}
+                          → (T : LinearMap A m p) → (B : LinearMap A n p)
+                          → (u v : Vec A (m +ᴺ n))
+                          → T ·ˡᵐ take m (u +ⱽ v) +ⱽ B ·ˡᵐ drop m (u +ⱽ v) ≡
+                             T ·ˡᵐ take m u +ⱽ B ·ˡᵐ drop m u +ⱽ
+                             (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
+        f[u+v]≡f[u]+f[v]' {m} T B u v = begin
+            T ·ˡᵐ (take m (u +ⱽ v)) +ⱽ B ·ˡᵐ (drop m (u +ⱽ v))
+          ≡⟨ cong₂ (λ x y → T ·ˡᵐ x +ⱽ B ·ˡᵐ y)
+                   (take-distr-zipWith _+_ u v) (drop-distr-zipWith _+_ u v)⟩
+            T ·ˡᵐ (take m u +ⱽ take m v) +ⱽ B ·ˡᵐ (drop m u +ⱽ drop m v)
+          ≡⟨ cong₂ _+ⱽ_ (f[u+v]≡f[u]+f[v] T (take m u) (take m v))
+                        (f[u+v]≡f[u]+f[v] B (drop m u) (drop m v)) ⟩
+            T ·ˡᵐ take m u +ⱽ T ·ˡᵐ take m v +ⱽ
+            (B ·ˡᵐ drop m u +ⱽ B ·ˡᵐ drop m v)
+          ≡⟨ sym (+ⱽ-assoc (T ·ˡᵐ take m u +ⱽ T ·ˡᵐ take m v)
+                           (B ·ˡᵐ drop m u) (B ·ˡᵐ drop m v)) ⟩
+            T ·ˡᵐ take m u +ⱽ T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m u +ⱽ
+            B ·ˡᵐ drop m v
+          ≡⟨ cong (_+ⱽ B ·ˡᵐ drop m v) (+ⱽ-assoc (T ·ˡᵐ take m u)
+                                                 (T ·ˡᵐ take m v)
+                                                 (B ·ˡᵐ drop m u)) ⟩
+            T ·ˡᵐ take m u +ⱽ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m u) +ⱽ
+            B ·ˡᵐ drop m v
+          ≡⟨ cong (λ x → (T ·ˡᵐ take m u +ⱽ x) +ⱽ B ·ˡᵐ drop m v)
+                  (+ⱽ-comm (T ·ˡᵐ take m v) (B ·ˡᵐ drop m u)) ⟩
+            (T ·ˡᵐ take m u +ⱽ ((B ·ˡᵐ drop m u +ⱽ T ·ˡᵐ take m v))) +ⱽ
+            B ·ˡᵐ drop m v
+          ≡⟨ cong (_+ⱽ B ·ˡᵐ drop m v) (sym (+ⱽ-assoc (T ·ˡᵐ take m u)
+                                                      (B ·ˡᵐ drop m u)
+                                                      (T ·ˡᵐ take m v))) ⟩
+            (T ·ˡᵐ take m u +ⱽ B ·ˡᵐ drop m u +ⱽ T ·ˡᵐ take m v) +ⱽ
+            B ·ˡᵐ drop m v
+          ≡⟨ +ⱽ-assoc (T ·ˡᵐ take m u +ⱽ B ·ˡᵐ drop m u)
+                      (T ·ˡᵐ take m v) (B ·ˡᵐ drop m v) ⟩
+            T ·ˡᵐ take m u +ⱽ B ·ˡᵐ drop m u +ⱽ
+            (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
+          ∎
+
+        f[c*v]≡c*f[v]' : {m n p : ℕ}
+                       → (T : LinearMap A m p) → (B : LinearMap A n p)
+                       → (c : A) (v : Vec A (m +ᴺ n))
+                       → T ·ˡᵐ take m (c *ᶜ v) +ⱽ B ·ˡᵐ drop m (c *ᶜ v) ≡
+                          c *ᶜ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
+        f[c*v]≡c*f[v]' {m} T B c v = begin
+            T ·ˡᵐ take m (c *ᶜ v) +ⱽ B ·ˡᵐ drop m (c *ᶜ v)
+          ≡⟨ cong₂ (λ x y → T ·ˡᵐ x +ⱽ B ·ˡᵐ y) (take-distr-map (c *_) m v)
+                                                 (drop-distr-map (c *_) m v) ⟩
+            T ·ˡᵐ (c *ᶜ take m v) +ⱽ B ·ˡᵐ (c *ᶜ drop m v)
+          ≡⟨ cong₂ _+ⱽ_ (f[c*v]≡c*f[v] T c (take m v))
+                        (f[c*v]≡c*f[v] B c (drop m v)) ⟩
+            c *ᶜ (T ·ˡᵐ take m v) +ⱽ c *ᶜ (B ·ˡᵐ drop m v)
+          ≡⟨ sym (*ᶜ-distr-+ⱽ c (T ·ˡᵐ take m v) (B ·ˡᵐ drop m v)) ⟩
+            c *ᶜ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
+          ∎
+
+  infixl 2 _—ˡᵐ_
 
 infixl 3 _|ˡᵐ_
 infixl 6 _+ˡᵐ_
