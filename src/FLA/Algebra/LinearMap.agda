@@ -101,8 +101,8 @@ module _ ⦃ F : Field A ⦄ where
         = refl
 
 
-  _|ˡᵐ_ : LinearMap A p m → LinearMap A p n → LinearMap A p (m +ᴺ n)
-  T |ˡᵐ B =
+  _—ˡᵐ_ : LinearMap A p m → LinearMap A p n → LinearMap A p (m +ᴺ n)
+  T —ˡᵐ B =
     record
       { f = λ v →  T ·ˡᵐ v ++ B ·ˡᵐ v
       ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]' T B
@@ -129,8 +129,8 @@ module _ ⦃ F : Field A ⦄ where
         | *ᶜ-distr-++ c (T ·ˡᵐ v) (B ·ˡᵐ v)
         = refl
 
-  _—ˡᵐ_ : LinearMap A m p → LinearMap A n p → LinearMap A (m +ᴺ n) p
-  _—ˡᵐ_ {m} {n} {p} T B =
+  _|ˡᵐ_ : LinearMap A m p → LinearMap A n p → LinearMap A (m +ᴺ n) p
+  _|ˡᵐ_ {m} {n} {p} T B =
     record
       { f = λ v → T ·ˡᵐ (take m v) +ⱽ B ·ˡᵐ (drop m v)
       ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]' T B
