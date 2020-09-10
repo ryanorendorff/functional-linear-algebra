@@ -6,7 +6,7 @@ open import Relation.Binary.PropositionalEquality hiding (∀-extensionality)
 open ≡-Reasoning
 
 open import Data.Nat using (ℕ; suc; zero)
-open import Data.Vec using (Vec; foldr; zipWith; map; []; _∷_)
+open import Data.Vec using (Vec; foldr; zipWith; map; []; _∷_; _++_)
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
@@ -83,6 +83,16 @@ module _ ⦃ F : Field A ⦄ where
       *ᶜ-distr-+ⱽ c us vs
     | *-distr-+ c u v
     = refl
+
+  +ⱽ-flip-++ : (a b : Vec A n) → (c d : Vec A m)
+             → (a ++ c) +ⱽ (b ++ d) ≡ a +ⱽ b ++ c +ⱽ d
+  +ⱽ-flip-++ [] [] c d = refl
+  +ⱽ-flip-++ (a ∷ as) (b ∷ bs) c d rewrite +ⱽ-flip-++ as bs c d = refl
+
+  *ᶜ-distr-++ : (c : A) (a : Vec A n) (b : Vec A m)
+              → c *ᶜ (a ++ b) ≡ (c *ᶜ a) ++ (c *ᶜ b)
+  *ᶜ-distr-++ c [] b = refl
+  *ᶜ-distr-++ c (a ∷ as) b rewrite *ᶜ-distr-++ c as b = refl
 
   ⟨⟩-comm : (v₁ v₂ : Vec A n)
           → ⟨ v₁ , v₂ ⟩ ≡ ⟨ v₂ , v₁ ⟩
