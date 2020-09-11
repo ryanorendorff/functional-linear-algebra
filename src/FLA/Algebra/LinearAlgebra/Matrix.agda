@@ -119,13 +119,19 @@ module _ ⦃ F : Field A ⦄ where
                       ⟨ x , (M₁ |ˡᵐ M₂) ·ˡᵐ y ⟩ ≡ ⟨ y , (M₁ᵀ —ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
       ⟨⟩-proof {m} {n} {p} M₁ M₂ M₁ᵀ M₂ᵀ M₁-proof M₂-proof x y =
         begin
-          ⟨ x , (M₁ |ˡᵐ M₂) ·ˡᵐ y ⟩
+            ⟨ x , (M₁ |ˡᵐ M₂) ·ˡᵐ y ⟩
           ≡⟨⟩
-          ⟨ x , (f M₁ (take n y) +ⱽ f M₂ (drop n y)) ⟩
+            ⟨ x , M₁ ·ˡᵐ take n y +ⱽ M₂ ·ˡᵐ drop n y ⟩
+          ≡⟨ ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x (M₁ ·ˡᵐ take n y) (M₂ ·ˡᵐ drop n y) ⟩
+            ⟨ x , M₁ ·ˡᵐ take n y ⟩ + ⟨ x ,  M₂ ·ˡᵐ drop n y ⟩
+          ≡⟨ cong₂ _+_ (M₁-proof x (take n y)) (M₂-proof x (drop n y)) ⟩
+            ⟨ take n y , M₁ᵀ ·ˡᵐ x ⟩ + ⟨ drop n y ,  M₂ᵀ ·ˡᵐ x  ⟩
           ≡⟨ {!!} ⟩
-          ⟨ y , (f M₁ᵀ x ++ f M₂ᵀ x) ⟩
+            ⟨ take n y ++ drop n y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x  ⟩
+          ≡⟨ cong (λ a → ⟨ a , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩) (take-drop-id n y) ⟩
+            ⟨ y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩
           ≡⟨⟩
-          ⟨ y , (M₁ᵀ —ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
+            ⟨ y , (M₁ᵀ —ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
         ∎
 
 
