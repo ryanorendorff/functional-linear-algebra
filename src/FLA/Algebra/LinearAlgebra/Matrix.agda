@@ -125,15 +125,15 @@ module _ ⦃ F : Field A ⦄ where
           ≡⟨ ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x (M₁ ·ˡᵐ take n y) (M₂ ·ˡᵐ drop n y) ⟩
             ⟨ x , M₁ ·ˡᵐ take n y ⟩ + ⟨ x ,  M₂ ·ˡᵐ drop n y ⟩
           ≡⟨ cong₂ _+_ (M₁-proof x (take n y)) (M₂-proof x (drop n y)) ⟩
-            ⟨ take n y , M₁ᵀ ·ˡᵐ x ⟩ + ⟨ drop n y ,  M₂ᵀ ·ˡᵐ x  ⟩
-          ≡⟨ {!!} ⟩
-            ⟨ take n y ++ drop n y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x  ⟩
+            ⟨ take n y , M₁ᵀ ·ˡᵐ x ⟩ + ⟨ drop n y ,  M₂ᵀ ·ˡᵐ x ⟩
+          ≡⟨ ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ (take n y) (M₁ᵀ ·ˡᵐ x)
+                                     (drop n y) (M₂ᵀ ·ˡᵐ x) ⟩
+            ⟨ take n y ++ drop n y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩
           ≡⟨ cong (λ a → ⟨ a , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩) (take-drop-id n y) ⟩
             ⟨ y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩
           ≡⟨⟩
             ⟨ y , (M₁ᵀ —ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
         ∎
-
 
   _—ᴹ_ : M A ∶ m × p → M A ∶ n × p → M A ∶ (m +ᴺ n) × p
   M —ᴹ N = (M ᵀ |ᴹ N ᵀ) ᵀ
