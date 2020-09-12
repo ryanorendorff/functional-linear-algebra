@@ -5,7 +5,7 @@ open import Data.Nat using (ℕ; suc; zero) renaming (_+_ to _+ᴺ_)
 
 open import Data.Empty
 
-open import Data.Vec using (Vec; foldr; zipWith; map; _++_)
+open import Data.Vec using (Vec; foldr; zipWith; map; _++_; take; drop; splitAt)
 open import Data.Product hiding (map; _,_)
 
 open import Relation.Binary.PropositionalEquality hiding (Extensionality)
@@ -48,6 +48,7 @@ _·_ : ⦃ F : Field A ⦄ → M A ∶ m × n → Vec A n → Vec A m
 
 module _ ⦃ F : Field A ⦄ where
   open Field F
+  open LinearMap
 
   _+ᴹ_ : M A ∶ m × n → M A ∶ m × n → M A ∶ m × n
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ +ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
@@ -102,6 +103,43 @@ module _ ⦃ F : Field A ⦄ where
           ⟨ M₁ᵀ ·ˡᵐ x , M₂ ·ˡᵐ y ⟩    ≡⟨ M₂-proof (M₁ᵀ ·ˡᵐ x) y ⟩
           ⟨ y , (M₂ᵀ *ˡᵐ M₁ᵀ) ·ˡᵐ x ⟩ ∎
 
+  _|ᴹ_ : M A ∶ m × n → M A ∶ m × p → M A ∶ m × (n +ᴺ p)
+  ⟦ M₁ , M₁ᵀ , p₁ ⟧ |ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
+    ⟦ M₁ |ˡᵐ M₂
+    , M₁ᵀ —ˡᵐ M₂ᵀ
+    , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂ ⟧
+    where
+      ⟨⟩-proof : {m n p : ℕ} → (M₁ : LinearMap A n m) (M₂ : LinearMap A p m)
+               → (M₁ᵀ : LinearMap A m n) (M₂ᵀ : LinearMap A m p)
+               → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
+                               → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
+               → (M₂-⟨⟩-proof : (x : Vec A m) (y : Vec A p)
+                               → ⟨ x , M₂ ·ˡᵐ y ⟩ ≡ ⟨ y , M₂ᵀ ·ˡᵐ x ⟩ )
+               → (x : Vec A m) (y : Vec A (n +ᴺ p)) →
+                      ⟨ x , (M₁ |ˡᵐ M₂) ·ˡᵐ y ⟩ ≡ ⟨ y , (M₁ᵀ —ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
+      ⟨⟩-proof {m} {n} {p} M₁ M₂ M₁ᵀ M₂ᵀ M₁-proof M₂-proof x y =
+        begin
+            ⟨ x , (M₁ |ˡᵐ M₂) ·ˡᵐ y ⟩
+          ≡⟨⟩
+            ⟨ x , M₁ ·ˡᵐ take n y +ⱽ M₂ ·ˡᵐ drop n y ⟩
+          ≡⟨ ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x (M₁ ·ˡᵐ take n y) (M₂ ·ˡᵐ drop n y) ⟩
+            ⟨ x , M₁ ·ˡᵐ take n y ⟩ + ⟨ x ,  M₂ ·ˡᵐ drop n y ⟩
+          ≡⟨ cong₂ _+_ (M₁-proof x (take n y)) (M₂-proof x (drop n y)) ⟩
+            ⟨ take n y , M₁ᵀ ·ˡᵐ x ⟩ + ⟨ drop n y ,  M₂ᵀ ·ˡᵐ x ⟩
+          ≡⟨ ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ (take n y) (M₁ᵀ ·ˡᵐ x)
+                                     (drop n y) (M₂ᵀ ·ˡᵐ x) ⟩
+            ⟨ take n y ++ drop n y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩
+          ≡⟨ cong (λ a → ⟨ a , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩) (take-drop-id n y) ⟩
+            ⟨ y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩
+          ≡⟨⟩
+            ⟨ y , (M₁ᵀ —ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
+        ∎
+
+  _—ᴹ_ : M A ∶ m × p → M A ∶ n × p → M A ∶ (m +ᴺ n) × p
+  M —ᴹ N = (M ᵀ |ᴹ N ᵀ) ᵀ
+
+  infixl 2 _—ᴹ_
+  infixl 3 _|ᴹ_
   infixl 6 _+ᴹ_
   infixl 7 _*ᴹ_
 

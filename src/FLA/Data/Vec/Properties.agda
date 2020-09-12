@@ -118,3 +118,17 @@ drop-distr-map f (suc m) (v ∷ vs) =
     drop m (map f vs)             ≡⟨ drop-distr-map f m vs ⟩
     map f (drop m vs)             ≡⟨ cong (map f) (sym (unfold-drop m v vs)) ⟩
     map f (drop (suc m) (v ∷ vs)) ∎
+
+
+take-drop-id : (m : ℕ) → (v : Vec A (m + n)) → take m v ++ drop m v ≡ v
+take-drop-id zero v = refl
+take-drop-id (suc m) (v ∷ vs) =
+  begin
+    take (suc m) (v ∷ vs) ++ drop (suc m) (v ∷ vs)
+  ≡⟨ cong₂ _++_ (unfold-take m v vs) (unfold-drop m v vs) ⟩
+    (v ∷ take m vs) ++ (drop m vs)
+  ≡⟨⟩
+    v ∷ (take m vs ++ drop m vs)
+  ≡⟨ cong (v ∷_) (take-drop-id m vs) ⟩
+    (v ∷ vs)
+  ∎

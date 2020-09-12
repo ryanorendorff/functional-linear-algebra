@@ -139,14 +139,30 @@ module _ ⦃ F : Field A ⦄ where
 
   ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ : (x y z : Vec A n)
                       → ⟨ x , y +ⱽ z ⟩ ≡ (⟨ x , y ⟩) + (⟨ x , z ⟩)
-  ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x y z = begin
-    ⟨ x , y +ⱽ z ⟩
-    ≡⟨ ⟨⟩-comm x (y +ⱽ z) ⟩
-    ⟨ y +ⱽ z , x ⟩
-    ≡⟨ ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ y z x ⟩
-    ⟨ y , x ⟩ + ⟨ z , x ⟩
-    ≡⟨ cong (_+ ⟨ z , x ⟩) (⟨⟩-comm y x) ⟩
-    ⟨ x , y ⟩ + ⟨ z , x ⟩
-    ≡⟨ cong (⟨ x , y ⟩ +_ ) (⟨⟩-comm z x) ⟩
-    ⟨ x , y ⟩ + ⟨ x , z ⟩
+  ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x y z =
+    begin
+      ⟨ x , y +ⱽ z ⟩        ≡⟨ ⟨⟩-comm x (y +ⱽ z) ⟩
+      ⟨ y +ⱽ z , x ⟩        ≡⟨ ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ y z x ⟩
+      ⟨ y , x ⟩ + ⟨ z , x ⟩ ≡⟨ cong (_+ ⟨ z , x ⟩) (⟨⟩-comm y x) ⟩
+      ⟨ x , y ⟩ + ⟨ z , x ⟩ ≡⟨ cong (⟨ x , y ⟩ +_ ) (⟨⟩-comm z x) ⟩
+      ⟨ x , y ⟩ + ⟨ x , z ⟩ ∎
+
+  ⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ : (a : Vec A m) → (b : Vec A n) → (c : Vec A m) → (d : Vec A n)
+                          → ⟨ a ++ b , c ++ d ⟩ ≡ ⟨ a , c ⟩ + ⟨ b ,  d ⟩
+  ⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ [] b [] d rewrite 0-+ (⟨ b , d ⟩) = refl
+  ⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ (a ∷ as) b (c ∷ cs) d =
+    begin
+        ⟨ a ∷ as ++ b , c ∷ cs ++ d ⟩
+      ≡⟨⟩
+        (a * c) + ⟨ as ++ b , cs ++ d ⟩
+      ≡⟨ cong ((a * c) +_) (⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ as b cs d) ⟩
+        (a * c) + (⟨ as , cs ⟩ + ⟨ b , d ⟩)
+      ≡⟨ +-assoc (a * c) ⟨ as , cs ⟩ ⟨ b , d ⟩ ⟩
+        ((a * c) + ⟨ as , cs ⟩) + ⟨ b , d ⟩
+      ≡⟨⟩
+        ⟨ a ∷ as , c ∷ cs ⟩ + ⟨ b , d ⟩
     ∎
+
+  ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ : (a b : Vec A m) → (c d : Vec A n)
+                          → ⟨ a , b ⟩ + ⟨ c ,  d ⟩ ≡ ⟨ a ++ c , b ++ d ⟩
+  ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ a b c d = sym (⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ a c b d)
