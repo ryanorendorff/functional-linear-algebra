@@ -5,7 +5,7 @@ open import Data.Nat using (ℕ; suc; zero) renaming (_+_ to _+ᴺ_)
 
 open import Data.Empty
 
-open import Data.Vec using (Vec; foldr; zipWith; map; _++_; take; drop; splitAt)
+open import Data.Vec using (Vec; foldr; zipWith; map; _++_; take; drop)
 open import Data.Product hiding (map; _,_)
 
 open import Relation.Binary.PropositionalEquality hiding (Extensionality)
@@ -40,11 +40,21 @@ data M_∶_×_ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
                → ⟨ x , M ·ˡᵐ y ⟩ ≡ ⟨ y , Mᵀ ·ˡᵐ x ⟩ )
           → M A ∶ m × n
 
-_ᵀ : ⦃ F : Field A ⦄ → M A ∶ m × n → M A ∶ n × m
-⟦ f , a , p ⟧ ᵀ = ⟦ a , f , (λ x y → sym (p y x)) ⟧
+module _ where
 
-_·_ : ⦃ F : Field A ⦄ → M A ∶ m × n → Vec A n → Vec A m
-⟦ f , a , _ ⟧ · x = f ·ˡᵐ x
+  _ᵀ : ⦃ F : Field A ⦄ → M A ∶ m × n → M A ∶ n × m
+  ⟦ f , a , p ⟧ ᵀ = ⟦ a , f , (λ x y → sym (p y x)) ⟧
+
+  _·ᴹₗ_ : ⦃ F : Field A ⦄ → M A ∶ m × n → Vec A n → Vec A m
+  ⟦ f , _ , _ ⟧ ·ᴹₗ x = f ·ˡᵐ x
+
+  _·ᴹᵣ_ : ⦃ F : Field A ⦄ → Vec A m → M A ∶ m × n → Vec A n
+  x ·ᴹᵣ ⟦ _ , a , _ ⟧ = a ·ˡᵐ x
+
+  infixr 20 _·ᴹᵣ_
+  infixr 21 _·ᴹₗ_
+  infixl 25 _ᵀ
+
 
 module _ ⦃ F : Field A ⦄ where
   open Field F
@@ -107,7 +117,8 @@ module _ ⦃ F : Field A ⦄ where
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ |ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
     ⟦ M₁ |ˡᵐ M₂
     , M₁ᵀ —ˡᵐ M₂ᵀ
-    , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂ ⟧
+    , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
+    ⟧
     where
       ⟨⟩-proof : {m n p : ℕ} → (M₁ : LinearMap A n m) (M₂ : LinearMap A p m)
                → (M₁ᵀ : LinearMap A m n) (M₂ᵀ : LinearMap A m p)
@@ -138,13 +149,51 @@ module _ ⦃ F : Field A ⦄ where
   _—ᴹ_ : M A ∶ m × p → M A ∶ n × p → M A ∶ (m +ᴺ n) × p
   M —ᴹ N = (M ᵀ |ᴹ N ᵀ) ᵀ
 
+  -- Block diagonal matrix
+  _/ᴹ_ : M A ∶ m × n → M A ∶ p × q → M A ∶ (m +ᴺ p) × (n +ᴺ q)
+  ⟦ M₁ , M₁ᵀ , p₁ ⟧ /ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
+    ⟦ M₁ /ˡᵐ M₂
+    , M₁ᵀ /ˡᵐ M₂ᵀ
+    , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
+    ⟧
+    where
+      ⟨⟩-proof : {m n p q : ℕ} → (M₁ : LinearMap A n m) (M₂ : LinearMap A q p)
+               → (M₁ᵀ : LinearMap A m n) (M₂ᵀ : LinearMap A p q)
+               → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
+                               → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
+               → (M₂-⟨⟩-proof : (x : Vec A p) (y : Vec A q)
+                               → ⟨ x , M₂ ·ˡᵐ y ⟩ ≡ ⟨ y , M₂ᵀ ·ˡᵐ x ⟩ )
+               → (x : Vec A (m +ᴺ p)) (y : Vec A (n +ᴺ q)) →
+                        ⟨ x , (M₁ /ˡᵐ M₂) ·ˡᵐ y ⟩ ≡ ⟨ y , (M₁ᵀ /ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
+      ⟨⟩-proof {m} {n} {p} M₁ M₂ M₁ᵀ M₂ᵀ M₁-proof M₂-proof x y =
+        begin
+            ⟨ x , (M₁ /ˡᵐ M₂) ·ˡᵐ y ⟩
+          ≡⟨⟩
+            ⟨ x , M₁ ·ˡᵐ take n y ++ M₂ ·ˡᵐ drop n y ⟩
+          ≡⟨ cong (λ x → ⟨ x , M₁ ·ˡᵐ take n y ++ M₂ ·ˡᵐ drop n y ⟩)
+                  (sym (take-drop-id m x)) ⟩
+            ⟨ take m x ++ drop m x , M₁ ·ˡᵐ (take n y) ++ M₂ ·ˡᵐ drop n y ⟩
+          ≡⟨ ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ (take m x) (drop m x)
+                                     (M₁ ·ˡᵐ (take n y)) (M₂ ·ˡᵐ drop n y) ⟩
+            ⟨ take m x , M₁ ·ˡᵐ (take n y) ⟩ + ⟨ drop m x , M₂ ·ˡᵐ drop n y ⟩
+          ≡⟨ cong₂ _+_ (M₁-proof (take m x) (take n y))
+                       (M₂-proof (drop m x) (drop n y)) ⟩
+            ⟨ take n y , M₁ᵀ ·ˡᵐ take m x  ⟩ + ⟨ drop n y , M₂ᵀ ·ˡᵐ  drop m x ⟩
+          ≡⟨ ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ (take n y) (M₁ᵀ ·ˡᵐ take m x)
+                                     (drop n y) (M₂ᵀ ·ˡᵐ  drop m x) ⟩
+            ⟨ take n y ++ drop n y , M₁ᵀ ·ˡᵐ take m x ++ M₂ᵀ ·ˡᵐ  drop m x ⟩
+          ≡⟨ cong (λ y → ⟨ y , M₁ᵀ ·ˡᵐ take m x ++ M₂ᵀ ·ˡᵐ  drop m x ⟩)
+                  (take-drop-id n y) ⟩
+            ⟨ y , M₁ᵀ ·ˡᵐ (take m x) ++ M₂ᵀ ·ˡᵐ (drop m x) ⟩
+          ≡⟨⟩
+            ⟨ y , (M₁ᵀ /ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
+        ∎
+
   infixl 2 _—ᴹ_
   infixl 3 _|ᴹ_
+  infixl 4 _/ᴹ_
   infixl 6 _+ᴹ_
   infixl 7 _*ᴹ_
-
-infixr 20 _·_
-infixl 25 _ᵀ
 
 
 -- Matrix Free Operators ------------------------------------------------------

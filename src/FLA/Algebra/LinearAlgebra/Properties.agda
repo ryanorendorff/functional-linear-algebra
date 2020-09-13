@@ -147,15 +147,15 @@ module _ ⦃ F : Field A ⦄ where
       ⟨ x , y ⟩ + ⟨ z , x ⟩ ≡⟨ cong (⟨ x , y ⟩ +_ ) (⟨⟩-comm z x) ⟩
       ⟨ x , y ⟩ + ⟨ x , z ⟩ ∎
 
-  ⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ : (a : Vec A m) → (b : Vec A n) → (c : Vec A m) → (d : Vec A n)
+  ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ : (a : Vec A m) → (b : Vec A n) → (c : Vec A m) → (d : Vec A n)
                           → ⟨ a ++ b , c ++ d ⟩ ≡ ⟨ a , c ⟩ + ⟨ b ,  d ⟩
-  ⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ [] b [] d rewrite 0-+ (⟨ b , d ⟩) = refl
-  ⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ (a ∷ as) b (c ∷ cs) d =
+  ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ [] b [] d rewrite 0-+ (⟨ b , d ⟩) = refl
+  ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ (a ∷ as) b (c ∷ cs) d =
     begin
         ⟨ a ∷ as ++ b , c ∷ cs ++ d ⟩
       ≡⟨⟩
         (a * c) + ⟨ as ++ b , cs ++ d ⟩
-      ≡⟨ cong ((a * c) +_) (⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ as b cs d) ⟩
+      ≡⟨ cong ((a * c) +_) (⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ as b cs d) ⟩
         (a * c) + (⟨ as , cs ⟩ + ⟨ b , d ⟩)
       ≡⟨ +-assoc (a * c) ⟨ as , cs ⟩ ⟨ b , d ⟩ ⟩
         ((a * c) + ⟨ as , cs ⟩) + ⟨ b , d ⟩
@@ -165,4 +165,4 @@ module _ ⦃ F : Field A ⦄ where
 
   ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ : (a b : Vec A m) → (c d : Vec A n)
                           → ⟨ a , b ⟩ + ⟨ c ,  d ⟩ ≡ ⟨ a ++ c , b ++ d ⟩
-  ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ a b c d = sym (⟨a++b,c++d⟩≡⟨a,b⟩+⟨c,d⟩ a c b d)
+  ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ a b c d = sym (⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ a c b d)

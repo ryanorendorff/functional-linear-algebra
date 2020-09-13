@@ -100,7 +100,7 @@ module _ ⦃ F : Field A ⦄ where
         | f[c*v]≡c*f[v] g c (h ·ˡᵐ v)
         = refl
 
-
+  -- vertical stack forward operator
   _—ˡᵐ_ : LinearMap A p m → LinearMap A p n → LinearMap A p (m +ᴺ n)
   T —ˡᵐ B =
     record
@@ -118,7 +118,7 @@ module _ ⦃ F : Field A ⦄ where
         | f[u+v]≡f[u]+f[v] B u v
         | +ⱽ-flip-++ (T ·ˡᵐ u) (T ·ˡᵐ v) (B ·ˡᵐ u) (B ·ˡᵐ v)
         = refl
-  
+
       f[c*v]≡c*f[v]' : (T : LinearMap A p m) → (B : LinearMap A p n)
                      → (c : A) → (v : Vec A p)
                      → T ·ˡᵐ (c *ᶜ v) ++ B ·ˡᵐ (c *ᶜ v) ≡
@@ -129,6 +129,7 @@ module _ ⦃ F : Field A ⦄ where
         | *ᶜ-distr-++ c (T ·ˡᵐ v) (B ·ˡᵐ v)
         = refl
 
+  -- horizontal stack forward operator
   _|ˡᵐ_ : LinearMap A m p → LinearMap A n p → LinearMap A (m +ᴺ n) p
   _|ˡᵐ_ {m} {n} {p} T B =
     record
@@ -193,11 +194,61 @@ module _ ⦃ F : Field A ⦄ where
             c *ᶜ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
           ∎
 
+  -- block diagonal forward and adjoint operator
+  _/ˡᵐ_ : LinearMap A m n → LinearMap A p q → LinearMap A (m +ᴺ p) (n +ᴺ q)
+  _/ˡᵐ_ {m} {n} {p} {q} T B =
+    record
+      { f = λ v → T ·ˡᵐ (take m v) ++ B ·ˡᵐ (drop m v)
+      ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]' T B
+      ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' T B
+      }
+      where
+        f[u+v]≡f[u]+f[v]' : {m n p q : ℕ}
+                          → (T : LinearMap A m n) → (B : LinearMap A p q)
+                          → (u v : Vec A (m +ᴺ p))
+                          → T ·ˡᵐ (take m (u +ⱽ v)) ++ B ·ˡᵐ (drop m (u +ⱽ v)) ≡
+                             (T ·ˡᵐ (take m u) ++ B ·ˡᵐ (drop m u)) +ⱽ
+                             (T ·ˡᵐ (take m v) ++ B ·ˡᵐ (drop m v))
+        f[u+v]≡f[u]+f[v]' {m} T B u v =
+          begin
+              T ·ˡᵐ take m (u +ⱽ v) ++ B ·ˡᵐ drop m (u +ⱽ v)
+            ≡⟨ cong₂ (λ x y → T ·ˡᵐ x ++ B ·ˡᵐ y)
+                     (take-distr-zipWith _+_ u v) (drop-distr-zipWith _+_ u v)⟩
+              T ·ˡᵐ (take m u +ⱽ take m v) ++ B ·ˡᵐ (drop m u +ⱽ drop m v)
+            ≡⟨ cong₂ _++_ (f[u+v]≡f[u]+f[v] T (take m u) (take m v))
+                          (f[u+v]≡f[u]+f[v] B (drop m u) (drop m v)) ⟩
+              (T ·ˡᵐ take m u +ⱽ T ·ˡᵐ take m v) ++
+              (B ·ˡᵐ drop m u +ⱽ B ·ˡᵐ drop m v)
+            ≡⟨ sym (+ⱽ-flip-++ (T ·ˡᵐ take m u) (T ·ˡᵐ take m v)
+                               (B ·ˡᵐ drop m u) (B ·ˡᵐ drop m v)) ⟩
+              (T ·ˡᵐ take m u ++ B ·ˡᵐ drop m u) +ⱽ
+              (T ·ˡᵐ take m v ++ B ·ˡᵐ drop m v)
+          ∎
+
+        f[c*v]≡c*f[v]' : {m n p q : ℕ}
+                       → (T : LinearMap A m n) → (B : LinearMap A p q)
+                       → (c : A) (v : Vec A (m +ᴺ p))
+                       → T ·ˡᵐ (take m (c *ᶜ v)) ++ B ·ˡᵐ (drop m (c *ᶜ v)) ≡
+                          c *ᶜ (T ·ˡᵐ (take m v) ++ B ·ˡᵐ (drop m v))
+        f[c*v]≡c*f[v]' {m} T B c v =
+          begin
+              T ·ˡᵐ take m (c *ᶜ v) ++ B ·ˡᵐ drop m (c *ᶜ v)
+            ≡⟨ cong₂ (λ x y → T ·ˡᵐ x ++ B ·ˡᵐ y) (take-distr-map (c *_) m v)
+                                                   (drop-distr-map (c *_) m v) ⟩
+              T ·ˡᵐ (c *ᶜ take m v) ++ B ·ˡᵐ (c *ᶜ (drop m v))
+            ≡⟨ cong₂ _++_ (f[c*v]≡c*f[v] T c (take m v))
+                          (f[c*v]≡c*f[v] B c (drop m v)) ⟩
+              c *ᶜ (T ·ˡᵐ take m v) ++ c *ᶜ (B ·ˡᵐ drop m v)
+            ≡⟨ sym (*ᶜ-distr-++ c (T ·ˡᵐ take m v) (B ·ˡᵐ drop m v)) ⟩
+              c *ᶜ (T ·ˡᵐ take m v ++ B ·ˡᵐ drop m v)
+          ∎
+
   -- Choose 20 since function application is assumed higher than almost anything
   infixr 20 _·ˡᵐ_
 
   infixl 2 _—ˡᵐ_
   infixl 3 _|ˡᵐ_
+  infixl 4 _/ˡᵐ_
   infixl 6 _+ˡᵐ_
   infixl 7 _*ˡᵐ_
 
