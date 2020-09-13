@@ -31,25 +31,25 @@ private
 -------------------------------------------------------------------------------
 
 private
-  data LinearMap↓ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
-    LM↓ : (Vec A m → Vec A n) → LinearMap↓ A m n
+  data _⊸↓_ {A : Set ℓ} ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
+    LM↓ : (Vec A m → Vec A n) → m ⊸↓ n
 
-  _·ˡᵐ↓_ : ⦃ F : Field A ⦄ → LinearMap↓ A m n → Vec A m → Vec A n
+  _·ˡᵐ↓_ : ⦃ F : Field A ⦄ → m ⊸↓ n → Vec A m → Vec A n
   _·ˡᵐ↓_ (LM↓ f) = f
 
   -- Choose 20 since function application is assumed higher than almost anything
   infixr 20 _·ˡᵐ↓_
 
-  L→L↓ : ⦃ F : Field A ⦄ → LinearMap A m n → LinearMap↓ A m n
+  L→L↓ : ⦃ F : Field A ⦄ → m ⊸ n → m ⊸↓ n
   L→L↓ record { f = f } = LM↓ f
 
   L↓→L : ⦃ F : Field A ⦄
-        → (L↓ : LinearMap↓ A m n)
+        → (L↓ : m ⊸↓ n)
         → (f[u+v]≡f[u]+f[v] : (u v : Vec A m)
                              → L↓ ·ˡᵐ↓ (u +ⱽ v) ≡ L↓ ·ˡᵐ↓ u +ⱽ L↓ ·ˡᵐ↓ v)
         → (f[c*v]≡c*f[v] : (c : A) → (v : Vec A m)
                           → L↓ ·ˡᵐ↓ (c *ᶜ v) ≡ c *ᶜ (L↓ ·ˡᵐ↓ v))
-        → LinearMap A m n
+        → m ⊸ n
   L↓→L (LM↓ f) f[u+v]≡f[u]+f[v] f[c*v]≡c*f[v] =
     record
       { f = f
@@ -85,7 +85,7 @@ private
         → (c : A) (v : Vec A m) → p c v ≡ q c v
       t f p q c v = uip (p c v) (q c v)
 
-  L↓≡→L≡ : ⦃ F : Field A ⦄ → (C D : LinearMap A m n)
+  L↓≡→L≡ : ⦃ F : Field A ⦄ → (C D : m ⊸ n)
           → (L→L↓ C ≡ L→L↓ D) → C ≡ D
   L↓≡→L≡ record { f = f
                  ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᶜ
@@ -106,44 +106,42 @@ private
 --                   LinearMap Proofs via LinearMap↓ Proofs                  --
 -------------------------------------------------------------------------------
 
-+ˡᵐ-comm : ⦃ F : Field A ⦄ → (L R : LinearMap A m n)
-         → L +ˡᵐ R ≡ R +ˡᵐ L
-+ˡᵐ-comm L R = L↓≡→L≡ (L +ˡᵐ R) (R +ˡᵐ L) (+ˡᵐ-comm↓ L R)
-  where
-    +ⱽ-comm-ext : ⦃ F : Field A ⦄
-      → (f g : Vec A m → Vec A n)
-      → (λ v → f v +ⱽ g v) ≡ (λ v → g v +ⱽ f v)
-    +ⱽ-comm-ext f g = extensionality (λ v → +ⱽ-comm (f v) (g v))
+module _ {ℓ : Level} {A : Set ℓ} ⦃ F : Field A ⦄ where
+  open Field F
+  open _⊸_
 
-    +ˡᵐ-comm↓ : ⦃ F : Field A ⦄ → (L R : LinearMap A m n)
-             → L→L↓ (L +ˡᵐ R) ≡ L→L↓ (R +ˡᵐ L)
-    +ˡᵐ-comm↓ L R = cong LM↓ (+ⱽ-comm-ext (LinearMap.f L) (LinearMap.f R))
+  +ˡᵐ-comm : (L R : m ⊸ n)
+          → L +ˡᵐ R ≡ R +ˡᵐ L
+  +ˡᵐ-comm L R = L↓≡→L≡ (L +ˡᵐ R) (R +ˡᵐ L) (+ˡᵐ-comm↓ L R)
+    where
+      +ⱽ-comm-ext : (f g : Vec A m → Vec A n)
+        → (λ v → f v +ⱽ g v) ≡ (λ v → g v +ⱽ f v)
+      +ⱽ-comm-ext f g = extensionality (λ v → +ⱽ-comm (f v) (g v))
 
-*ˡᵐ-distr-+ˡᵐₗ : ⦃ F : Field A ⦄
-               → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
-               → (X *ˡᵐ (Y +ˡᵐ Z)) ≡ (X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z)
-*ˡᵐ-distr-+ˡᵐₗ X Y Z = L↓≡→L≡ (X *ˡᵐ (Y +ˡᵐ Z)) ((X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z))
-                               (*ˡᵐ-distr-+ˡᵐₗ↓ X Y Z)
-  where
-    *-distr-+ⱽ : ⦃ F : Field A ⦄
-      → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
-      → (λ v → X ·ˡᵐ (Y ·ˡᵐ v +ⱽ Z ·ˡᵐ v)) ≡
-         (λ v → X ·ˡᵐ (Y ·ˡᵐ v) +ⱽ X ·ˡᵐ (Z ·ˡᵐ v))
-    *-distr-+ⱽ X Y Z = extensionality
-      (λ v → LinearMap.f[u+v]≡f[u]+f[v] X (Y ·ˡᵐ v) (Z ·ˡᵐ v))
+      +ˡᵐ-comm↓ : (L R : m ⊸ n)
+              → L→L↓ (L +ˡᵐ R) ≡ L→L↓ (R +ˡᵐ L)
+      +ˡᵐ-comm↓ L R = cong LM↓ (+ⱽ-comm-ext (L ·ˡᵐ_) (R ·ˡᵐ_))
 
-    *ˡᵐ-distr-+ˡᵐₗ↓ : ⦃ F : Field A ⦄
-                    → (X : LinearMap A n m) → (Y Z : LinearMap A p n)
-                    → L→L↓ (X *ˡᵐ (Y +ˡᵐ Z)) ≡ L→L↓ (X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z)
-    *ˡᵐ-distr-+ˡᵐₗ↓ X Y Z = cong LM↓ (*-distr-+ⱽ X Y Z)
+  *ˡᵐ-distr-+ˡᵐₗ : (X : n ⊸ m) → (Y Z : p ⊸ n)
+                → (X *ˡᵐ (Y +ˡᵐ Z)) ≡ (X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z)
+  *ˡᵐ-distr-+ˡᵐₗ X Y Z = L↓≡→L≡ (X *ˡᵐ (Y +ˡᵐ Z)) ((X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z))
+                                (*ˡᵐ-distr-+ˡᵐₗ↓ X Y Z)
+    where
+      *-distr-+ⱽ : (X : n ⊸ m) → (Y Z : p ⊸ n)
+        → (λ v → X ·ˡᵐ (Y ·ˡᵐ v +ⱽ Z ·ˡᵐ v)) ≡
+          (λ v → X ·ˡᵐ (Y ·ˡᵐ v) +ⱽ X ·ˡᵐ (Z ·ˡᵐ v))
+      *-distr-+ⱽ X Y Z = extensionality
+        (λ v → f[u+v]≡f[u]+f[v] X (Y ·ˡᵐ v) (Z ·ˡᵐ v))
 
-*ˡᵐ-distr-+ˡᵐᵣ : ⦃ F : Field A ⦄
-               → (X Y : LinearMap A n m) → (Z : LinearMap A p n)
-               → (X +ˡᵐ Y) *ˡᵐ Z ≡ X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z
-*ˡᵐ-distr-+ˡᵐᵣ X Y Z = L↓≡→L≡ ((X +ˡᵐ Y) *ˡᵐ Z) (X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z)
-                               (*ˡᵐ-distr-+ˡᵐᵣ↓ X Y Z)
-  where
-    *ˡᵐ-distr-+ˡᵐᵣ↓ : ⦃ F : Field A ⦄
-                    → (X Y : LinearMap A n m) → (Z : LinearMap A p n)
-                    → L→L↓ ((X +ˡᵐ Y) *ˡᵐ Z) ≡ L→L↓ (X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z)
-    *ˡᵐ-distr-+ˡᵐᵣ↓ X Y Z = cong LM↓ refl
+      *ˡᵐ-distr-+ˡᵐₗ↓ : (X : n ⊸ m) → (Y Z : p ⊸ n)
+                      → L→L↓ (X *ˡᵐ (Y +ˡᵐ Z)) ≡ L→L↓ (X *ˡᵐ Y +ˡᵐ X *ˡᵐ Z)
+      *ˡᵐ-distr-+ˡᵐₗ↓ X Y Z = cong LM↓ (*-distr-+ⱽ X Y Z)
+
+  *ˡᵐ-distr-+ˡᵐᵣ : (X Y : n ⊸ m) → (Z : p ⊸ n)
+                → (X +ˡᵐ Y) *ˡᵐ Z ≡ X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z
+  *ˡᵐ-distr-+ˡᵐᵣ X Y Z = L↓≡→L≡ ((X +ˡᵐ Y) *ˡᵐ Z) (X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z)
+                                (*ˡᵐ-distr-+ˡᵐᵣ↓ X Y Z)
+    where
+      *ˡᵐ-distr-+ˡᵐᵣ↓ : (X Y : n ⊸ m) → (Z : p ⊸ n)
+                      → L→L↓ ((X +ˡᵐ Y) *ˡᵐ Z) ≡ L→L↓ (X *ˡᵐ Z +ˡᵐ Y *ˡᵐ Z)
+      *ˡᵐ-distr-+ˡᵐᵣ↓ X Y Z = cong LM↓ refl

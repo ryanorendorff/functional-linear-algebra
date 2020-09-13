@@ -34,8 +34,8 @@ private
 -------------------------------------------------------------------------------
 
 data M_∶_×_ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
-  ⟦_,_,_⟧ : (M : LinearMap A n m )
-          → (Mᵀ : LinearMap A m n )
+  ⟦_,_,_⟧ : (M : n ⊸ m )
+          → (Mᵀ : m ⊸ n )
           → (p : (x : Vec A m) → (y : Vec A n)
                → ⟨ x , M ·ˡᵐ y ⟩ ≡ ⟨ y , Mᵀ ·ˡᵐ x ⟩ )
           → M A ∶ m × n
@@ -58,7 +58,7 @@ module _ where
 
 module _ ⦃ F : Field A ⦄ where
   open Field F
-  open LinearMap
+  open _⊸_
 
   _+ᴹ_ : M A ∶ m × n → M A ∶ m × n → M A ∶ m × n
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ +ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
@@ -67,8 +67,8 @@ module _ ⦃ F : Field A ⦄ where
     , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
     ⟧
     where
-      ⟨⟩-proof : (M₁ M₂ : LinearMap A n m)
-               → (M₁ᵀ M₂ᵀ : LinearMap A m n)
+      ⟨⟩-proof : (M₁ M₂ : n ⊸ m)
+               → (M₁ᵀ M₂ᵀ : m ⊸ n)
                → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
                                → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
                → (M₂-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
@@ -97,8 +97,8 @@ module _ ⦃ F : Field A ⦄ where
     , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
     ⟧
     where
-      ⟨⟩-proof : (M₁ : LinearMap A n m) (M₂ : LinearMap A p n)
-               → (M₁ᵀ : LinearMap A m n) (M₂ᵀ : LinearMap A n p)
+      ⟨⟩-proof : (M₁ : n ⊸ m) (M₂ : p ⊸ n)
+               → (M₁ᵀ : m ⊸ n) (M₂ᵀ : n ⊸ p)
                → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
                                → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
                → (M₂-⟨⟩-proof : (x : Vec A n) (y : Vec A p)
@@ -120,8 +120,8 @@ module _ ⦃ F : Field A ⦄ where
     , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
     ⟧
     where
-      ⟨⟩-proof : {m n p : ℕ} → (M₁ : LinearMap A n m) (M₂ : LinearMap A p m)
-               → (M₁ᵀ : LinearMap A m n) (M₂ᵀ : LinearMap A m p)
+      ⟨⟩-proof : {m n p : ℕ} → (M₁ : n ⊸ m) (M₂ : p ⊸ m)
+               → (M₁ᵀ : m ⊸ n) (M₂ᵀ : m ⊸ p)
                → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
                                → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
                → (M₂-⟨⟩-proof : (x : Vec A m) (y : Vec A p)
@@ -157,8 +157,9 @@ module _ ⦃ F : Field A ⦄ where
     , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
     ⟧
     where
-      ⟨⟩-proof : {m n p q : ℕ} → (M₁ : LinearMap A n m) (M₂ : LinearMap A q p)
-               → (M₁ᵀ : LinearMap A m n) (M₂ᵀ : LinearMap A p q)
+      ⟨⟩-proof : {m n p q : ℕ}
+               → (M₁ : n ⊸ m) (M₂ : q ⊸ p)
+               → (M₁ᵀ : m ⊸ n) (M₂ᵀ : p ⊸ q)
                → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
                                → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
                → (M₂-⟨⟩-proof : (x : Vec A p) (y : Vec A q)
