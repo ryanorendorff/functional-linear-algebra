@@ -90,17 +90,16 @@ module _ ⦃ F : Field A ⦄ where
     ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' g h
     }
     where
-      f[u+v]≡f[u]+f[v]' : (g : n ⊸ p)
-                        → (h : m ⊸ n)
+      f[u+v]≡f[u]+f[v]' : (g : n ⊸ p) (h : m ⊸ n)
                         → (u v : Vec A m)
-                        → g ·ˡᵐ (h ·ˡᵐ (u +ⱽ v)) ≡ g ·ˡᵐ (h ·ˡᵐ u) +ⱽ g ·ˡᵐ (h ·ˡᵐ v)
+                        → g ·ˡᵐ (h ·ˡᵐ (u +ⱽ v)) ≡
+                           g ·ˡᵐ (h ·ˡᵐ u) +ⱽ g ·ˡᵐ (h ·ˡᵐ v)
       f[u+v]≡f[u]+f[v]' g h u v rewrite
           f[u+v]≡f[u]+f[v] h u v
         | f[u+v]≡f[u]+f[v] g (f h u) (f h v)
         = refl
   
-      f[c*v]≡c*f[v]' : (g : n ⊸ p)
-                     → (h : m ⊸ n)
+      f[c*v]≡c*f[v]' : (g : n ⊸ p) (h : m ⊸ n)
                      → (c : A) (v : Vec A m)
                      → g ·ˡᵐ (h ·ˡᵐ (c *ᶜ v)) ≡ c *ᶜ g ·ˡᵐ (h ·ˡᵐ v)
       f[c*v]≡c*f[v]' g h c v rewrite
@@ -117,7 +116,7 @@ module _ ⦃ F : Field A ⦄ where
       ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' T B
       }
     where
-      f[u+v]≡f[u]+f[v]' : (T : p ⊸ m) → (B : p ⊸ n)
+      f[u+v]≡f[u]+f[v]' : (T : p ⊸ m) (B : p ⊸ n)
                         → (u v : Vec A p)
                         → T ·ˡᵐ (u +ⱽ v) ++ B ·ˡᵐ (u +ⱽ v) ≡
                           (T ·ˡᵐ u ++ B ·ˡᵐ u) +ⱽ (T ·ˡᵐ v ++ B ·ˡᵐ v)
@@ -127,7 +126,7 @@ module _ ⦃ F : Field A ⦄ where
         | +ⱽ-flip-++ (T ·ˡᵐ u) (T ·ˡᵐ v) (B ·ˡᵐ u) (B ·ˡᵐ v)
         = refl
 
-      f[c*v]≡c*f[v]' : (T : p ⊸ m) → (B : p ⊸ n)
+      f[c*v]≡c*f[v]' : (T : p ⊸ m) (B : p ⊸ n)
                      → (c : A) → (v : Vec A p)
                      → T ·ˡᵐ (c *ᶜ v) ++ B ·ˡᵐ (c *ᶜ v) ≡
                         c *ᶜ (T ·ˡᵐ v ++ B ·ˡᵐ v)
@@ -147,7 +146,7 @@ module _ ⦃ F : Field A ⦄ where
       }
       where
         f[u+v]≡f[u]+f[v]' : {m n p : ℕ}
-                          → (T : m ⊸ p) → (B : n ⊸ p)
+                          → (T : m ⊸ p) (B : n ⊸ p)
                           → (u v : Vec A (m +ᴺ n))
                           → T ·ˡᵐ take m (u +ⱽ v) +ⱽ B ·ˡᵐ drop m (u +ⱽ v) ≡
                              T ·ˡᵐ take m u +ⱽ B ·ˡᵐ drop m u +ⱽ
@@ -212,7 +211,7 @@ module _ ⦃ F : Field A ⦄ where
       }
       where
         f[u+v]≡f[u]+f[v]' : {m n p q : ℕ}
-                          → (T : m ⊸ n) → (B : p ⊸ q)
+                          → (T : m ⊸ n) (B : p ⊸ q)
                           → (u v : Vec A (m +ᴺ p))
                           → T ·ˡᵐ (take m (u +ⱽ v)) ++ B ·ˡᵐ (drop m (u +ⱽ v)) ≡
                              (T ·ˡᵐ (take m u) ++ B ·ˡᵐ (drop m u)) +ⱽ
@@ -234,7 +233,7 @@ module _ ⦃ F : Field A ⦄ where
           ∎
 
         f[c*v]≡c*f[v]' : {m n p q : ℕ}
-                       → (T : m ⊸ n) → (B : p ⊸ q)
+                       → (T : m ⊸ n) (B : p ⊸ q)
                        → (c : A) (v : Vec A (m +ᴺ p))
                        → T ·ˡᵐ (take m (c *ᶜ v)) ++ B ·ˡᵐ (drop m (c *ᶜ v)) ≡
                           c *ᶜ (T ·ˡᵐ (take m v) ++ B ·ˡᵐ (drop m v))
