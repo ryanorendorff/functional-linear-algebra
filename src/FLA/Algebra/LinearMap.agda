@@ -29,7 +29,8 @@ private
     A : Set ℓ
     m n p q : ℕ
 
-record LinearMap (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
+-- A linear map from one vector field to another
+record _⊸_ {ℓ : Level} {A : Set ℓ} ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
   field
     f : (Vec A m → Vec A n)
 
@@ -39,21 +40,28 @@ record LinearMap (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
     -- Homogeneity
     f[c*v]≡c*f[v] : (c : A) → (v : Vec A m) → f (c *ᶜ v) ≡ c *ᶜ (f v)
 
+infixr 1 _⊸_
+
+-- A convenient syntax if a particular set needs to be specified.
+_—_⊸_ : {ℓ : Level} (m : ℕ) (A : Set ℓ) (n : ℕ) ⦃ F : Field A ⦄ → Set ℓ
+m — A ⊸ n  = _⊸_ {A = A} m n
+infixr 1 _—_⊸_
+
 module _ ⦃ F : Field A ⦄ where
   open Field F
-  open LinearMap
+  open _⊸_
 
-  _·ˡᵐ_ : LinearMap A m n → Vec A m → Vec A n
+  _·ˡᵐ_ : m ⊸ n → Vec A m → Vec A n
   _·ˡᵐ_ LM = f LM
 
-  _+ˡᵐ_ : LinearMap A m n → LinearMap A m n → LinearMap A m n
+  _+ˡᵐ_ : m ⊸ n → m ⊸ n → m ⊸ n
   g +ˡᵐ h = record
     { f = λ v → g ·ˡᵐ v +ⱽ h ·ˡᵐ v
     ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]' g h
     ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' g h
     }
     where
-      f[u+v]≡f[u]+f[v]' : (g h : LinearMap A m n) → (u v : Vec A m)
+      f[u+v]≡f[u]+f[v]' : (g h : m ⊸ n) → (u v : Vec A m)
                         → g ·ˡᵐ (u +ⱽ v) +ⱽ h ·ˡᵐ (u +ⱽ v) ≡
                            g ·ˡᵐ u +ⱽ h ·ˡᵐ u +ⱽ (g ·ˡᵐ v +ⱽ h ·ˡᵐ v)
       f[u+v]≡f[u]+f[v]' g h u v rewrite
@@ -66,7 +74,7 @@ module _ ⦃ F : Field A ⦄ where
         | sym (+ⱽ-assoc (g ·ˡᵐ u) (h ·ˡᵐ u) (g ·ˡᵐ v +ⱽ h ·ˡᵐ v))
         = refl
   
-      f[c*v]≡c*f[v]' : (g h : LinearMap A m n) → (c : A) (v : Vec A m)
+      f[c*v]≡c*f[v]' : (g h : m ⊸ n) → (c : A) (v : Vec A m)
                      → g ·ˡᵐ (c *ᶜ v) +ⱽ h ·ˡᵐ (c *ᶜ v) ≡
                         c *ᶜ (g ·ˡᵐ v +ⱽ h ·ˡᵐ v)
       f[c*v]≡c*f[v]' g h c v rewrite
@@ -75,24 +83,23 @@ module _ ⦃ F : Field A ⦄ where
         | sym (*ᶜ-distr-+ⱽ c (g ·ˡᵐ v) (h ·ˡᵐ v))
         = refl
 
-  _*ˡᵐ_ : LinearMap A n p → LinearMap A m n → LinearMap A m p
+  _*ˡᵐ_ : n ⊸ p → m ⊸ n → m ⊸ p
   g *ˡᵐ h = record
     { f = λ v → g ·ˡᵐ (h ·ˡᵐ v)
     ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]' g h
     ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' g h
     }
     where
-      f[u+v]≡f[u]+f[v]' : (g : LinearMap A n p)
-                        → (h : LinearMap A m n)
+      f[u+v]≡f[u]+f[v]' : (g : n ⊸ p) (h : m ⊸ n)
                         → (u v : Vec A m)
-                        → g ·ˡᵐ (h ·ˡᵐ (u +ⱽ v)) ≡ g ·ˡᵐ (h ·ˡᵐ u) +ⱽ g ·ˡᵐ (h ·ˡᵐ v)
+                        → g ·ˡᵐ (h ·ˡᵐ (u +ⱽ v)) ≡
+                           g ·ˡᵐ (h ·ˡᵐ u) +ⱽ g ·ˡᵐ (h ·ˡᵐ v)
       f[u+v]≡f[u]+f[v]' g h u v rewrite
           f[u+v]≡f[u]+f[v] h u v
         | f[u+v]≡f[u]+f[v] g (f h u) (f h v)
         = refl
   
-      f[c*v]≡c*f[v]' : (g : LinearMap A n p)
-                     → (h : LinearMap A m n)
+      f[c*v]≡c*f[v]' : (g : n ⊸ p) (h : m ⊸ n)
                      → (c : A) (v : Vec A m)
                      → g ·ˡᵐ (h ·ˡᵐ (c *ᶜ v)) ≡ c *ᶜ g ·ˡᵐ (h ·ˡᵐ v)
       f[c*v]≡c*f[v]' g h c v rewrite
@@ -101,7 +108,7 @@ module _ ⦃ F : Field A ⦄ where
         = refl
 
   -- vertical stack forward operator
-  _—ˡᵐ_ : LinearMap A p m → LinearMap A p n → LinearMap A p (m +ᴺ n)
+  _—ˡᵐ_ : p ⊸ m → p ⊸ n → p ⊸ (m +ᴺ n)
   T —ˡᵐ B =
     record
       { f = λ v →  T ·ˡᵐ v ++ B ·ˡᵐ v
@@ -109,7 +116,7 @@ module _ ⦃ F : Field A ⦄ where
       ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' T B
       }
     where
-      f[u+v]≡f[u]+f[v]' : (T : LinearMap A p m) → (B : LinearMap A p n)
+      f[u+v]≡f[u]+f[v]' : (T : p ⊸ m) (B : p ⊸ n)
                         → (u v : Vec A p)
                         → T ·ˡᵐ (u +ⱽ v) ++ B ·ˡᵐ (u +ⱽ v) ≡
                           (T ·ˡᵐ u ++ B ·ˡᵐ u) +ⱽ (T ·ˡᵐ v ++ B ·ˡᵐ v)
@@ -119,7 +126,7 @@ module _ ⦃ F : Field A ⦄ where
         | +ⱽ-flip-++ (T ·ˡᵐ u) (T ·ˡᵐ v) (B ·ˡᵐ u) (B ·ˡᵐ v)
         = refl
 
-      f[c*v]≡c*f[v]' : (T : LinearMap A p m) → (B : LinearMap A p n)
+      f[c*v]≡c*f[v]' : (T : p ⊸ m) (B : p ⊸ n)
                      → (c : A) → (v : Vec A p)
                      → T ·ˡᵐ (c *ᶜ v) ++ B ·ˡᵐ (c *ᶜ v) ≡
                         c *ᶜ (T ·ˡᵐ v ++ B ·ˡᵐ v)
@@ -130,7 +137,7 @@ module _ ⦃ F : Field A ⦄ where
         = refl
 
   -- horizontal stack forward operator
-  _|ˡᵐ_ : LinearMap A m p → LinearMap A n p → LinearMap A (m +ᴺ n) p
+  _|ˡᵐ_ : m ⊸ p → n ⊸ p → (m +ᴺ n) ⊸ p
   _|ˡᵐ_ {m} {n} {p} T B =
     record
       { f = λ v → T ·ˡᵐ (take m v) +ⱽ B ·ˡᵐ (drop m v)
@@ -139,7 +146,7 @@ module _ ⦃ F : Field A ⦄ where
       }
       where
         f[u+v]≡f[u]+f[v]' : {m n p : ℕ}
-                          → (T : LinearMap A m p) → (B : LinearMap A n p)
+                          → (T : m ⊸ p) (B : n ⊸ p)
                           → (u v : Vec A (m +ᴺ n))
                           → T ·ˡᵐ take m (u +ⱽ v) +ⱽ B ·ˡᵐ drop m (u +ⱽ v) ≡
                              T ·ˡᵐ take m u +ⱽ B ·ˡᵐ drop m u +ⱽ
@@ -178,7 +185,7 @@ module _ ⦃ F : Field A ⦄ where
           ∎
 
         f[c*v]≡c*f[v]' : {m n p : ℕ}
-                       → (T : LinearMap A m p) → (B : LinearMap A n p)
+                       → (T : m ⊸ p) → (B : n ⊸ p)
                        → (c : A) (v : Vec A (m +ᴺ n))
                        → T ·ˡᵐ take m (c *ᶜ v) +ⱽ B ·ˡᵐ drop m (c *ᶜ v) ≡
                           c *ᶜ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
@@ -195,7 +202,7 @@ module _ ⦃ F : Field A ⦄ where
           ∎
 
   -- block diagonal forward and adjoint operator
-  _/ˡᵐ_ : LinearMap A m n → LinearMap A p q → LinearMap A (m +ᴺ p) (n +ᴺ q)
+  _/ˡᵐ_ : m ⊸ n → p ⊸ q → (m +ᴺ p) ⊸ (n +ᴺ q)
   _/ˡᵐ_ {m} {n} {p} {q} T B =
     record
       { f = λ v → T ·ˡᵐ (take m v) ++ B ·ˡᵐ (drop m v)
@@ -204,7 +211,7 @@ module _ ⦃ F : Field A ⦄ where
       }
       where
         f[u+v]≡f[u]+f[v]' : {m n p q : ℕ}
-                          → (T : LinearMap A m n) → (B : LinearMap A p q)
+                          → (T : m ⊸ n) (B : p ⊸ q)
                           → (u v : Vec A (m +ᴺ p))
                           → T ·ˡᵐ (take m (u +ⱽ v)) ++ B ·ˡᵐ (drop m (u +ⱽ v)) ≡
                              (T ·ˡᵐ (take m u) ++ B ·ˡᵐ (drop m u)) +ⱽ
@@ -226,7 +233,7 @@ module _ ⦃ F : Field A ⦄ where
           ∎
 
         f[c*v]≡c*f[v]' : {m n p q : ℕ}
-                       → (T : LinearMap A m n) → (B : LinearMap A p q)
+                       → (T : m ⊸ n) (B : p ⊸ q)
                        → (c : A) (v : Vec A (m +ᴺ p))
                        → T ·ˡᵐ (take m (c *ᶜ v)) ++ B ·ˡᵐ (drop m (c *ᶜ v)) ≡
                           c *ᶜ (T ·ˡᵐ (take m v) ++ B ·ˡᵐ (drop m v))
@@ -255,14 +262,14 @@ module _ ⦃ F : Field A ⦄ where
 
 -- Example LinearMap values ---------------------------------------------------
 
-idₗₘ : ⦃ F : Field A ⦄ → LinearMap A n n
+idₗₘ : ⦃ F : Field A ⦄ → n ⊸ n
 idₗₘ = record
   { f = id
   ; f[u+v]≡f[u]+f[v] = λ u v → refl
   ; f[c*v]≡c*f[v] = λ c v → refl
   }
 
-diagₗₘ : ⦃ F : Field A ⦄ → Vec A n → LinearMap A n n
+diagₗₘ : ⦃ F : Field A ⦄ → Vec A n → n ⊸ n
 diagₗₘ d = record
   { f = d ∘ⱽ_
   ; f[u+v]≡f[u]+f[v] = ∘ⱽ-distr-+ⱽ d

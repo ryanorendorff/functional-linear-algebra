@@ -31,100 +31,99 @@ private
 --                   M without the inner product proof: M↓                   --
 -------------------------------------------------------------------------------
 
-data M↓_∶_×_ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
-  ⟦_,_⟧ : (M : LinearMap A n m ) → (Mᵀ : LinearMap A m n ) → M↓ A ∶ m × n
+private
+  data M↓_∶_×_ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
+    ⟦_,_⟧ : (M : n ⊸ m ) → (Mᵀ : m ⊸ n ) → M↓ A ∶ m × n
 
-_·↓_ : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → Vec A n → Vec A m
-⟦ f , a ⟧ ·↓ x = f ·ˡᵐ x
+  _·↓_ : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → Vec A n → Vec A m
+  ⟦ f , a ⟧ ·↓ x = f ·ˡᵐ x
 
-_ᵀ↓ : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → M↓ A ∶ n × m
-⟦ f , a ⟧ ᵀ↓ = ⟦ a , f ⟧
+  _ᵀ↓ : ⦃ F : Field A ⦄ → M↓ A ∶ m × n → M↓ A ∶ n × m
+  ⟦ f , a ⟧ ᵀ↓ = ⟦ a , f ⟧
 
-infixr 20 _·↓_
-infixl 25 _ᵀ↓
+  infixr 20 _·↓_
+  infixl 25 _ᵀ↓
 
-M→M↓ : ⦃ F : Field A ⦄ → M A ∶ m × n → M↓ A ∶ m × n
-M→M↓ ⟦ M , Mᵀ , p ⟧ = ⟦ M , Mᵀ ⟧
+  M→M↓ : ⦃ F : Field A ⦄ → M A ∶ m × n → M↓ A ∶ m × n
+  M→M↓ ⟦ M , Mᵀ , p ⟧ = ⟦ M , Mᵀ ⟧
 
-M↓→M : ⦃ F : Field A ⦄
-      → (M↓ : M↓ A ∶ m × n)
-      → (p : (x : Vec A m) → (y : Vec A n)
-            → ⟨ x , M↓ ·↓ y ⟩ ≡ ⟨ y , M↓ ᵀ↓ ·↓ x ⟩ )
-      → M A ∶ m × n
-M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
+  M↓→M : ⦃ F : Field A ⦄
+        → (M↓ : M↓ A ∶ m × n)
+        → (p : (x : Vec A m) → (y : Vec A n)
+              → ⟨ x , M↓ ·↓ y ⟩ ≡ ⟨ y , M↓ ᵀ↓ ·↓ x ⟩ )
+        → M A ∶ m × n
+  M↓→M ⟦ M , Mᵀ ⟧ p = ⟦ M , Mᵀ , p ⟧
 
-⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP : {ℓ : Level} → {A : Set ℓ} → ⦃ F : Field A ⦄
-                   → (C : LinearMap A n m) → (Cᵀ : LinearMap A m n)
-                   → (p q : (x : Vec A m) (y : Vec A n)
-                           → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
-                   → p ≡ q
-⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP {m} {n} {ℓ} {A} C Cᵀ p q =
-  extensionality (λ x → extensionality (λ y → f C Cᵀ p q x y))
-  where
-    f : {m n : ℕ}
-          → {A : Set ℓ}
-          → ⦃ F : Field A ⦄
-          → (C : LinearMap A n m) → (Cᵀ : LinearMap A m n)
-          → (p q : (x : Vec A m) (y : Vec A n)
-                  → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
-          → (x : Vec A m) →  (y : Vec A n) → p x y ≡ q x y
-    f C Cᵀ p q (x) (y) = uip (p x y) (q x y)
+  ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP : {ℓ : Level} → {A : Set ℓ} → ⦃ F : Field A ⦄
+                    → (C : n ⊸ m) → (Cᵀ : m ⊸ n)
+                    → (p q : (x : Vec A m) (y : Vec A n)
+                            → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
+                    → p ≡ q
+  ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP {m} {n} {ℓ} {A} C Cᵀ p q =
+    extensionality (λ x → extensionality (λ y → f C Cᵀ p q x y))
+    where
+      f : {m n : ℕ}
+            → {A : Set ℓ}
+            → ⦃ F : Field A ⦄
+            → (C : n ⊸ m) → (Cᵀ : m ⊸ n)
+            → (p q : (x : Vec A m) (y : Vec A n)
+                    → ⟨ x , C ·ˡᵐ y ⟩ ≡ ⟨ y , Cᵀ ·ˡᵐ x ⟩)
+            → (x : Vec A m) →  (y : Vec A n) → p x y ≡ q x y
+      f C Cᵀ p q (x) (y) = uip (p x y) (q x y)
 
-M↓≡→M≡ : ⦃ F : Field A ⦄ → (C D : M A ∶ m × n) → (M→M↓ C ≡ M→M↓ D) → C ≡ D
-M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ refl rewrite
-  ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP C Cᵀ p q = refl
+  M↓≡→M≡ : ⦃ F : Field A ⦄ → (C D : M A ∶ m × n) → (M→M↓ C ≡ M→M↓ D) → C ≡ D
+  M↓≡→M≡ ⟦ C , Cᵀ , p ⟧ ⟦ .C , .Cᵀ , q ⟧ refl rewrite
+    ⟨x,Ay⟩≡⟨y,Aᵀx⟩-UIP C Cᵀ p q = refl
 
 
 -------------------------------------------------------------------------------
 --                                Proofs on M                                --
 -------------------------------------------------------------------------------
 
-ᵀᵀ : {A : Set} ⦃ F : Field A ⦄ → (B : M A ∶ m × n) → B ᵀ ᵀ ≡ B
-ᵀᵀ B = M↓≡→M≡ (B ᵀ ᵀ) B (ᵀᵀ↓ B)
-  where
-    ᵀᵀ↓ : {A : Set} ⦃ F : Field A ⦄ → (B : M A ∶ m × n) → M→M↓ (B ᵀ ᵀ) ≡ M→M↓ B
-    ᵀᵀ↓ ⟦ M , Mᵀ , p ⟧ = refl
+module _ {ℓ : Level} {A : Set ℓ} ⦃ F : Field A ⦄ where
+  open Field F
 
-ᵀ-distr-* : {A : Set} ⦃ F : Field A ⦄ → (L : M A ∶ m × n) (R : M A ∶ n × p)
-          → (L *ᴹ R) ᵀ ≡ (R ᵀ *ᴹ L ᵀ)
-ᵀ-distr-* L R = M↓≡→M≡ ((L *ᴹ R) ᵀ) (R ᵀ *ᴹ L ᵀ) (ᵀ-distr-*↓ L R)
-  where
-    ᵀ-distr-*↓ : {A : Set} ⦃ F : Field A ⦄ → (L : M A ∶ m × n) (R : M A ∶ n × p)
-               → M→M↓ ((L *ᴹ R) ᵀ) ≡ M→M↓ (R ᵀ *ᴹ L ᵀ)
-    ᵀ-distr-*↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ₁ , q ⟧ = refl
+  ᵀᵀ : (B : M A ∶ m × n) → B ᵀ ᵀ ≡ B
+  ᵀᵀ B = M↓≡→M≡ (B ᵀ ᵀ) B (ᵀᵀ↓ B)
+    where
+      ᵀᵀ↓ : (B : M A ∶ m × n) → M→M↓ (B ᵀ ᵀ) ≡ M→M↓ B
+      ᵀᵀ↓ ⟦ M , Mᵀ , p ⟧ = refl
 
-ᵀ-distr-+ : {A : Set} ⦃ F : Field A ⦄ → (L R : M A ∶ m × n)
-           → (L +ᴹ R) ᵀ ≡ L ᵀ +ᴹ R ᵀ
-ᵀ-distr-+ L R = M↓≡→M≡ ((L +ᴹ R) ᵀ) (L ᵀ +ᴹ R ᵀ) (ᵀ-distr-+↓ L R)
-  where
-    ᵀ-distr-+↓ : {A : Set} ⦃ F : Field A ⦄ → (L R : M A ∶ m × n)
-               → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
-    ᵀ-distr-+↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
+  ᵀ-distr-* : (L : M A ∶ m × n) (R : M A ∶ n × p)
+            → (L *ᴹ R) ᵀ ≡ (R ᵀ *ᴹ L ᵀ)
+  ᵀ-distr-* L R = M↓≡→M≡ ((L *ᴹ R) ᵀ) (R ᵀ *ᴹ L ᵀ) (ᵀ-distr-*↓ L R)
+    where
+      ᵀ-distr-*↓ : (L : M A ∶ m × n) (R : M A ∶ n × p)
+                → M→M↓ ((L *ᴹ R) ᵀ) ≡ M→M↓ (R ᵀ *ᴹ L ᵀ)
+      ᵀ-distr-*↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ₁ , q ⟧ = refl
 
-*ᴹ-distr-+ᴹₗ : {A : Set} ⦃ F : Field A ⦄
-             → (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
-             → X *ᴹ (Y +ᴹ Z) ≡ X *ᴹ Y +ᴹ X *ᴹ Z
-*ᴹ-distr-+ᴹₗ X Y Z = M↓≡→M≡ (X *ᴹ (Y +ᴹ Z)) (X *ᴹ Y +ᴹ X *ᴹ Z)
-                             (*ᴹ-distr-+ᴹ↓ₗ X Y Z)
-  where
-    *ᴹ-distr-+ᴹ↓ₗ : {A : Set} ⦃ F : Field A ⦄
-                  → (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
-                  → M→M↓ (X *ᴹ (Y +ᴹ Z)) ≡ M→M↓ (X *ᴹ Y +ᴹ X *ᴹ Z)
-    *ᴹ-distr-+ᴹ↓ₗ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ rewrite
-        *ˡᵐ-distr-+ˡᵐₗ X Y Z
-      | *ˡᵐ-distr-+ˡᵐᵣ Yᵀ Zᵀ Xᵀ
-      = refl
+  ᵀ-distr-+ : (L R : M A ∶ m × n) → (L +ᴹ R) ᵀ ≡ L ᵀ +ᴹ R ᵀ
+  ᵀ-distr-+ L R = M↓≡→M≡ ((L +ᴹ R) ᵀ) (L ᵀ +ᴹ R ᵀ) (ᵀ-distr-+↓ L R)
+    where
+      ᵀ-distr-+↓ : (L R : M A ∶ m × n)
+                 → M→M↓ ((L +ᴹ R) ᵀ) ≡ M→M↓ (L ᵀ +ᴹ R ᵀ)
+      ᵀ-distr-+↓ ⟦ L , Lᵀ , p ⟧ ⟦ R , Rᵀ , q ⟧ = refl
 
-*ᴹ-distr-+ᴹᵣ : {A : Set} ⦃ F : Field A ⦄
-             → (X Y : M A ∶ m × n) (Z : M A ∶ n × p)
-             → (X +ᴹ Y) *ᴹ Z ≡ X *ᴹ Z +ᴹ Y *ᴹ Z
-*ᴹ-distr-+ᴹᵣ X Y Z = M↓≡→M≡ ((X +ᴹ Y) *ᴹ Z) (X *ᴹ Z +ᴹ Y *ᴹ Z)
-                             (*ᴹ-distr-+ᴹ↓ᵣ X Y Z)
-  where
-    *ᴹ-distr-+ᴹ↓ᵣ : {A : Set} ⦃ F : Field A ⦄
-                  → (X Y : M A ∶ m × n) (Z : M A ∶ n × p)
-                  → M→M↓ ((X +ᴹ Y) *ᴹ Z) ≡ M→M↓ (X *ᴹ Z +ᴹ Y *ᴹ Z)
-    *ᴹ-distr-+ᴹ↓ᵣ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ rewrite
-        *ˡᵐ-distr-+ˡᵐᵣ X Y Z
-      | *ˡᵐ-distr-+ˡᵐₗ Zᵀ Xᵀ Yᵀ
-      = refl
+  *ᴹ-distr-+ᴹₗ : (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
+               → X *ᴹ (Y +ᴹ Z) ≡ X *ᴹ Y +ᴹ X *ᴹ Z
+  *ᴹ-distr-+ᴹₗ X Y Z = M↓≡→M≡ (X *ᴹ (Y +ᴹ Z)) (X *ᴹ Y +ᴹ X *ᴹ Z)
+                              (*ᴹ-distr-+ᴹ↓ₗ X Y Z)
+    where
+      *ᴹ-distr-+ᴹ↓ₗ : (X : M A ∶ m × n) (Y Z : M A ∶ n × p)
+                    → M→M↓ (X *ᴹ (Y +ᴹ Z)) ≡ M→M↓ (X *ᴹ Y +ᴹ X *ᴹ Z)
+      *ᴹ-distr-+ᴹ↓ₗ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ rewrite
+          *ˡᵐ-distr-+ˡᵐₗ X Y Z
+        | *ˡᵐ-distr-+ˡᵐᵣ Yᵀ Zᵀ Xᵀ
+        = refl
+
+  *ᴹ-distr-+ᴹᵣ : (X Y : M A ∶ m × n) (Z : M A ∶ n × p)
+               → (X +ᴹ Y) *ᴹ Z ≡ X *ᴹ Z +ᴹ Y *ᴹ Z
+  *ᴹ-distr-+ᴹᵣ X Y Z = M↓≡→M≡ ((X +ᴹ Y) *ᴹ Z) (X *ᴹ Z +ᴹ Y *ᴹ Z)
+                              (*ᴹ-distr-+ᴹ↓ᵣ X Y Z)
+    where
+      *ᴹ-distr-+ᴹ↓ᵣ : (X Y : M A ∶ m × n) (Z : M A ∶ n × p)
+                    → M→M↓ ((X +ᴹ Y) *ᴹ Z) ≡ M→M↓ (X *ᴹ Z +ᴹ Y *ᴹ Z)
+      *ᴹ-distr-+ᴹ↓ᵣ ⟦ X , Xᵀ , Xₚ ⟧ ⟦ Y , Yᵀ , Yₚ ⟧ ⟦ Z , Zᵀ , Zₚ ⟧ rewrite
+          *ˡᵐ-distr-+ˡᵐᵣ X Y Z
+        | *ˡᵐ-distr-+ˡᵐₗ Zᵀ Xᵀ Yᵀ
+        = refl
