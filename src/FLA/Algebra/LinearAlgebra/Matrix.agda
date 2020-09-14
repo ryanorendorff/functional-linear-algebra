@@ -67,8 +67,7 @@ module _ ⦃ F : Field A ⦄ where
     , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
     ⟧
     where
-      ⟨⟩-proof : (M₁ M₂ : n ⊸ m)
-               → (M₁ᵀ M₂ᵀ : m ⊸ n)
+      ⟨⟩-proof : (M₁ M₂ : n ⊸ m) (M₁ᵀ M₂ᵀ : m ⊸ n)
                → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
                                → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
                → (M₂-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
@@ -97,8 +96,7 @@ module _ ⦃ F : Field A ⦄ where
     , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
     ⟧
     where
-      ⟨⟩-proof : (M₁ : n ⊸ m) (M₂ : p ⊸ n)
-               → (M₁ᵀ : m ⊸ n) (M₂ᵀ : n ⊸ p)
+      ⟨⟩-proof : (M₁ : n ⊸ m) (M₂ : p ⊸ n) (M₁ᵀ : m ⊸ n) (M₂ᵀ : n ⊸ p)
                → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
                                → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
                → (M₂-⟨⟩-proof : (x : Vec A n) (y : Vec A p)
@@ -120,8 +118,8 @@ module _ ⦃ F : Field A ⦄ where
     , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
     ⟧
     where
-      ⟨⟩-proof : {m n p : ℕ} → (M₁ : n ⊸ m) (M₂ : p ⊸ m)
-               → (M₁ᵀ : m ⊸ n) (M₂ᵀ : m ⊸ p)
+      ⟨⟩-proof : {m n p : ℕ}
+               → (M₁ : n ⊸ m) (M₂ : p ⊸ m) (M₁ᵀ : m ⊸ n) (M₂ᵀ : m ⊸ p)
                → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
                                → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
                → (M₂-⟨⟩-proof : (x : Vec A m) (y : Vec A p)
@@ -158,8 +156,7 @@ module _ ⦃ F : Field A ⦄ where
     ⟧
     where
       ⟨⟩-proof : {m n p q : ℕ}
-               → (M₁ : n ⊸ m) (M₂ : q ⊸ p)
-               → (M₁ᵀ : m ⊸ n) (M₂ᵀ : p ⊸ q)
+               → (M₁ : n ⊸ m) (M₂ : q ⊸ p) (M₁ᵀ : m ⊸ n) (M₂ᵀ : p ⊸ q)
                → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
                                → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
                → (M₂-⟨⟩-proof : (x : Vec A p) (y : Vec A q)
