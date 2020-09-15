@@ -255,9 +255,9 @@ module _ ⦃ F : Field A ⦄ where
     record
       { f = λ v → c *ᶜ m ·ˡᵐ v
       ; f[u+v]≡f[u]+f[v] = λ u v → trans (cong (c *ᶜ_) (f[u+v]≡f[u]+f[v] m u v))
-                                          (*ᶜ-distr-+ⱽ c (m ·ˡᵐ u) (m ·ˡᵐ v))
+                                         (*ᶜ-distr-+ⱽ c (m ·ˡᵐ u) (m ·ˡᵐ v))
       ; f[c*v]≡c*f[v] = λ c₁ v → trans (cong (c *ᶜ_) (f[c*v]≡c*f[v] m c₁ v))
-                                        (*ᶜ-comm c c₁ (f m v))
+                                       (*ᶜ-comm c c₁ (f m v))
       }
 
   -- Choose 20 since function application is assumed higher than almost anything
