@@ -187,6 +187,7 @@ module _ ⦃ F : Field A ⦄ where
             ⟨ y , (M₁ᵀ /ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
         ∎
 
+  -- Multiply by a constant
   _∘ᴹ_ : A → M A ∶ m × n → M A ∶ m × n
   c ∘ᴹ ⟦ M , Mᵀ , p ⟧ = ⟦ c ∘ˡᵐ M , c ∘ˡᵐ Mᵀ , ⟨⟩-proof M Mᵀ c p ⟧
     where

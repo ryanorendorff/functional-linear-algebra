@@ -250,6 +250,7 @@ module _ ⦃ F : Field A ⦄ where
               c *ᶜ (T ·ˡᵐ take m v ++ B ·ˡᵐ drop m v)
           ∎
 
+  -- Multiply by a constant
   _∘ˡᵐ_ : A → n ⊸ m → n ⊸ m
   c ∘ˡᵐ m =
     record
