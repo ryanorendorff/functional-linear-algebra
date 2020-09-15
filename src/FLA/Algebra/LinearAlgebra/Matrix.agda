@@ -188,7 +188,30 @@ module _ ⦃ F : Field A ⦄ where
         ∎
 
   _∘ᴹ_ : A → M A ∶ m × n → M A ∶ m × n
-  c ∘ᴹ ⟦ M , Mᵀ , p ⟧ = ⟦ c ∘ˡᵐ M , c ∘ˡᵐ Mᵀ , {!!} ⟧
+  c ∘ᴹ ⟦ M , Mᵀ , p ⟧ = ⟦ c ∘ˡᵐ M , c ∘ˡᵐ Mᵀ , ⟨⟩-proof M Mᵀ c p ⟧
+    where
+      ⟨⟩-proof : {m n : ℕ} (M : n ⊸ m) (Mᵀ : m ⊸ n) (c : A)
+               → (M-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
+                               → ⟨ x , M ·ˡᵐ y ⟩ ≡ ⟨ y , Mᵀ ·ˡᵐ x ⟩ )
+               → (x : Vec A m) (y : Vec A n)
+               → ⟨ x , (c ∘ˡᵐ M) ·ˡᵐ y ⟩ ≡ ⟨ y , (c ∘ˡᵐ Mᵀ) ·ˡᵐ x ⟩
+      ⟨⟩-proof {m} {n} M Mᵀ c M-⟨⟩-proof x y =
+        begin
+            ⟨ x , (c ∘ˡᵐ M) ·ˡᵐ y ⟩
+          ≡⟨⟩
+            ⟨ x , c *ᶜ (M ·ˡᵐ y) ⟩
+          ≡⟨ cong (λ z → ⟨ x , z ⟩) (sym (f[c*v]≡c*f[v] M c y)) ⟩
+            ⟨ x , M ·ˡᵐ (c *ᶜ y) ⟩
+          ≡⟨ M-⟨⟩-proof x ((c *ᶜ y)) ⟩
+            ⟨ c *ᶜ y , Mᵀ ·ˡᵐ x ⟩
+          ≡⟨ ⟨⟩-comm (c *ᶜ y) (Mᵀ ·ˡᵐ x) ⟩
+            ⟨ Mᵀ ·ˡᵐ x , c *ᶜ y ⟩
+          ≡⟨ cong sum (trans (∘ⱽ*ᶜ≡*ᶜ∘ⱽ c (Mᵀ ·ˡᵐ x) y)
+                             (*ᶜ∘ⱽ-assoc c (Mᵀ ·ˡᵐ x) y)) ⟩
+            ⟨ (c ∘ˡᵐ Mᵀ) ·ˡᵐ x , y ⟩
+          ≡⟨ ⟨⟩-comm ((c ∘ˡᵐ Mᵀ) ·ˡᵐ x) y ⟩
+            ⟨ y , (c ∘ˡᵐ Mᵀ) ·ˡᵐ x ⟩
+        ∎
 
   infixl 2 _—ᴹ_
   infixl 3 _|ᴹ_
