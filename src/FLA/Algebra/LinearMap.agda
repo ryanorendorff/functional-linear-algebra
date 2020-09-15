@@ -250,6 +250,16 @@ module _ ⦃ F : Field A ⦄ where
               c *ᶜ (T ·ˡᵐ take m v ++ B ·ˡᵐ drop m v)
           ∎
 
+  _∘ˡᵐ_ : A → n ⊸ m → n ⊸ m
+  c ∘ˡᵐ m =
+    record
+      { f = λ v → c *ᶜ m ·ˡᵐ v
+      ; f[u+v]≡f[u]+f[v] = λ u v → trans (cong (c *ᶜ_) (f[u+v]≡f[u]+f[v] m u v))
+                                          (*ᶜ-distr-+ⱽ c (m ·ˡᵐ u) (m ·ˡᵐ v))
+      ; f[c*v]≡c*f[v] = λ c₁ v → trans (cong (c *ᶜ_) (f[c*v]≡c*f[v] m c₁ v))
+                                        (*ᶜ-comm c c₁ (f m v))
+      }
+
   -- Choose 20 since function application is assumed higher than almost anything
   infixr 20 _·ˡᵐ_
 
@@ -258,20 +268,22 @@ module _ ⦃ F : Field A ⦄ where
   infixl 4 _/ˡᵐ_
   infixl 6 _+ˡᵐ_
   infixl 7 _*ˡᵐ_
+  infixl 10 _∘ˡᵐ_
 
 
 -- Example LinearMap values ---------------------------------------------------
 
-idₗₘ : ⦃ F : Field A ⦄ → n ⊸ n
-idₗₘ = record
-  { f = id
-  ; f[u+v]≡f[u]+f[v] = λ u v → refl
-  ; f[c*v]≡c*f[v] = λ c v → refl
-  }
+module _ ⦃ F : Field A ⦄ where
+  idₗₘ : n ⊸ n
+  idₗₘ = record
+    { f = id
+    ; f[u+v]≡f[u]+f[v] = λ u v → refl
+    ; f[c*v]≡c*f[v] = λ c v → refl
+    }
 
-diagₗₘ : ⦃ F : Field A ⦄ → Vec A n → n ⊸ n
-diagₗₘ d = record
-  { f = d ∘ⱽ_
-  ; f[u+v]≡f[u]+f[v] = ∘ⱽ-distr-+ⱽ d
-  ; f[c*v]≡c*f[v] = λ c v → ∘ⱽ*ᶜ≡*ᶜ∘ⱽ c d v
-  }
+  diagₗₘ : Vec A n → n ⊸ n
+  diagₗₘ d = record
+    { f = d ∘ⱽ_
+    ; f[u+v]≡f[u]+f[v] = ∘ⱽ-distr-+ⱽ d
+    ; f[c*v]≡c*f[v] = λ c v → ∘ⱽ*ᶜ≡*ᶜ∘ⱽ c d v
+    }

@@ -84,6 +84,22 @@ module _ ⦃ F : Field A ⦄ where
     | *-distr-+ c u v
     = refl
 
+  *ᶜ-comm : (a b : A) (v : Vec A n) → a *ᶜ (b *ᶜ v) ≡ b *ᶜ (a *ᶜ v)
+  *ᶜ-comm a b [] = refl
+  *ᶜ-comm a b (v ∷ vs) =
+    begin
+        a *ᶜ (b *ᶜ (v ∷ vs))
+      ≡⟨⟩
+        (a * (b * v)) ∷ a *ᶜ (b *ᶜ vs)
+      ≡⟨ cong (_∷ a *ᶜ (b *ᶜ vs)) (trans (trans (*-assoc a b v)
+                                         (cong (_* v) (*-comm a b)))
+                                         (sym (*-assoc b a v))) ⟩
+        (b * (a * v)) ∷ a *ᶜ (b *ᶜ vs)
+      ≡⟨ cong ((b * (a * v)) ∷_) (*ᶜ-comm a b vs) ⟩
+        b *ᶜ (a *ᶜ (v ∷ vs))
+      ∎
+ 
+
   +ⱽ-flip-++ : (a b : Vec A n) → (c d : Vec A m)
              → (a ++ c) +ⱽ (b ++ d) ≡ a +ⱽ b ++ c +ⱽ d
   +ⱽ-flip-++ [] [] c d = refl
