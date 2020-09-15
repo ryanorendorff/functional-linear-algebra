@@ -34,13 +34,11 @@ module _ ⦃ F : Field A ⦄ where
 
   +ⱽ-comm : (v₁ v₂ : Vec A n) → v₁ +ⱽ v₂ ≡ v₂ +ⱽ v₁
   +ⱽ-comm [] [] = refl
-  +ⱽ-comm (x₁ ∷ vs₁) (x₂ ∷ vs₂) = begin
-    x₁ + x₂ ∷ vs₁ +ⱽ vs₂
-    ≡⟨ cong ((x₁ + x₂) ∷_) (+ⱽ-comm vs₁ vs₂) ⟩
-    x₁ + x₂ ∷ vs₂ +ⱽ vs₁
-    ≡⟨ cong (_∷ vs₂ +ⱽ vs₁) (+-comm x₁ x₂) ⟩
-    x₂ + x₁ ∷ vs₂ +ⱽ vs₁
-    ∎
+  +ⱽ-comm (x₁ ∷ vs₁) (x₂ ∷ vs₂) =
+    begin
+      x₁ + x₂ ∷ vs₁ +ⱽ vs₂ ≡⟨ cong ((x₁ + x₂) ∷_) (+ⱽ-comm vs₁ vs₂) ⟩
+      x₁ + x₂ ∷ vs₂ +ⱽ vs₁ ≡⟨ cong (_∷ vs₂ +ⱽ vs₁) (+-comm x₁ x₂) ⟩
+      x₂ + x₁ ∷ vs₂ +ⱽ vs₁ ∎
 
   ∘ⱽ-assoc : (v₁ v₂ v₃ : Vec A n)
            → v₁ ∘ⱽ v₂ ∘ⱽ v₃ ≡ v₁ ∘ⱽ (v₂ ∘ⱽ v₃)
@@ -76,6 +74,12 @@ module _ ⦃ F : Field A ⦄ where
     | sym (*-assoc c u v)
     = refl
 
+  *ᶜ∘ⱽ-assoc : (c : A) (u v : Vec A n)
+             → c *ᶜ (u ∘ⱽ v) ≡ (c *ᶜ u) ∘ⱽ v
+  *ᶜ∘ⱽ-assoc c [] [] = refl
+  *ᶜ∘ⱽ-assoc c (u ∷ us) (v ∷ vs) = cong₂ (_∷_) (*-assoc c u v)
+                                               (*ᶜ∘ⱽ-assoc c us vs)
+
   *ᶜ-distr-+ⱽ : (c : A) (u v : Vec A n)
               → c *ᶜ (u +ⱽ v) ≡ c *ᶜ u +ⱽ c *ᶜ v
   *ᶜ-distr-+ⱽ c [] [] = refl
@@ -83,6 +87,13 @@ module _ ⦃ F : Field A ⦄ where
       *ᶜ-distr-+ⱽ c us vs
     | *-distr-+ c u v
     = refl
+
+  *ᶜ-comm : (a b : A) (v : Vec A n) → a *ᶜ (b *ᶜ v) ≡ b *ᶜ (a *ᶜ v)
+  *ᶜ-comm a b [] = refl
+  *ᶜ-comm a b (v ∷ vs) = cong₂ _∷_ (trans (trans (*-assoc a b v)
+                                          (cong (_* v) (*-comm a b)))
+                                          (sym (*-assoc b a v)))
+                                   (*ᶜ-comm a b vs)
 
   +ⱽ-flip-++ : (a b : Vec A n) → (c d : Vec A m)
              → (a ++ c) +ⱽ (b ++ d) ≡ a +ⱽ b ++ c +ⱽ d
@@ -96,11 +107,7 @@ module _ ⦃ F : Field A ⦄ where
 
   ⟨⟩-comm : (v₁ v₂ : Vec A n)
           → ⟨ v₁ , v₂ ⟩ ≡ ⟨ v₂ , v₁ ⟩
-  ⟨⟩-comm [] [] = refl
-  ⟨⟩-comm (x₁ ∷ v₁) (x₂ ∷ v₂) rewrite
-      ⟨⟩-comm v₁ v₂
-    | *-comm x₁ x₂
-    = refl
+  ⟨⟩-comm v₁ v₂ = cong sum (∘ⱽ-comm v₁ v₂)
 
   sum-distr-+ⱽ : (v₁ v₂ : Vec A n) → sum (v₁ +ⱽ v₂) ≡ sum v₁ + sum v₂
   sum-distr-+ⱽ [] [] = sym (0ᶠ+0ᶠ≡0ᶠ)

@@ -187,11 +187,39 @@ module _ ⦃ F : Field A ⦄ where
             ⟨ y , (M₁ᵀ /ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
         ∎
 
+  -- Multiply by a constant
+  _∘ᴹ_ : A → M A ∶ m × n → M A ∶ m × n
+  c ∘ᴹ ⟦ M , Mᵀ , p ⟧ = ⟦ c ∘ˡᵐ M , c ∘ˡᵐ Mᵀ , ⟨⟩-proof M Mᵀ c p ⟧
+    where
+      ⟨⟩-proof : {m n : ℕ} (M : n ⊸ m) (Mᵀ : m ⊸ n) (c : A)
+               → (M-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
+                               → ⟨ x , M ·ˡᵐ y ⟩ ≡ ⟨ y , Mᵀ ·ˡᵐ x ⟩ )
+               → (x : Vec A m) (y : Vec A n)
+               → ⟨ x , (c ∘ˡᵐ M) ·ˡᵐ y ⟩ ≡ ⟨ y , (c ∘ˡᵐ Mᵀ) ·ˡᵐ x ⟩
+      ⟨⟩-proof {m} {n} M Mᵀ c M-⟨⟩-proof x y =
+        begin
+            ⟨ x , (c ∘ˡᵐ M) ·ˡᵐ y ⟩
+          ≡⟨⟩
+            ⟨ x , c *ᶜ (M ·ˡᵐ y) ⟩
+          ≡⟨ cong (λ z → ⟨ x , z ⟩) (sym (f[c*v]≡c*f[v] M c y)) ⟩
+            ⟨ x , M ·ˡᵐ (c *ᶜ y) ⟩
+          ≡⟨ M-⟨⟩-proof x ((c *ᶜ y)) ⟩
+            ⟨ c *ᶜ y , Mᵀ ·ˡᵐ x ⟩
+          ≡⟨ ⟨⟩-comm (c *ᶜ y) (Mᵀ ·ˡᵐ x) ⟩
+            ⟨ Mᵀ ·ˡᵐ x , c *ᶜ y ⟩
+          ≡⟨ cong sum (trans (∘ⱽ*ᶜ≡*ᶜ∘ⱽ c (Mᵀ ·ˡᵐ x) y)
+                             (*ᶜ∘ⱽ-assoc c (Mᵀ ·ˡᵐ x) y)) ⟩
+            ⟨ (c ∘ˡᵐ Mᵀ) ·ˡᵐ x , y ⟩
+          ≡⟨ ⟨⟩-comm ((c ∘ˡᵐ Mᵀ) ·ˡᵐ x) y ⟩
+            ⟨ y , (c ∘ˡᵐ Mᵀ) ·ˡᵐ x ⟩
+        ∎
+
   infixl 2 _—ᴹ_
   infixl 3 _|ᴹ_
   infixl 4 _/ᴹ_
   infixl 6 _+ᴹ_
   infixl 7 _*ᴹ_
+  infixl 10 _∘ᴹ_ 
 
 
 -- Matrix Free Operators ------------------------------------------------------
@@ -208,16 +236,16 @@ module _ ⦃ F : Field A ⦄ where
           zipWith-comm (_*_) (*-comm) x y
         = refl
 
-diag : ⦃ F : Field A ⦄ → Vec A n → M A ∶ n × n
-diag d = ⟦ diagₗₘ d , diagₗₘ d , diag-transpose d ⟧
-  where
-    diag-transpose : ⦃ F : Field A ⦄ → (d : Vec A n) → (x y : Vec A n)
-                   → ⟨ x , diagₗₘ d ·ˡᵐ y ⟩ ≡ ⟨ y , diagₗₘ d ·ˡᵐ x ⟩
-    diag-transpose {{F}} d x y =
-      begin
-        ⟨ x , diagₗₘ d ·ˡᵐ y ⟩ ≡⟨⟩
-        sum (x ∘ⱽ (d ∘ⱽ y))    ≡⟨ cong (sum) (∘ⱽ-comm x (d ∘ⱽ y)) ⟩
-        sum ((d ∘ⱽ y) ∘ⱽ x)    ≡⟨ cong (λ dy → sum (dy ∘ⱽ x)) (∘ⱽ-comm d y) ⟩
-        sum ((y ∘ⱽ d) ∘ⱽ x)    ≡⟨ cong sum (∘ⱽ-assoc y d x) ⟩
-        sum (y ∘ⱽ (d ∘ⱽ x))    ≡⟨⟩
-        ⟨ y , diagₗₘ d ·ˡᵐ x ⟩ ∎
+  diag : Vec A n → M A ∶ n × n
+  diag d = ⟦ diagₗₘ d , diagₗₘ d , diag-transpose d ⟧
+    where
+      diag-transpose : (d : Vec A n) → (x y : Vec A n)
+                     → ⟨ x , diagₗₘ d ·ˡᵐ y ⟩ ≡ ⟨ y , diagₗₘ d ·ˡᵐ x ⟩
+      diag-transpose d x y =
+        begin
+          ⟨ x , diagₗₘ d ·ˡᵐ y ⟩ ≡⟨⟩
+          sum (x ∘ⱽ (d ∘ⱽ y))    ≡⟨ cong (sum) (∘ⱽ-comm x (d ∘ⱽ y)) ⟩
+          sum ((d ∘ⱽ y) ∘ⱽ x)    ≡⟨ cong (λ dy → sum (dy ∘ⱽ x)) (∘ⱽ-comm d y) ⟩
+          sum ((y ∘ⱽ d) ∘ⱽ x)    ≡⟨ cong sum (∘ⱽ-assoc y d x) ⟩
+          sum (y ∘ⱽ (d ∘ⱽ x))    ≡⟨⟩
+          ⟨ y , diagₗₘ d ·ˡᵐ x ⟩ ∎
