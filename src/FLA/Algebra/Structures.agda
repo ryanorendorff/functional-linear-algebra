@@ -6,6 +6,7 @@
 module FLA.Algebra.Structures where
 
 open import Level using (Level) renaming (suc to lsuc)
+open import Data.Sum using (_⊎_)
 open import Relation.Binary.PropositionalEquality using (_≡_; _≢_)
 
 private
@@ -47,8 +48,7 @@ record LinearlyOrdered (A : Set ℓ) : Set (lsuc ℓ) where
   field
     _≤_ : A → A → Set ℓ
 
-    -- TODO: find the standard library way to represent a sum
-    -- total : x ≤ y or y ≤ x
+    total : (x y : A) → x ≤ y ⊎ y ≤ x
     trans : (x y z : A) → x ≤ y → y ≤ z → x ≤ z
     anti-sym : (x y : A) → x ≤ y → y ≤ x → x ≡ y
 

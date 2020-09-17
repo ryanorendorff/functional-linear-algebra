@@ -2,16 +2,15 @@
 
 open import Level using (Level)
 
-open import Relation.Binary.PropositionalEquality hiding (∀-extensionality)
+open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 
-open import Data.Nat using (ℕ; suc; zero)
-open import Data.Vec using (Vec; foldr; zipWith; map; []; _∷_; _++_)
+open import Data.Nat using (ℕ)
+open import Data.Vec using (Vec; []; _∷_; foldr; _++_)
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
 open import FLA.Algebra.LinearAlgebra
-open import FLA.Data.Vec.Properties
 
 module FLA.Algebra.LinearAlgebra.Properties where
 
@@ -40,74 +39,74 @@ module _ ⦃ F : Field A ⦄ where
       x₁ + x₂ ∷ vs₂ +ⱽ vs₁ ≡⟨ cong (_∷ vs₂ +ⱽ vs₁) (+-comm x₁ x₂) ⟩
       x₂ + x₁ ∷ vs₂ +ⱽ vs₁ ∎
 
-  ∘ⱽ-assoc : (v₁ v₂ v₃ : Vec A n)
-           → v₁ ∘ⱽ v₂ ∘ⱽ v₃ ≡ v₁ ∘ⱽ (v₂ ∘ⱽ v₃)
-  ∘ⱽ-assoc [] [] [] = refl
-  ∘ⱽ-assoc (v₁ ∷ vs₁) (v₂ ∷ vs₂) (v₃ ∷ vs₃) rewrite
-      ∘ⱽ-assoc vs₁ vs₂ vs₃
+  *ⱽ-assoc : (v₁ v₂ v₃ : Vec A n)
+           → v₁ *ⱽ v₂ *ⱽ v₃ ≡ v₁ *ⱽ (v₂ *ⱽ v₃)
+  *ⱽ-assoc [] [] [] = refl
+  *ⱽ-assoc (v₁ ∷ vs₁) (v₂ ∷ vs₂) (v₃ ∷ vs₃) rewrite
+      *ⱽ-assoc vs₁ vs₂ vs₃
     | *-assoc v₁ v₂ v₃
     = refl
 
-  ∘ⱽ-comm : (v₁ v₂ : Vec A n) → v₁ ∘ⱽ v₂ ≡ v₂ ∘ⱽ v₁
-  ∘ⱽ-comm [] [] = refl
-  ∘ⱽ-comm (v₁ ∷ vs₁) (v₂ ∷ vs₂) rewrite
-      ∘ⱽ-comm vs₁ vs₂
+  *ⱽ-comm : (v₁ v₂ : Vec A n) → v₁ *ⱽ v₂ ≡ v₂ *ⱽ v₁
+  *ⱽ-comm [] [] = refl
+  *ⱽ-comm (v₁ ∷ vs₁) (v₂ ∷ vs₂) rewrite
+      *ⱽ-comm vs₁ vs₂
     | *-comm v₁ v₂
     = refl
 
-  ∘ⱽ-distr-+ⱽ : (a u v : Vec A n)
-              → a ∘ⱽ (u +ⱽ v) ≡ a ∘ⱽ u +ⱽ a ∘ⱽ v
-  ∘ⱽ-distr-+ⱽ [] [] [] = refl
-  ∘ⱽ-distr-+ⱽ (a ∷ as) (u ∷ us) (v ∷ vs) rewrite
-      ∘ⱽ-distr-+ⱽ as us vs
+  *ⱽ-distr-+ⱽ : (a u v : Vec A n)
+              → a *ⱽ (u +ⱽ v) ≡ a *ⱽ u +ⱽ a *ⱽ v
+  *ⱽ-distr-+ⱽ [] [] [] = refl
+  *ⱽ-distr-+ⱽ (a ∷ as) (u ∷ us) (v ∷ vs) rewrite
+      *ⱽ-distr-+ⱽ as us vs
     | *-distr-+ a u v
     = refl
 
   -- Homogeneity of degree 1 for linear maps
-  ∘ⱽ*ᶜ≡*ᶜ∘ⱽ : (c : A) (u v : Vec A n)
-            → u ∘ⱽ c *ᶜ v ≡ c *ᶜ (u ∘ⱽ v)
-  ∘ⱽ*ᶜ≡*ᶜ∘ⱽ c [] [] = refl
-  ∘ⱽ*ᶜ≡*ᶜ∘ⱽ c (u ∷ us) (v ∷ vs) rewrite
-      ∘ⱽ*ᶜ≡*ᶜ∘ⱽ c us vs
+  *ⱽ∘ⱽ≡∘ⱽ*ⱽ : (c : A) (u v : Vec A n)
+            → u *ⱽ c ∘ⱽ v ≡ c ∘ⱽ (u *ⱽ v)
+  *ⱽ∘ⱽ≡∘ⱽ*ⱽ c [] [] = refl
+  *ⱽ∘ⱽ≡∘ⱽ*ⱽ c (u ∷ us) (v ∷ vs) rewrite
+      *ⱽ∘ⱽ≡∘ⱽ*ⱽ c us vs
     | *-assoc u c v
     | *-comm u c
     | sym (*-assoc c u v)
     = refl
 
-  *ᶜ∘ⱽ-assoc : (c : A) (u v : Vec A n)
-             → c *ᶜ (u ∘ⱽ v) ≡ (c *ᶜ u) ∘ⱽ v
-  *ᶜ∘ⱽ-assoc c [] [] = refl
-  *ᶜ∘ⱽ-assoc c (u ∷ us) (v ∷ vs) = cong₂ (_∷_) (*-assoc c u v)
-                                               (*ᶜ∘ⱽ-assoc c us vs)
+  ∘ⱽ*ⱽ-assoc : (c : A) (u v : Vec A n)
+             → c ∘ⱽ (u *ⱽ v) ≡ (c ∘ⱽ u) *ⱽ v
+  ∘ⱽ*ⱽ-assoc c [] [] = refl
+  ∘ⱽ*ⱽ-assoc c (u ∷ us) (v ∷ vs) = cong₂ (_∷_) (*-assoc c u v)
+                                               (∘ⱽ*ⱽ-assoc c us vs)
 
-  *ᶜ-distr-+ⱽ : (c : A) (u v : Vec A n)
-              → c *ᶜ (u +ⱽ v) ≡ c *ᶜ u +ⱽ c *ᶜ v
-  *ᶜ-distr-+ⱽ c [] [] = refl
-  *ᶜ-distr-+ⱽ c (u ∷ us) (v ∷ vs) rewrite
-      *ᶜ-distr-+ⱽ c us vs
+  ∘ⱽ-distr-+ⱽ : (c : A) (u v : Vec A n)
+              → c ∘ⱽ (u +ⱽ v) ≡ c ∘ⱽ u +ⱽ c ∘ⱽ v
+  ∘ⱽ-distr-+ⱽ c [] [] = refl
+  ∘ⱽ-distr-+ⱽ c (u ∷ us) (v ∷ vs) rewrite
+      ∘ⱽ-distr-+ⱽ c us vs
     | *-distr-+ c u v
     = refl
 
-  *ᶜ-comm : (a b : A) (v : Vec A n) → a *ᶜ (b *ᶜ v) ≡ b *ᶜ (a *ᶜ v)
-  *ᶜ-comm a b [] = refl
-  *ᶜ-comm a b (v ∷ vs) = cong₂ _∷_ (trans (trans (*-assoc a b v)
+  ∘ⱽ-comm : (a b : A) (v : Vec A n) → a ∘ⱽ (b ∘ⱽ v) ≡ b ∘ⱽ (a ∘ⱽ v)
+  ∘ⱽ-comm a b [] = refl
+  ∘ⱽ-comm a b (v ∷ vs) = cong₂ _∷_ (trans (trans (*-assoc a b v)
                                           (cong (_* v) (*-comm a b)))
                                           (sym (*-assoc b a v)))
-                                   (*ᶜ-comm a b vs)
+                                   (∘ⱽ-comm a b vs)
 
   +ⱽ-flip-++ : (a b : Vec A n) → (c d : Vec A m)
              → (a ++ c) +ⱽ (b ++ d) ≡ a +ⱽ b ++ c +ⱽ d
   +ⱽ-flip-++ [] [] c d = refl
   +ⱽ-flip-++ (a ∷ as) (b ∷ bs) c d rewrite +ⱽ-flip-++ as bs c d = refl
 
-  *ᶜ-distr-++ : (c : A) (a : Vec A n) (b : Vec A m)
-              → c *ᶜ (a ++ b) ≡ (c *ᶜ a) ++ (c *ᶜ b)
-  *ᶜ-distr-++ c [] b = refl
-  *ᶜ-distr-++ c (a ∷ as) b rewrite *ᶜ-distr-++ c as b = refl
+  ∘ⱽ-distr-++ : (c : A) (a : Vec A n) (b : Vec A m)
+              → c ∘ⱽ (a ++ b) ≡ (c ∘ⱽ a) ++ (c ∘ⱽ b)
+  ∘ⱽ-distr-++ c [] b = refl
+  ∘ⱽ-distr-++ c (a ∷ as) b rewrite ∘ⱽ-distr-++ c as b = refl
 
   ⟨⟩-comm : (v₁ v₂ : Vec A n)
           → ⟨ v₁ , v₂ ⟩ ≡ ⟨ v₂ , v₁ ⟩
-  ⟨⟩-comm v₁ v₂ = cong sum (∘ⱽ-comm v₁ v₂)
+  ⟨⟩-comm v₁ v₂ = cong sum (*ⱽ-comm v₁ v₂)
 
   sum-distr-+ⱽ : (v₁ v₂ : Vec A n) → sum (v₁ +ⱽ v₂) ≡ sum v₁ + sum v₂
   sum-distr-+ⱽ [] [] = sym (0ᶠ+0ᶠ≡0ᶠ)
@@ -129,13 +128,13 @@ module _ ⦃ F : Field A ⦄ where
   ⟨x+y,z⟩≡⟨x,z⟩+⟨y,z⟩ x y z = begin
     ⟨ x +ⱽ y , z ⟩
     ≡⟨⟩
-    sum ((x +ⱽ y) ∘ⱽ z )
-    ≡⟨ cong sum (∘ⱽ-comm (x +ⱽ y) z) ⟩
-    sum (z ∘ⱽ (x +ⱽ y))
-    ≡⟨ cong sum (∘ⱽ-distr-+ⱽ z x y) ⟩
-    sum (z ∘ⱽ x +ⱽ z ∘ⱽ y)
-    ≡⟨ sum-distr-+ⱽ (z ∘ⱽ x) (z ∘ⱽ y) ⟩
-    sum (z ∘ⱽ x) + sum (z ∘ⱽ y)
+    sum ((x +ⱽ y) *ⱽ z )
+    ≡⟨ cong sum (*ⱽ-comm (x +ⱽ y) z) ⟩
+    sum (z *ⱽ (x +ⱽ y))
+    ≡⟨ cong sum (*ⱽ-distr-+ⱽ z x y) ⟩
+    sum (z *ⱽ x +ⱽ z *ⱽ y)
+    ≡⟨ sum-distr-+ⱽ (z *ⱽ x) (z *ⱽ y) ⟩
+    sum (z *ⱽ x) + sum (z *ⱽ y)
     ≡⟨⟩
     ⟨ z , x ⟩ + ⟨ z , y ⟩
     ≡⟨ cong (_+ ⟨ z , y ⟩) (⟨⟩-comm z x) ⟩

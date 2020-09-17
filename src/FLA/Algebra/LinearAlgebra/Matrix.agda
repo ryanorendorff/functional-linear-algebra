@@ -1,14 +1,11 @@
 {-# OPTIONS --without-K --safe #-}
 
 open import Level using (Level)
-open import Data.Nat using (ℕ; suc; zero) renaming (_+_ to _+ᴺ_)
+open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 
-open import Data.Empty
+open import Data.Vec using (Vec; _++_; take; drop)
 
-open import Data.Vec using (Vec; foldr; zipWith; map; _++_; take; drop)
-open import Data.Product hiding (map; _,_)
-
-open import Relation.Binary.PropositionalEquality hiding (Extensionality)
+open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 
 open import Function using (id)
@@ -200,15 +197,15 @@ module _ ⦃ F : Field A ⦄ where
         begin
             ⟨ x , (c ∘ˡᵐ M) ·ˡᵐ y ⟩
           ≡⟨⟩
-            ⟨ x , c *ᶜ (M ·ˡᵐ y) ⟩
+            ⟨ x , c ∘ⱽ (M ·ˡᵐ y) ⟩
           ≡⟨ cong (λ z → ⟨ x , z ⟩) (sym (f[c*v]≡c*f[v] M c y)) ⟩
-            ⟨ x , M ·ˡᵐ (c *ᶜ y) ⟩
-          ≡⟨ M-⟨⟩-proof x ((c *ᶜ y)) ⟩
-            ⟨ c *ᶜ y , Mᵀ ·ˡᵐ x ⟩
-          ≡⟨ ⟨⟩-comm (c *ᶜ y) (Mᵀ ·ˡᵐ x) ⟩
-            ⟨ Mᵀ ·ˡᵐ x , c *ᶜ y ⟩
-          ≡⟨ cong sum (trans (∘ⱽ*ᶜ≡*ᶜ∘ⱽ c (Mᵀ ·ˡᵐ x) y)
-                             (*ᶜ∘ⱽ-assoc c (Mᵀ ·ˡᵐ x) y)) ⟩
+            ⟨ x , M ·ˡᵐ (c ∘ⱽ y) ⟩
+          ≡⟨ M-⟨⟩-proof x ((c ∘ⱽ y)) ⟩
+            ⟨ c ∘ⱽ y , Mᵀ ·ˡᵐ x ⟩
+          ≡⟨ ⟨⟩-comm (c ∘ⱽ y) (Mᵀ ·ˡᵐ x) ⟩
+            ⟨ Mᵀ ·ˡᵐ x , c ∘ⱽ y ⟩
+          ≡⟨ cong sum (trans (*ⱽ∘ⱽ≡∘ⱽ*ⱽ c (Mᵀ ·ˡᵐ x) y)
+                             (∘ⱽ*ⱽ-assoc c (Mᵀ ·ˡᵐ x) y)) ⟩
             ⟨ (c ∘ˡᵐ Mᵀ) ·ˡᵐ x , y ⟩
           ≡⟨ ⟨⟩-comm ((c ∘ˡᵐ Mᵀ) ·ˡᵐ x) y ⟩
             ⟨ y , (c ∘ˡᵐ Mᵀ) ·ˡᵐ x ⟩
@@ -244,8 +241,8 @@ module _ ⦃ F : Field A ⦄ where
       diag-transpose d x y =
         begin
           ⟨ x , diagₗₘ d ·ˡᵐ y ⟩ ≡⟨⟩
-          sum (x ∘ⱽ (d ∘ⱽ y))    ≡⟨ cong (sum) (∘ⱽ-comm x (d ∘ⱽ y)) ⟩
-          sum ((d ∘ⱽ y) ∘ⱽ x)    ≡⟨ cong (λ dy → sum (dy ∘ⱽ x)) (∘ⱽ-comm d y) ⟩
-          sum ((y ∘ⱽ d) ∘ⱽ x)    ≡⟨ cong sum (∘ⱽ-assoc y d x) ⟩
-          sum (y ∘ⱽ (d ∘ⱽ x))    ≡⟨⟩
+          sum (x *ⱽ (d *ⱽ y))    ≡⟨ cong (sum) (*ⱽ-comm x (d *ⱽ y)) ⟩
+          sum ((d *ⱽ y) *ⱽ x)    ≡⟨ cong (λ dy → sum (dy *ⱽ x)) (*ⱽ-comm d y) ⟩
+          sum ((y *ⱽ d) *ⱽ x)    ≡⟨ cong sum (*ⱽ-assoc y d x) ⟩
+          sum (y *ⱽ (d *ⱽ x))    ≡⟨⟩
           ⟨ y , diagₗₘ d ·ˡᵐ x ⟩ ∎
