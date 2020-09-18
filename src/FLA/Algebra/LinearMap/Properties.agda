@@ -4,9 +4,8 @@ open import Level using (Level)
 
 open import Axiom.UniquenessOfIdentityProofs.WithK using (uip)
 
-open import Relation.Binary.PropositionalEquality hiding (Extensionality)
+open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
-
 
 open import Data.Nat using (ℕ)
 open import Data.Vec using (Vec)
@@ -48,7 +47,7 @@ private
         → (f[u+v]≡f[u]+f[v] : (u v : Vec A m)
                              → L↓ ·ˡᵐ↓ (u +ⱽ v) ≡ L↓ ·ˡᵐ↓ u +ⱽ L↓ ·ˡᵐ↓ v)
         → (f[c*v]≡c*f[v] : (c : A) → (v : Vec A m)
-                          → L↓ ·ˡᵐ↓ (c *ᶜ v) ≡ c *ᶜ (L↓ ·ˡᵐ↓ v))
+                          → L↓ ·ˡᵐ↓ (c ∘ⱽ v) ≡ c ∘ⱽ (L↓ ·ˡᵐ↓ v))
         → m ⊸ n
   L↓→L (LM↓ f) f[u+v]≡f[u]+f[v] f[c*v]≡c*f[v] =
     record
@@ -74,14 +73,14 @@ private
 
   f[c*v]≡c*f[v]-UIP : {ℓ : Level} {A : Set ℓ} {m n : ℕ} → ⦃ F : Field A ⦄
                     → (f : Vec A m → Vec A n)
-                    → (p q : (c : A) (v : Vec A m) → f (c *ᶜ v) ≡ c *ᶜ (f v))
+                    → (p q : (c : A) (v : Vec A m) → f (c ∘ⱽ v) ≡ c ∘ⱽ (f v))
                     → p ≡ q
   f[c*v]≡c*f[v]-UIP f p q =
     extensionality (λ c → extensionality (λ v → t f p q c v))
     where
       t : {ℓ : Level} {A : Set ℓ} {m n : ℕ} → ⦃ F : Field A ⦄
         → (f : Vec A m → Vec A n)
-        → (p q : (c : A) (v : Vec A m) → f (c *ᶜ v) ≡ c *ᶜ (f v))
+        → (p q : (c : A) (v : Vec A m) → f (c ∘ⱽ v) ≡ c ∘ⱽ (f v))
         → (c : A) (v : Vec A m) → p c v ≡ q c v
       t f p q c v = uip (p c v) (q c v)
 

@@ -6,7 +6,7 @@ open import Relation.Binary.PropositionalEquality using (_≡_; _≢_)
 
 module FLA.Algebra.Properties.Field {ℓ : Level } {A : Set ℓ} ⦃ F : Field A ⦄ where
 
-open Field {{...}}
+open Field F
 
 0ᶠ+0ᶠ≡0ᶠ : 0ᶠ + 0ᶠ ≡ 0ᶠ
 0ᶠ+0ᶠ≡0ᶠ = +-0 0ᶠ

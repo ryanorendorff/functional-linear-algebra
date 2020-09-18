@@ -7,10 +7,9 @@ open import Level using (Level)
 open import Relation.Binary.PropositionalEquality hiding (Extensionality)
 open ≡-Reasoning
 
-open import Data.Nat using (ℕ; suc; zero) renaming (_+_ to _+ᴺ_)
+open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 open import Data.Nat.Properties
-open import Data.Vec using (Vec; foldr; zipWith; map; _++_; []; _∷_; take; drop)
-open import Data.Vec.Properties
+open import Data.Vec using (Vec; _++_; take; drop)
 
 open import Function using (id)
 
@@ -18,7 +17,6 @@ open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
 open import FLA.Algebra.LinearAlgebra
 open import FLA.Algebra.LinearAlgebra.Properties
-open import FLA.Data.VectorList using (split)
 open import FLA.Data.Vec.Properties
 
 module FLA.Algebra.LinearMap where
@@ -38,7 +36,7 @@ record _⊸_ {ℓ : Level} {A : Set ℓ} ⦃ F : Field A ⦄ (m n : ℕ) : Set �
     f[u+v]≡f[u]+f[v] : (u v : Vec A m) → f (u +ⱽ v) ≡ f u +ⱽ f v
 
     -- Homogeneity
-    f[c*v]≡c*f[v] : (c : A) → (v : Vec A m) → f (c *ᶜ v) ≡ c *ᶜ (f v)
+    f[c*v]≡c*f[v] : (c : A) → (v : Vec A m) → f (c ∘ⱽ v) ≡ c ∘ⱽ (f v)
 
 infixr 1 _⊸_
 
@@ -75,12 +73,12 @@ module _ ⦃ F : Field A ⦄ where
         = refl
   
       f[c*v]≡c*f[v]' : (g h : m ⊸ n) → (c : A) (v : Vec A m)
-                     → g ·ˡᵐ (c *ᶜ v) +ⱽ h ·ˡᵐ (c *ᶜ v) ≡
-                        c *ᶜ (g ·ˡᵐ v +ⱽ h ·ˡᵐ v)
+                     → g ·ˡᵐ (c ∘ⱽ v) +ⱽ h ·ˡᵐ (c ∘ⱽ v) ≡
+                        c ∘ⱽ (g ·ˡᵐ v +ⱽ h ·ˡᵐ v)
       f[c*v]≡c*f[v]' g h c v rewrite
           f[c*v]≡c*f[v] g c v
         | f[c*v]≡c*f[v] h c v
-        | sym (*ᶜ-distr-+ⱽ c (g ·ˡᵐ v) (h ·ˡᵐ v))
+        | sym (∘ⱽ-distr-+ⱽ c (g ·ˡᵐ v) (h ·ˡᵐ v))
         = refl
 
   _*ˡᵐ_ : n ⊸ p → m ⊸ n → m ⊸ p
@@ -101,7 +99,7 @@ module _ ⦃ F : Field A ⦄ where
   
       f[c*v]≡c*f[v]' : (g : n ⊸ p) (h : m ⊸ n)
                      → (c : A) (v : Vec A m)
-                     → g ·ˡᵐ (h ·ˡᵐ (c *ᶜ v)) ≡ c *ᶜ g ·ˡᵐ (h ·ˡᵐ v)
+                     → g ·ˡᵐ (h ·ˡᵐ (c ∘ⱽ v)) ≡ c ∘ⱽ g ·ˡᵐ (h ·ˡᵐ v)
       f[c*v]≡c*f[v]' g h c v rewrite
           f[c*v]≡c*f[v] h c v
         | f[c*v]≡c*f[v] g c (h ·ˡᵐ v)
@@ -128,12 +126,12 @@ module _ ⦃ F : Field A ⦄ where
 
       f[c*v]≡c*f[v]' : (T : p ⊸ m) (B : p ⊸ n)
                      → (c : A) → (v : Vec A p)
-                     → T ·ˡᵐ (c *ᶜ v) ++ B ·ˡᵐ (c *ᶜ v) ≡
-                        c *ᶜ (T ·ˡᵐ v ++ B ·ˡᵐ v)
+                     → T ·ˡᵐ (c ∘ⱽ v) ++ B ·ˡᵐ (c ∘ⱽ v) ≡
+                        c ∘ⱽ (T ·ˡᵐ v ++ B ·ˡᵐ v)
       f[c*v]≡c*f[v]' T B c v rewrite
           f[c*v]≡c*f[v] T c v
         | f[c*v]≡c*f[v] B c v
-        | *ᶜ-distr-++ c (T ·ˡᵐ v) (B ·ˡᵐ v)
+        | ∘ⱽ-distr-++ c (T ·ˡᵐ v) (B ·ˡᵐ v)
         = refl
 
   -- horizontal stack forward operator
@@ -187,18 +185,18 @@ module _ ⦃ F : Field A ⦄ where
         f[c*v]≡c*f[v]' : {m n p : ℕ}
                        → (T : m ⊸ p) → (B : n ⊸ p)
                        → (c : A) (v : Vec A (m +ᴺ n))
-                       → T ·ˡᵐ take m (c *ᶜ v) +ⱽ B ·ˡᵐ drop m (c *ᶜ v) ≡
-                          c *ᶜ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
+                       → T ·ˡᵐ take m (c ∘ⱽ v) +ⱽ B ·ˡᵐ drop m (c ∘ⱽ v) ≡
+                          c ∘ⱽ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
         f[c*v]≡c*f[v]' {m} T B c v = begin
-            T ·ˡᵐ take m (c *ᶜ v) +ⱽ B ·ˡᵐ drop m (c *ᶜ v)
+            T ·ˡᵐ take m (c ∘ⱽ v) +ⱽ B ·ˡᵐ drop m (c ∘ⱽ v)
           ≡⟨ cong₂ (λ x y → T ·ˡᵐ x +ⱽ B ·ˡᵐ y) (take-distr-map (c *_) m v)
                                                  (drop-distr-map (c *_) m v) ⟩
-            T ·ˡᵐ (c *ᶜ take m v) +ⱽ B ·ˡᵐ (c *ᶜ drop m v)
+            T ·ˡᵐ (c ∘ⱽ take m v) +ⱽ B ·ˡᵐ (c ∘ⱽ drop m v)
           ≡⟨ cong₂ _+ⱽ_ (f[c*v]≡c*f[v] T c (take m v))
                         (f[c*v]≡c*f[v] B c (drop m v)) ⟩
-            c *ᶜ (T ·ˡᵐ take m v) +ⱽ c *ᶜ (B ·ˡᵐ drop m v)
-          ≡⟨ sym (*ᶜ-distr-+ⱽ c (T ·ˡᵐ take m v) (B ·ˡᵐ drop m v)) ⟩
-            c *ᶜ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
+            c ∘ⱽ (T ·ˡᵐ take m v) +ⱽ c ∘ⱽ (B ·ˡᵐ drop m v)
+          ≡⟨ sym (∘ⱽ-distr-+ⱽ c (T ·ˡᵐ take m v) (B ·ˡᵐ drop m v)) ⟩
+            c ∘ⱽ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
           ∎
 
   -- block diagonal forward and adjoint operator
@@ -235,30 +233,30 @@ module _ ⦃ F : Field A ⦄ where
         f[c*v]≡c*f[v]' : {m n p q : ℕ}
                        → (T : m ⊸ n) (B : p ⊸ q)
                        → (c : A) (v : Vec A (m +ᴺ p))
-                       → T ·ˡᵐ (take m (c *ᶜ v)) ++ B ·ˡᵐ (drop m (c *ᶜ v)) ≡
-                          c *ᶜ (T ·ˡᵐ (take m v) ++ B ·ˡᵐ (drop m v))
+                       → T ·ˡᵐ (take m (c ∘ⱽ v)) ++ B ·ˡᵐ (drop m (c ∘ⱽ v)) ≡
+                          c ∘ⱽ (T ·ˡᵐ (take m v) ++ B ·ˡᵐ (drop m v))
         f[c*v]≡c*f[v]' {m} T B c v =
           begin
-              T ·ˡᵐ take m (c *ᶜ v) ++ B ·ˡᵐ drop m (c *ᶜ v)
+              T ·ˡᵐ take m (c ∘ⱽ v) ++ B ·ˡᵐ drop m (c ∘ⱽ v)
             ≡⟨ cong₂ (λ x y → T ·ˡᵐ x ++ B ·ˡᵐ y) (take-distr-map (c *_) m v)
                                                    (drop-distr-map (c *_) m v) ⟩
-              T ·ˡᵐ (c *ᶜ take m v) ++ B ·ˡᵐ (c *ᶜ (drop m v))
+              T ·ˡᵐ (c ∘ⱽ take m v) ++ B ·ˡᵐ (c ∘ⱽ (drop m v))
             ≡⟨ cong₂ _++_ (f[c*v]≡c*f[v] T c (take m v))
                           (f[c*v]≡c*f[v] B c (drop m v)) ⟩
-              c *ᶜ (T ·ˡᵐ take m v) ++ c *ᶜ (B ·ˡᵐ drop m v)
-            ≡⟨ sym (*ᶜ-distr-++ c (T ·ˡᵐ take m v) (B ·ˡᵐ drop m v)) ⟩
-              c *ᶜ (T ·ˡᵐ take m v ++ B ·ˡᵐ drop m v)
+              c ∘ⱽ (T ·ˡᵐ take m v) ++ c ∘ⱽ (B ·ˡᵐ drop m v)
+            ≡⟨ sym (∘ⱽ-distr-++ c (T ·ˡᵐ take m v) (B ·ˡᵐ drop m v)) ⟩
+              c ∘ⱽ (T ·ˡᵐ take m v ++ B ·ˡᵐ drop m v)
           ∎
 
   -- Multiply by a constant
   _∘ˡᵐ_ : A → n ⊸ m → n ⊸ m
   c ∘ˡᵐ m =
     record
-      { f = λ v → c *ᶜ m ·ˡᵐ v
-      ; f[u+v]≡f[u]+f[v] = λ u v → trans (cong (c *ᶜ_) (f[u+v]≡f[u]+f[v] m u v))
-                                         (*ᶜ-distr-+ⱽ c (m ·ˡᵐ u) (m ·ˡᵐ v))
-      ; f[c*v]≡c*f[v] = λ c₁ v → trans (cong (c *ᶜ_) (f[c*v]≡c*f[v] m c₁ v))
-                                       (*ᶜ-comm c c₁ (f m v))
+      { f = λ v → c ∘ⱽ m ·ˡᵐ v
+      ; f[u+v]≡f[u]+f[v] = λ u v → trans (cong (c ∘ⱽ_) (f[u+v]≡f[u]+f[v] m u v))
+                                         (∘ⱽ-distr-+ⱽ c (m ·ˡᵐ u) (m ·ˡᵐ v))
+      ; f[c*v]≡c*f[v] = λ c₁ v → trans (cong (c ∘ⱽ_) (f[c*v]≡c*f[v] m c₁ v))
+                                       (∘ⱽ-comm c c₁ (f m v))
       }
 
   -- Choose 20 since function application is assumed higher than almost anything
@@ -284,7 +282,7 @@ module _ ⦃ F : Field A ⦄ where
 
   diagₗₘ : Vec A n → n ⊸ n
   diagₗₘ d = record
-    { f = d ∘ⱽ_
-    ; f[u+v]≡f[u]+f[v] = ∘ⱽ-distr-+ⱽ d
-    ; f[c*v]≡c*f[v] = λ c v → ∘ⱽ*ᶜ≡*ᶜ∘ⱽ c d v
+    { f = d *ⱽ_
+    ; f[u+v]≡f[u]+f[v] = *ⱽ-distr-+ⱽ d
+    ; f[c*v]≡c*f[v] = λ c v → *ⱽ∘ⱽ≡∘ⱽ*ⱽ c d v
     }
