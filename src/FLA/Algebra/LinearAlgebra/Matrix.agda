@@ -30,22 +30,22 @@ private
 --                          M constructor and values                         --
 -------------------------------------------------------------------------------
 
-data M_∶_×_ (A : Set ℓ) ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
+data Mat_×_ {A : Set ℓ} ⦃ F : Field A ⦄ (m n : ℕ) : Set ℓ where
   ⟦_,_,_⟧ : (M : n ⊸ m )
           → (Mᵀ : m ⊸ n )
           → (p : (x : Vec A m) → (y : Vec A n)
                → ⟨ x , M ·ˡᵐ y ⟩ ≡ ⟨ y , Mᵀ ·ˡᵐ x ⟩ )
-          → M A ∶ m × n
+          → Mat m × n
 
-module _ where
+module _ ⦃ F : Field A ⦄ where
 
-  _ᵀ : ⦃ F : Field A ⦄ → M A ∶ m × n → M A ∶ n × m
+  _ᵀ : Mat m × n → Mat n × m
   ⟦ f , a , p ⟧ ᵀ = ⟦ a , f , (λ x y → sym (p y x)) ⟧
 
-  _·ᴹₗ_ : ⦃ F : Field A ⦄ → M A ∶ m × n → Vec A n → Vec A m
+  _·ᴹₗ_ : Mat m × n → Vec A n → Vec A m
   ⟦ f , _ , _ ⟧ ·ᴹₗ x = f ·ˡᵐ x
 
-  _·ᴹᵣ_ : ⦃ F : Field A ⦄ → Vec A m → M A ∶ m × n → Vec A n
+  _·ᴹᵣ_ : Vec A m → Mat m × n → Vec A n
   x ·ᴹᵣ ⟦ _ , a , _ ⟧ = a ·ˡᵐ x
 
   infixr 20 _·ᴹᵣ_
@@ -57,7 +57,7 @@ module _ ⦃ F : Field A ⦄ where
   open Field F
   open _⊸_
 
-  _+ᴹ_ : M A ∶ m × n → M A ∶ m × n → M A ∶ m × n
+  _+ᴹ_ : Mat m × n → Mat m × n → Mat m × n
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ +ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
     ⟦ M₁ +ˡᵐ M₂
     , M₁ᵀ +ˡᵐ M₂ᵀ
@@ -86,7 +86,7 @@ module _ ⦃ F : Field A ⦄ where
             ⟨ y , (M₁ᵀ +ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
         ∎
 
-  _*ᴹ_ : M A ∶ m × n → M A ∶ n × p → M A ∶ m × p
+  _*ᴹ_ : Mat m × n → Mat n × p → Mat m × p
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ *ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
     ⟦ M₁ *ˡᵐ M₂
     , M₂ᵀ *ˡᵐ M₁ᵀ
@@ -108,7 +108,7 @@ module _ ⦃ F : Field A ⦄ where
           ⟨ M₁ᵀ ·ˡᵐ x , M₂ ·ˡᵐ y ⟩    ≡⟨ M₂-proof (M₁ᵀ ·ˡᵐ x) y ⟩
           ⟨ y , (M₂ᵀ *ˡᵐ M₁ᵀ) ·ˡᵐ x ⟩ ∎
 
-  _|ᴹ_ : M A ∶ m × n → M A ∶ m × p → M A ∶ m × (n +ᴺ p)
+  _|ᴹ_ : Mat m × n → Mat m × p → Mat m × (n +ᴺ p)
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ |ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
     ⟦ M₁ |ˡᵐ M₂
     , M₁ᵀ —ˡᵐ M₂ᵀ
@@ -141,11 +141,11 @@ module _ ⦃ F : Field A ⦄ where
             ⟨ y , (M₁ᵀ —ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
         ∎
 
-  _—ᴹ_ : M A ∶ m × p → M A ∶ n × p → M A ∶ (m +ᴺ n) × p
+  _—ᴹ_ : Mat m × p → Mat n × p → Mat (m +ᴺ n) × p
   M —ᴹ N = (M ᵀ |ᴹ N ᵀ) ᵀ
 
   -- Block diagonal matrix
-  _/ᴹ_ : M A ∶ m × n → M A ∶ p × q → M A ∶ (m +ᴺ p) × (n +ᴺ q)
+  _/ᴹ_ : Mat m × n → Mat p × q → Mat (m +ᴺ p) × (n +ᴺ q)
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ /ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
     ⟦ M₁ /ˡᵐ M₂
     , M₁ᵀ /ˡᵐ M₂ᵀ
@@ -185,7 +185,7 @@ module _ ⦃ F : Field A ⦄ where
         ∎
 
   -- Multiply by a constant
-  _∘ᴹ_ : A → M A ∶ m × n → M A ∶ m × n
+  _∘ᴹ_ : A → Mat m × n → Mat m × n
   c ∘ᴹ ⟦ M , Mᵀ , p ⟧ = ⟦ c ∘ˡᵐ M , c ∘ˡᵐ Mᵀ , ⟨⟩-proof M Mᵀ c p ⟧
     where
       ⟨⟩-proof : {m n : ℕ} (M : n ⊸ m) (Mᵀ : m ⊸ n) (c : A)
@@ -224,7 +224,7 @@ module _ ⦃ F : Field A ⦄ where
 module _ ⦃ F : Field A ⦄ where
   open Field F
 
-  I : M A ∶ n × n
+  I : Mat n × n
   I = ⟦ idₗₘ , idₗₘ , id-transpose  ⟧
     where
       id-transpose : (x y : Vec A n)
@@ -233,7 +233,7 @@ module _ ⦃ F : Field A ⦄ where
           zipWith-comm (_*_) (*-comm) x y
         = refl
 
-  diag : Vec A n → M A ∶ n × n
+  diag : Vec A n → Mat n × n
   diag d = ⟦ diagₗₘ d , diagₗₘ d , diag-transpose d ⟧
     where
       diag-transpose : (d : Vec A n) → (x y : Vec A n)
