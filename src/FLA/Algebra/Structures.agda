@@ -41,7 +41,7 @@ record Field (A : Set ℓ) : Set ℓ where
     *-distr-+ : (a b c : A) → a * (b + c) ≡ a * b + a * c
 
 
-record LinearlyOrdered (A : Set ℓ) : Set (lsuc ℓ) where
+record TotalOrder (A : Set ℓ) : Set (lsuc ℓ) where
 
   infixl 5 _≤_
 
@@ -53,18 +53,36 @@ record LinearlyOrdered (A : Set ℓ) : Set (lsuc ℓ) where
     anti-sym : (x y : A) → x ≤ y → y ≤ x → x ≡ y
 
 
--- record LinearlyOrderedField (A : Set ℓ) : Set ℓ where
---   open Field
---   open LinearlyOrdered
+record TotalOrderField (A : Set ℓ) : Set (lsuc ℓ) where
 
+  field
+    ⦃ F ⦄ : Field A
+    ⦃ TO ⦄ : TotalOrder A
+
+  open Field F public
+  open TotalOrder TO public
+
+  field
+    x≤y→z+x≤z+y : (x y z : A) → x ≤ y → z + x ≤ z + y
+    0≤x→0≤y→0≤x*y : (x y : A) → 0ᶠ ≤ x → 0ᶠ ≤ y → 0ᶠ ≤ x * y
+
+
+-- record CompleteOrderedField (A : Set ℓ) : Set (lsuc ℓ) where
 --   field
---     x≤y→z+x≤z+y : (x y z : A) → x ≤ y → z + x ≤ z + y
---     0≤x→0≤y→0≤x*y : (x y : A) → 0 ≤ x → 0 ≤ y → 0 ≤ x * y
+--     ⦃ TOF ⦄ : TotalOrderField A
 
--- record CompleteOrderedField (A : Set ℓ) : Set ℓ where
---   open LinearlyOrderedField
-
---   -- Proof of the supremum rule
+--   open LinearlyOrderedField LinOrdField
+--
+--   UpperBound : Data.Set.NonEmpty A → Data.Set
+--   Supremum : (∀ (v : UpperBound(A)) → ∃ [u ∈ UpperBound(A)] [u ≤ v])
+--   completeness : (S : Data.Set.NonEmpty A)
+--                → (ub: ∃ [y ∈ A] (λ x ∈ S → x ≤ y))
+--                → Supremum A
+--   completeness : every non-empty subset of F, bounded above, has a
+--     supremum in F. If A is a non-empty subset of R, and if A has an upper
+--     bound, then A has a least upper bound u, such that for every upper
+--     bound v of A, u ≤ v.
+--   apparently completeness implies the archimedian principle.
 
 {-
 If we want the reals, we need a few things
