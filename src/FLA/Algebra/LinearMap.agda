@@ -71,7 +71,7 @@ module _ ⦃ F : Field A ⦄ where
         | (+ⱽ-assoc (h ·ˡᵐ u) (g ·ˡᵐ v) (h ·ˡᵐ v))
         | sym (+ⱽ-assoc (g ·ˡᵐ u) (h ·ˡᵐ u) (g ·ˡᵐ v +ⱽ h ·ˡᵐ v))
         = refl
-  
+
       f[c*v]≡c*f[v]' : (g h : m ⊸ n) → (c : A) (v : Vec A m)
                      → g ·ˡᵐ (c ∘ⱽ v) +ⱽ h ·ˡᵐ (c ∘ⱽ v) ≡
                         c ∘ⱽ (g ·ˡᵐ v +ⱽ h ·ˡᵐ v)
@@ -96,7 +96,7 @@ module _ ⦃ F : Field A ⦄ where
           f[u+v]≡f[u]+f[v] h u v
         | f[u+v]≡f[u]+f[v] g (f h u) (f h v)
         = refl
-  
+
       f[c*v]≡c*f[v]' : (g : n ⊸ p) (h : m ⊸ n)
                      → (c : A) (v : Vec A m)
                      → g ·ˡᵐ (h ·ˡᵐ (c ∘ⱽ v)) ≡ c ∘ⱽ g ·ˡᵐ (h ·ˡᵐ v)
