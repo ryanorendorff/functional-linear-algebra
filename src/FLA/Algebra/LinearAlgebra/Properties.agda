@@ -6,7 +6,7 @@ open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 
 open import Data.Nat using (ℕ)
-open import Data.Vec using (Vec; []; _∷_; foldr; _++_)
+open import Data.Vec using (Vec; []; _∷_; _++_; foldr; map)
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
@@ -39,6 +39,22 @@ module _ ⦃ F : Field A ⦄ where
       x₁ + x₂ ∷ vs₂ +ⱽ vs₁ ≡⟨ cong (_∷ vs₂ +ⱽ vs₁) (+-comm x₁ x₂) ⟩
       x₂ + x₁ ∷ vs₂ +ⱽ vs₁ ∎
 
+  -- This should work for any linear function (I think), instead of just -_,
+  *ⱽ-map--ⱽ : (a v : Vec A n)
+            → a *ⱽ (map -_ v) ≡ map -_ (a *ⱽ v)
+  *ⱽ-map--ⱽ [] [] = refl
+  *ⱽ-map--ⱽ (a ∷ as) (v ∷ vs) = begin
+      (a ∷ as) *ⱽ map -_ (v ∷ vs)
+    ≡⟨⟩
+      (a * - v) ∷ (as *ⱽ map -_ vs)
+    ≡⟨ cong ((a * - v) ∷_) (*ⱽ-map--ⱽ as vs) ⟩
+      (a * - v) ∷ (map -_ (as *ⱽ vs))
+    ≡⟨ cong (_∷ (map -_ (as *ⱽ vs))) (a*-b≡-[a*b] a v) ⟩
+      (- (a * v)) ∷ (map -_ (as *ⱽ vs))
+    ≡⟨⟩
+      map -_ ((a ∷ as) *ⱽ (v ∷ vs))
+    ∎
+
   *ⱽ-assoc : (v₁ v₂ v₃ : Vec A n)
            → v₁ *ⱽ v₂ *ⱽ v₃ ≡ v₁ *ⱽ (v₂ *ⱽ v₃)
   *ⱽ-assoc [] [] [] = refl
@@ -61,6 +77,15 @@ module _ ⦃ F : Field A ⦄ where
       *ⱽ-distr-+ⱽ as us vs
     | *-distr-+ a u v
     = refl
+
+  *ⱽ-distr--ⱽ : (a u v : Vec A n)
+              → a *ⱽ (u -ⱽ v) ≡ a *ⱽ u -ⱽ a *ⱽ v
+  *ⱽ-distr--ⱽ a u v = begin
+    a *ⱽ (u -ⱽ v)               ≡⟨⟩
+    a *ⱽ (u +ⱽ (map (-_) v))    ≡⟨ *ⱽ-distr-+ⱽ a u (map -_ v) ⟩
+    a *ⱽ u +ⱽ a *ⱽ (map -_ v)   ≡⟨ cong (a *ⱽ u +ⱽ_) (*ⱽ-map--ⱽ a v) ⟩
+    a *ⱽ u +ⱽ (map -_ (a *ⱽ v)) ≡⟨⟩
+    a *ⱽ u -ⱽ a *ⱽ v            ∎
 
   -- Homogeneity of degree 1 for linear maps
   *ⱽ∘ⱽ≡∘ⱽ*ⱽ : (c : A) (u v : Vec A n)

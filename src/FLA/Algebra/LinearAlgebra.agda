@@ -23,19 +23,24 @@ module _ {ℓ : Level} {A : Set ℓ} ⦃ F : Field A ⦄ where
   open Field F
 
   -- Vector addition
-  _+ⱽ_ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → Vec A n
+  _+ⱽ_ : Vec A n → Vec A n → Vec A n
   _+ⱽ_ = zipWith _+_
 
+  -- Vector substraction
+  _-ⱽ_ : Vec A n → Vec A n → Vec A n
+  a -ⱽ b = a +ⱽ (map (-_) b)
+
   -- Vector Hadamard product
-  _*ⱽ_ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → Vec A n
+  _*ⱽ_ : Vec A n → Vec A n → Vec A n
   _*ⱽ_ = zipWith _*_
 
   -- Multiply vector by a constant
-  _∘ⱽ_ : ⦃ F : Field A ⦄ → A → Vec A n → Vec A n
+  _∘ⱽ_ : A → Vec A n → Vec A n
   c ∘ⱽ v = map (c *_) v
 
   -- Match the fixity of Haskell
   infixl  6 _+ⱽ_
+  infixl  6 _-ⱽ_
   infixl  7 _*ⱽ_
   infixl 10 _∘ⱽ_
 
