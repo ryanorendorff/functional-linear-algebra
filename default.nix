@@ -19,7 +19,7 @@ mkDerivation {
   ];
 
   meta = with stdenv.lib; {
-    homepage = "https://github.io/ryanorendorff/functional-linear-algebra";
+    homepage = "https://github.com/ryanorendorff/functional-linear-algebra";
     description = ''
       Formalizing linear algebra in Agda by representing matrices as functions
       from one vector space to another.
