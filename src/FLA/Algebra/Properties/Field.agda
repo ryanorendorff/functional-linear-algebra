@@ -18,68 +18,40 @@ open Field F
 
 a*0ᶠ≡0 : (a : A) → a * 0ᶠ ≡ 0ᶠ
 a*0ᶠ≡0 a = begin
-  a * 0ᶠ
-  ≡⟨ trans (sym (+-0 (a * 0ᶠ))) (+-comm (a * 0ᶠ) 0ᶠ) ⟩
-  0ᶠ + a * 0ᶠ
-  ≡⟨ cong (_+ a * 0ᶠ) (sym (+-inv a)) ⟩
-  - a + a + a * 0ᶠ
-  ≡⟨ cong (λ x → - a + x + a * 0ᶠ) (sym (*-1 a)) ⟩
-  - a + a * 1ᶠ + a * 0ᶠ
-  ≡⟨ sym (+-assoc (- a) (a * 1ᶠ) (a * 0ᶠ)) ⟩
-  - a + (a * 1ᶠ + a * 0ᶠ)
-  ≡⟨ cong (- a +_) (sym (*-distr-+ a 1ᶠ 0ᶠ)) ⟩
-  - a + (a * (1ᶠ + 0ᶠ))
-  ≡⟨ cong (λ x → - a + (a * x)) (+-0 1ᶠ) ⟩
-  - a + (a * 1ᶠ)
-  ≡⟨ cong (- a +_) (*-1 a) ⟩
-  - a + a
-  ≡⟨ +-inv a ⟩
-  0ᶠ
-  ∎
+  a * 0ᶠ                  ≡˘⟨ 0-+ (a * 0ᶠ) ⟩
+  0ᶠ + a * 0ᶠ             ≡⟨ cong (_+ a * 0ᶠ) (sym (+-inv a)) ⟩
+  - a + a + a * 0ᶠ        ≡⟨ cong (λ x → - a + x + a * 0ᶠ) (sym (*-1 a)) ⟩
+  - a + a * 1ᶠ + a * 0ᶠ   ≡˘⟨ +-assoc (- a) (a * 1ᶠ) (a * 0ᶠ) ⟩
+  - a + (a * 1ᶠ + a * 0ᶠ) ≡⟨ cong (- a +_) (sym (*-distr-+ a 1ᶠ 0ᶠ)) ⟩
+  - a + (a * (1ᶠ + 0ᶠ))   ≡⟨ cong (λ x → - a + (a * x)) (+-0 1ᶠ) ⟩
+  - a + (a * 1ᶠ)          ≡⟨ cong (- a +_) (*-1 a) ⟩
+  - a + a                 ≡⟨ +-inv a ⟩
+  0ᶠ                      ∎
 
 -a≡-1ᶠ*a : (a : A) → - a ≡ - 1ᶠ * a
 -a≡-1ᶠ*a a = begin
-  - a
-  ≡⟨ sym (+-0 (- a)) ⟩
-  - a + 0ᶠ
-  ≡⟨ cong (- a +_) (sym (a*0ᶠ≡0 a)) ⟩
-  - a + (a * 0ᶠ)
-  ≡⟨ cong (λ x → - a + (a * x)) (sym (+-inv 1ᶠ)) ⟩
-  - a + (a * (- 1ᶠ + 1ᶠ))
-  ≡⟨ cong (- a +_) (*-distr-+ a (- 1ᶠ) 1ᶠ) ⟩
-  - a + (a * - 1ᶠ + a * 1ᶠ)
-  ≡⟨ cong (- a +_) (+-comm (a * - 1ᶠ) (a * 1ᶠ)) ⟩
-  - a + (a * 1ᶠ + a * - 1ᶠ )
-  ≡⟨ +-assoc (- a) (a * 1ᶠ) (a * - 1ᶠ) ⟩
-  - a + a * 1ᶠ + a * - 1ᶠ
-  ≡⟨ cong (λ x → - a + x + a * - 1ᶠ) (*-1 a) ⟩
-  - a + a + a * - 1ᶠ
-  ≡⟨ cong (_+ a * - 1ᶠ) (+-inv a) ⟩
-  0ᶠ + a * - 1ᶠ
-  ≡⟨ trans (+-comm 0ᶠ (a * - 1ᶠ)) (+-0 (a * - 1ᶠ)) ⟩
-  a * - 1ᶠ
-  ≡⟨ *-comm a (- 1ᶠ) ⟩
-  - 1ᶠ * a
-  ∎
+  - a                        ≡˘⟨ +-0 (- a) ⟩
+  - a + 0ᶠ                   ≡⟨ cong (- a +_) (sym (a*0ᶠ≡0 a)) ⟩
+  - a + (a * 0ᶠ)             ≡⟨ cong (λ x → - a + (a * x)) (sym (+-inv 1ᶠ)) ⟩
+  - a + (a * (- 1ᶠ + 1ᶠ))    ≡⟨ cong (- a +_) (*-distr-+ a (- 1ᶠ) 1ᶠ) ⟩
+  - a + (a * - 1ᶠ + a * 1ᶠ)  ≡⟨ cong (- a +_) (+-comm (a * - 1ᶠ) (a * 1ᶠ)) ⟩
+  - a + (a * 1ᶠ + a * - 1ᶠ ) ≡⟨ +-assoc (- a) (a * 1ᶠ) (a * - 1ᶠ) ⟩
+  - a + a * 1ᶠ + a * - 1ᶠ    ≡⟨ cong (λ x → - a + x + a * - 1ᶠ) (*-1 a) ⟩
+  - a + a + a * - 1ᶠ         ≡⟨ cong (_+ a * - 1ᶠ) (+-inv a) ⟩
+  0ᶠ + a * - 1ᶠ              ≡⟨ 0-+ (a * - 1ᶠ) ⟩
+  a * - 1ᶠ                   ≡⟨ *-comm a (- 1ᶠ) ⟩
+  - 1ᶠ * a                   ∎
 
 -a*b≡-[a*b] : (a b : A) → - a * b ≡ - (a * b)
 -a*b≡-[a*b] a b = begin
-  - a * b
-  ≡⟨ cong (_* b) (-a≡-1ᶠ*a a) ⟩
-  (- 1ᶠ * a) * b
-  ≡⟨ sym (*-assoc (- 1ᶠ) a b) ⟩
-  - 1ᶠ * (a * b)
-  ≡⟨ sym (-a≡-1ᶠ*a ((a * b))) ⟩
-  - (a * b)
-  ∎
+  - a * b        ≡⟨ cong (_* b) (-a≡-1ᶠ*a a) ⟩
+  (- 1ᶠ * a) * b ≡˘⟨ *-assoc (- 1ᶠ) a b ⟩
+  - 1ᶠ * (a * b) ≡˘⟨ -a≡-1ᶠ*a ((a * b)) ⟩
+  - (a * b)      ∎
 
 a*-b≡-[a*b] : (a b : A) → a * - b ≡ - (a * b)
 a*-b≡-[a*b] a b = begin
-  a * - b
-  ≡⟨ *-comm a (- b) ⟩
-  - b * a
-  ≡⟨ -a*b≡-[a*b] b a ⟩
-  - (b * a)
-  ≡⟨ cong -_ (*-comm b a) ⟩
-  - (a * b)
-  ∎
+  a * - b   ≡⟨ *-comm a (- b) ⟩
+  - b * a   ≡⟨ -a*b≡-[a*b] b a ⟩
+  - (b * a) ≡⟨ cong -_ (*-comm b a) ⟩
+  - (a * b) ∎
