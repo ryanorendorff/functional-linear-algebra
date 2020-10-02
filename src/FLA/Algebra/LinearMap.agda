@@ -9,7 +9,7 @@ open ≡-Reasoning
 
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 open import Data.Nat.Properties
-open import Data.Vec using (Vec; _++_; take; drop)
+open import Data.Vec using (Vec; _++_; take; drop; map)
 
 open import Function using (id)
 
@@ -80,6 +80,35 @@ module _ ⦃ F : Field A ⦄ where
         | f[c*v]≡c*f[v] h c v
         | sym (∘ⱽ-distr-+ⱽ c (g ·ˡᵐ v) (h ·ˡᵐ v))
         = refl
+
+  _-ˡᵐ_ : m ⊸ n → m ⊸ n → m ⊸ n
+  g -ˡᵐ h = record
+    { f = λ v → g ·ˡᵐ v -ⱽ h ·ˡᵐ v
+    ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]' g h
+    ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' g h
+    }
+    where
+      f[u+v]≡f[u]+f[v]' : (g h : m ⊸ n) → (u v : Vec A m)
+                        → g ·ˡᵐ (u +ⱽ v) -ⱽ h ·ˡᵐ (u +ⱽ v) ≡
+                           g ·ˡᵐ u -ⱽ h ·ˡᵐ u +ⱽ (g ·ˡᵐ v -ⱽ h ·ˡᵐ v)
+      f[u+v]≡f[u]+f[v]' g h u v = begin
+          g ·ˡᵐ (u +ⱽ v) -ⱽ h ·ˡᵐ (u +ⱽ v)
+          ≡⟨ cong₂ _-ⱽ_ (f[u+v]≡f[u]+f[v] g u v) (f[u+v]≡f[u]+f[v] h u v) ⟩
+          g ·ˡᵐ u +ⱽ g ·ˡᵐ v -ⱽ (h ·ˡᵐ u +ⱽ h ·ˡᵐ v)
+          ≡⟨ {!!} ⟩ -- map -_ (u +ⱽ v) ≡ (map -_ u +ⱽ map -_ v)
+          g ·ˡᵐ u +ⱽ g ·ˡᵐ v +ⱽ (map -_ (h ·ˡᵐ u) +ⱽ map -_ (h ·ˡᵐ v))
+          ≡⟨ {!!} ⟩
+          g ·ˡᵐ u -ⱽ h ·ˡᵐ u +ⱽ (g ·ˡᵐ v -ⱽ h ·ˡᵐ v)
+        ∎
+      -- May also want to prove map -_ v ≡ (- 1ᶠ) ∘ⱽ v
+      -- which would allow me to change u -ⱽ v ≡ u +ⱽ (- 1ᶠ) ∘ⱽ v
+      -- and then allow me to use all the standard assoc/etc proofs
+
+      f[c*v]≡c*f[v]' : (g h : m ⊸ n) → (c : A) (v : Vec A m)
+                     → g ·ˡᵐ (c ∘ⱽ v) -ⱽ h ·ˡᵐ (c ∘ⱽ v) ≡
+                        c ∘ⱽ (g ·ˡᵐ v -ⱽ h ·ˡᵐ v)
+      f[c*v]≡c*f[v]' g h c v = {!!}
+
 
   _*ˡᵐ_ : n ⊸ p → m ⊸ n → m ⊸ p
   g *ˡᵐ h = record
