@@ -318,6 +318,7 @@ module _ ⦃ F : Field A ⦄ where
   infixl 3 _|ˡᵐ_
   infixl 4 _/ˡᵐ_
   infixl 6 _+ˡᵐ_
+  infixl 6 _-ˡᵐ_
   infixl 7 _*ˡᵐ_
   infixl 10 _∘ˡᵐ_
 
