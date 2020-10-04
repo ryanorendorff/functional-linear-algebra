@@ -9,7 +9,7 @@ open ≡-Reasoning
 
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 open import Data.Nat.Properties
-open import Data.Vec using (Vec; _++_; take; drop)
+open import Data.Vec using (Vec; _++_; take; drop; map)
 
 open import Function using (id)
 
@@ -52,34 +52,86 @@ module _ ⦃ F : Field A ⦄ where
   _·ˡᵐ_ : m ⊸ n → Vec A m → Vec A n
   _·ˡᵐ_ LM = f LM
 
+  private
+    +ˡᵐ-linearity : (g h : m ⊸ n) → (u v x y : Vec A m)
+                  → g ·ˡᵐ (u +ⱽ v) +ⱽ h ·ˡᵐ (x +ⱽ y) ≡
+                     g ·ˡᵐ u +ⱽ h ·ˡᵐ x +ⱽ (g ·ˡᵐ v +ⱽ h ·ˡᵐ y)
+    +ˡᵐ-linearity g h u v x y rewrite
+        f[u+v]≡f[u]+f[v] g u v
+      | f[u+v]≡f[u]+f[v] h x y
+      | (+ⱽ-assoc (g ·ˡᵐ u) (g ·ˡᵐ v) (h ·ˡᵐ x +ⱽ h ·ˡᵐ y))
+      | sym (+ⱽ-assoc (g ·ˡᵐ v) (h ·ˡᵐ x) (h ·ˡᵐ y))
+      | +ⱽ-comm (g ·ˡᵐ v) (h ·ˡᵐ x)
+      | (+ⱽ-assoc (h ·ˡᵐ x) (g ·ˡᵐ v) (h ·ˡᵐ y))
+      | sym (+ⱽ-assoc (g ·ˡᵐ u) (h ·ˡᵐ x) (g ·ˡᵐ v +ⱽ h ·ˡᵐ y))
+      = refl
+
+    +-homogeneity : (g h : m ⊸ n) → (c : A) (u v : Vec A m)
+                  → g ·ˡᵐ (c ∘ⱽ u) +ⱽ h ·ˡᵐ (c ∘ⱽ v) ≡
+                     c ∘ⱽ (g ·ˡᵐ u +ⱽ h ·ˡᵐ v)
+    +-homogeneity g h c u v rewrite
+          f[c*v]≡c*f[v] g c u
+        | f[c*v]≡c*f[v] h c v
+        | sym (∘ⱽ-distr-+ⱽ c (g ·ˡᵐ u) (h ·ˡᵐ v))
+        = refl
+
   _+ˡᵐ_ : m ⊸ n → m ⊸ n → m ⊸ n
   g +ˡᵐ h = record
     { f = λ v → g ·ˡᵐ v +ⱽ h ·ˡᵐ v
+    ; f[u+v]≡f[u]+f[v] = λ u v → +ˡᵐ-linearity g h u v u v
+    ; f[c*v]≡c*f[v] = λ c v → +-homogeneity g h c v v
+    }
+
+  _-ˡᵐ_ : m ⊸ n → m ⊸ n → m ⊸ n
+  g -ˡᵐ h = record
+    { f = λ v → g ·ˡᵐ v -ⱽ h ·ˡᵐ v
     ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]' g h
     ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]' g h
     }
     where
       f[u+v]≡f[u]+f[v]' : (g h : m ⊸ n) → (u v : Vec A m)
-                        → g ·ˡᵐ (u +ⱽ v) +ⱽ h ·ˡᵐ (u +ⱽ v) ≡
-                           g ·ˡᵐ u +ⱽ h ·ˡᵐ u +ⱽ (g ·ˡᵐ v +ⱽ h ·ˡᵐ v)
-      f[u+v]≡f[u]+f[v]' g h u v rewrite
-          f[u+v]≡f[u]+f[v] g u v
-        | f[u+v]≡f[u]+f[v] h u v
-        | (+ⱽ-assoc (g ·ˡᵐ u) (g ·ˡᵐ v) (h ·ˡᵐ u +ⱽ h ·ˡᵐ v))
-        | sym (+ⱽ-assoc (g ·ˡᵐ v) (h ·ˡᵐ u) (h ·ˡᵐ v))
-        | +ⱽ-comm (g ·ˡᵐ v) (h ·ˡᵐ u)
-        | (+ⱽ-assoc (h ·ˡᵐ u) (g ·ˡᵐ v) (h ·ˡᵐ v))
-        | sym (+ⱽ-assoc (g ·ˡᵐ u) (h ·ˡᵐ u) (g ·ˡᵐ v +ⱽ h ·ˡᵐ v))
-        = refl
+                        → g ·ˡᵐ (u +ⱽ v) -ⱽ h ·ˡᵐ (u +ⱽ v) ≡
+                           g ·ˡᵐ u -ⱽ h ·ˡᵐ u +ⱽ (g ·ˡᵐ v -ⱽ h ·ˡᵐ v)
+      f[u+v]≡f[u]+f[v]' g h u v = begin
+          g ·ˡᵐ (u +ⱽ v) -ⱽ h ·ˡᵐ (u +ⱽ v)
+        ≡⟨ cong (g ·ˡᵐ (u +ⱽ v) +ⱽ_) (-ⱽ≡-1ᶠ∘ⱽ (h ·ˡᵐ (u +ⱽ v))) ⟩
+          g ·ˡᵐ (u +ⱽ v) +ⱽ (- 1ᶠ) ∘ⱽ (h ·ˡᵐ (u +ⱽ v))
+        ≡⟨ cong (λ x → g ·ˡᵐ (u +ⱽ v) +ⱽ (- 1ᶠ) ∘ⱽ x) (f[u+v]≡f[u]+f[v] h u v) ⟩
+          g ·ˡᵐ (u +ⱽ v) +ⱽ (- 1ᶠ) ∘ⱽ (h ·ˡᵐ u +ⱽ h ·ˡᵐ v)
+        ≡⟨ cong (g ·ˡᵐ (u +ⱽ v) +ⱽ_) (∘ⱽ-distr-+ⱽ (- 1ᶠ) (h ·ˡᵐ u) (h ·ˡᵐ v)) ⟩
+          g ·ˡᵐ (u +ⱽ v) +ⱽ ((- 1ᶠ) ∘ⱽ h ·ˡᵐ u +ⱽ (- 1ᶠ) ∘ⱽ h ·ˡᵐ v)
+        ≡⟨ cong₂ (λ x y → g ·ˡᵐ (u +ⱽ v) +ⱽ (x +ⱽ y))
+                 (sym (f[c*v]≡c*f[v] h (- 1ᶠ) u))
+                 (sym (f[c*v]≡c*f[v] h (- 1ᶠ) v)) ⟩
+          g ·ˡᵐ (u +ⱽ v) +ⱽ (h ·ˡᵐ ((- 1ᶠ) ∘ⱽ u) +ⱽ h ·ˡᵐ ((- 1ᶠ) ∘ⱽ v))
+        ≡⟨ cong (g ·ˡᵐ (u +ⱽ v) +ⱽ_)
+                (sym (f[u+v]≡f[u]+f[v] h ((- 1ᶠ) ∘ⱽ u) ((- 1ᶠ) ∘ⱽ v))) ⟩
+          g ·ˡᵐ (u +ⱽ v) +ⱽ (h ·ˡᵐ ((- 1ᶠ) ∘ⱽ u +ⱽ (- 1ᶠ) ∘ⱽ v))
+        ≡⟨ +ˡᵐ-linearity g h u v ((- 1ᶠ) ∘ⱽ u) ((- 1ᶠ) ∘ⱽ v) ⟩
+          g ·ˡᵐ u +ⱽ h ·ˡᵐ ((- 1ᶠ) ∘ⱽ u) +ⱽ (g ·ˡᵐ v +ⱽ h ·ˡᵐ ((- 1ᶠ) ∘ⱽ v))
+        ≡⟨ cong₂ (λ x y → g ·ˡᵐ u +ⱽ x +ⱽ (g ·ˡᵐ v +ⱽ y))
+          (trans (f[c*v]≡c*f[v] h ((- 1ᶠ)) u) (sym (-ⱽ≡-1ᶠ∘ⱽ (h ·ˡᵐ u))))
+          (trans (f[c*v]≡c*f[v] h ((- 1ᶠ)) v) (sym (-ⱽ≡-1ᶠ∘ⱽ (h ·ˡᵐ v)))) ⟩
+          g ·ˡᵐ u -ⱽ h ·ˡᵐ u +ⱽ (g ·ˡᵐ v -ⱽ h ·ˡᵐ v)
+        ∎
 
       f[c*v]≡c*f[v]' : (g h : m ⊸ n) → (c : A) (v : Vec A m)
-                     → g ·ˡᵐ (c ∘ⱽ v) +ⱽ h ·ˡᵐ (c ∘ⱽ v) ≡
-                        c ∘ⱽ (g ·ˡᵐ v +ⱽ h ·ˡᵐ v)
-      f[c*v]≡c*f[v]' g h c v rewrite
-          f[c*v]≡c*f[v] g c v
-        | f[c*v]≡c*f[v] h c v
-        | sym (∘ⱽ-distr-+ⱽ c (g ·ˡᵐ v) (h ·ˡᵐ v))
-        = refl
+                     → g ·ˡᵐ (c ∘ⱽ v) -ⱽ h ·ˡᵐ (c ∘ⱽ v) ≡
+                        c ∘ⱽ (g ·ˡᵐ v -ⱽ h ·ˡᵐ v)
+      f[c*v]≡c*f[v]' g h c v = begin
+          g ·ˡᵐ (c ∘ⱽ v) -ⱽ h ·ˡᵐ (c ∘ⱽ v)
+        ≡⟨ cong (g ·ˡᵐ (c ∘ⱽ v) +ⱽ_)
+          (trans (-ⱽ≡-1ᶠ∘ⱽ (h ·ˡᵐ (c ∘ⱽ v)))
+                 (sym (f[c*v]≡c*f[v] h (- 1ᶠ) (c ∘ⱽ v)))) ⟩
+          g ·ˡᵐ (c ∘ⱽ v) +ⱽ h ·ˡᵐ ((- 1ᶠ) ∘ⱽ (c ∘ⱽ v))
+        ≡⟨ cong (λ x → g ·ˡᵐ (c ∘ⱽ v) +ⱽ h ·ˡᵐ x) (∘ⱽ-comm (- 1ᶠ) c v) ⟩
+          g ·ˡᵐ (c ∘ⱽ v) +ⱽ h ·ˡᵐ (c ∘ⱽ ((- 1ᶠ) ∘ⱽ v))
+        ≡⟨ +-homogeneity g h c v ((- 1ᶠ) ∘ⱽ v) ⟩
+          c ∘ⱽ (g ·ˡᵐ v +ⱽ h ·ˡᵐ ((- 1ᶠ) ∘ⱽ v))
+        ≡⟨ cong (λ x → c ∘ⱽ (g ·ˡᵐ v +ⱽ x))
+                (trans (f[c*v]≡c*f[v] h (- 1ᶠ) v) (sym (-ⱽ≡-1ᶠ∘ⱽ (h ·ˡᵐ v)))) ⟩
+          c ∘ⱽ (g ·ˡᵐ v -ⱽ h ·ˡᵐ v)
+        ∎
 
   _*ˡᵐ_ : n ⊸ p → m ⊸ n → m ⊸ p
   g *ˡᵐ h = record
@@ -266,6 +318,7 @@ module _ ⦃ F : Field A ⦄ where
   infixl 3 _|ˡᵐ_
   infixl 4 _/ˡᵐ_
   infixl 6 _+ˡᵐ_
+  infixl 6 _-ˡᵐ_
   infixl 7 _*ˡᵐ_
   infixl 10 _∘ˡᵐ_
 

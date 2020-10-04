@@ -216,7 +216,7 @@ module _ ⦃ F : Field A ⦄ where
   infixl 4 _/ᴹ_
   infixl 6 _+ᴹ_
   infixl 7 _*ᴹ_
-  infixl 10 _∘ᴹ_ 
+  infixl 10 _∘ᴹ_
 
 
 -- Matrix Free Operators ------------------------------------------------------

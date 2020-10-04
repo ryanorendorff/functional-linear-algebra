@@ -55,6 +55,14 @@ module _ ⦃ F : Field A ⦄ where
       map -_ ((a ∷ as) *ⱽ (v ∷ vs))
     ∎
 
+  -ⱽ≡-1ᶠ∘ⱽ : (v : Vec A n) → map -_ v ≡ (- 1ᶠ) ∘ⱽ v
+  -ⱽ≡-1ᶠ∘ⱽ [] = refl
+  -ⱽ≡-1ᶠ∘ⱽ (v ∷ vs) = begin
+      map -_ (v ∷ vs)           ≡⟨⟩
+      (- v) ∷ map -_ vs         ≡⟨ cong₂ (_∷_) (-a≡-1ᶠ*a v) (-ⱽ≡-1ᶠ∘ⱽ vs) ⟩
+      (- 1ᶠ * v) ∷ (- 1ᶠ) ∘ⱽ vs ≡⟨⟩
+      (- 1ᶠ) ∘ⱽ (v ∷ vs)        ∎
+
   *ⱽ-assoc : (v₁ v₂ v₃ : Vec A n)
            → v₁ *ⱽ v₂ *ⱽ v₃ ≡ v₁ *ⱽ (v₂ *ⱽ v₃)
   *ⱽ-assoc [] [] [] = refl
