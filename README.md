@@ -12,7 +12,9 @@ functions (matrix vector multiply `M` and matrix transpose vector multiply
 - Each function respects linearity and homogeneity. 
   - Linearity: `(u v : Vec A m) → f (u +ⱽ v) ≡ f u +ⱽ f v`
   - Homogeneity: `(c : A) → (v : Vec A m) → f (c ∘ⱽ v) ≡ c ∘ⱽ (f v)`
-- The pair of functions must form a valid inner product: `(x : Vec A m) → (y : Vec A n) → ⟨ x , M ·ˡᵐ y ⟩ ≡ ⟨ y , Mᵀ ·ˡᵐ x ⟩`.
+- The pair of functions must form a valid inner product:
+
+  `(x : Vec A m) → (y : Vec A n) → ⟨ x , M ·ˡᵐ y ⟩ ≡ ⟨ y , Mᵀ ·ˡᵐ x ⟩`.
 
 This library is based off the following previous implementations of the idea.
 
