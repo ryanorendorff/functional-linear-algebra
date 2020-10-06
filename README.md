@@ -61,7 +61,7 @@ be found in the [Agda section of the nixpkgs manual][nixpkgs-agda].
 <!-- Other material related to this project on my github -->
 [PyOp]: https://github.com/ryanorendorff/pyop
 [convex]: https://github.com/ryanorendorff/convex
-[presentation]: https://github.com/ryanorendorff/lc-2020-linear-algebra-agda)
+[presentation]: https://github.com/ryanorendorff/lc-2020-linear-algebra-agda
 
 <!-- References -->
 [agda-mode]: https://agda.readthedocs.io/en/v2.6.1/tools/emacs-mode.html
