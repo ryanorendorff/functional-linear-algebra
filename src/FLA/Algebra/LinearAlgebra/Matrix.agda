@@ -86,6 +86,26 @@ module _ ⦃ F : Field A ⦄ where
             ⟨ y , (M₁ᵀ +ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
         ∎
 
+  _-ᴹ_ : Mat m × n → Mat m × n → Mat m × n
+  ⟦ M₁ , M₁ᵀ , p₁ ⟧ -ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
+    ⟦ M₁ -ˡᵐ M₂
+    , M₁ᵀ -ˡᵐ M₂ᵀ
+    , ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ p₁ p₂
+    ⟧
+    where
+      ⟨⟩-proof : (M₁ M₂ : n ⊸ m) (M₁ᵀ M₂ᵀ : m ⊸ n)
+               → (M₁-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
+                               → ⟨ x , M₁ ·ˡᵐ y ⟩ ≡ ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ )
+               → (M₂-⟨⟩-proof : (x : Vec A m) (y : Vec A n)
+                               → ⟨ x , M₂ ·ˡᵐ y ⟩ ≡ ⟨ y , M₂ᵀ ·ˡᵐ x ⟩ )
+               → (x : Vec A m) (y : Vec A n)
+               → ⟨ x , (M₁ -ˡᵐ M₂) ·ˡᵐ y ⟩ ≡ ⟨ y , (M₁ᵀ -ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
+      ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ M₁-proof M₂-proof x y = begin
+          ⟨ x , (M₁ -ˡᵐ M₂) ·ˡᵐ y ⟩
+        ≡⟨ {!!} ⟩
+          ⟨ y , (M₁ᵀ -ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
+        ∎
+
   _*ᴹ_ : Mat m × n → Mat n × p → Mat m × p
   ⟦ M₁ , M₁ᵀ , p₁ ⟧ *ᴹ ⟦ M₂ , M₂ᵀ , p₂ ⟧ =
     ⟦ M₁ *ˡᵐ M₂
@@ -215,6 +235,7 @@ module _ ⦃ F : Field A ⦄ where
   infixl 3 _|ᴹ_
   infixl 4 _/ᴹ_
   infixl 6 _+ᴹ_
+  infixl 6 _-ᴹ_
   infixl 7 _*ᴹ_
   infixl 10 _∘ᴹ_
 
