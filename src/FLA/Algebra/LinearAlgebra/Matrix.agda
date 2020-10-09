@@ -78,9 +78,7 @@ module _ ⦃ F : Field A ⦄ where
             ⟨ x , M₁ ·ˡᵐ y +ⱽ M₂ ·ˡᵐ y ⟩
           ≡⟨ ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x (M₁ ·ˡᵐ y) (M₂ ·ˡᵐ y) ⟩
             ⟨ x , M₁ ·ˡᵐ y ⟩ + ⟨ x , M₂ ·ˡᵐ y ⟩
-          ≡⟨ cong (_+ ⟨ x , M₂ ·ˡᵐ y ⟩) (M₁-proof x y) ⟩
-            ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + ⟨ x , M₂ ·ˡᵐ y ⟩
-          ≡⟨ cong (⟨ y , M₁ᵀ ·ˡᵐ x ⟩ +_) (M₂-proof x y) ⟩
+          ≡⟨ cong₂ _+_ (M₁-proof x y) (M₂-proof x y) ⟩
             ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + ⟨ y , M₂ᵀ ·ˡᵐ x ⟩
           ≡⟨ sym (⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ y (M₁ᵀ ·ˡᵐ x) (M₂ᵀ ·ˡᵐ x)) ⟩
             ⟨ y , (M₁ᵀ +ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
@@ -102,7 +100,30 @@ module _ ⦃ F : Field A ⦄ where
                → ⟨ x , (M₁ -ˡᵐ M₂) ·ˡᵐ y ⟩ ≡ ⟨ y , (M₁ᵀ -ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
       ⟨⟩-proof M₁ M₂ M₁ᵀ M₂ᵀ M₁-proof M₂-proof x y = begin
           ⟨ x , (M₁ -ˡᵐ M₂) ·ˡᵐ y ⟩
-        ≡⟨ {!!} ⟩
+        ≡⟨⟩
+          ⟨ x , M₁ ·ˡᵐ y -ⱽ M₂ ·ˡᵐ y ⟩
+        ≡⟨ cong (λ a → ⟨ x , M₁ ·ˡᵐ y +ⱽ a ⟩) (-ⱽ≡-1ᶠ∘ⱽ (M₂ ·ˡᵐ y)) ⟩
+          ⟨ x , M₁ ·ˡᵐ y +ⱽ (- 1ᶠ) ∘ⱽ M₂ ·ˡᵐ y ⟩
+        ≡⟨ ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ x (M₁ ·ˡᵐ y) ((- 1ᶠ) ∘ⱽ M₂ ·ˡᵐ y) ⟩
+          ⟨ x , M₁ ·ˡᵐ y ⟩ + ⟨ x , (- 1ᶠ) ∘ⱽ M₂ ·ˡᵐ y ⟩
+        ≡⟨ cong (λ a → ⟨ x , M₁ ·ˡᵐ y ⟩ + ⟨ x , a ⟩ )
+                (sym (f[c*v]≡c*f[v] M₂ (- 1ᶠ) y)) ⟩
+          ⟨ x , M₁ ·ˡᵐ y ⟩ + ⟨ x , (M₂ ·ˡᵐ ((- 1ᶠ) ∘ⱽ y)) ⟩
+        ≡⟨ cong₂ _+_ (M₁-proof x y) (M₂-proof x ((- 1ᶠ) ∘ⱽ y)) ⟩
+          ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + ⟨ (- 1ᶠ) ∘ⱽ y , M₂ᵀ ·ˡᵐ x ⟩
+        ≡⟨⟩
+          ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + sum ( ((- 1ᶠ) ∘ⱽ y) *ⱽ M₂ᵀ ·ˡᵐ x )
+        ≡⟨ cong (λ a → ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + sum a)
+                (sym (∘ⱽ*ⱽ-assoc (- 1ᶠ) y (M₂ᵀ ·ˡᵐ x))) ⟩
+          ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + sum ((- 1ᶠ) ∘ⱽ (y *ⱽ M₂ᵀ ·ˡᵐ x))
+        ≡⟨ cong (λ a → ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + sum a)
+                (sym (*ⱽ∘ⱽ≡∘ⱽ*ⱽ (- 1ᶠ) y (M₂ᵀ ·ˡᵐ x))) ⟩
+          ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + sum (y *ⱽ ((- 1ᶠ) ∘ⱽ M₂ᵀ ·ˡᵐ x))
+        ≡⟨⟩
+          ⟨ y , M₁ᵀ ·ˡᵐ x ⟩ + ⟨ y , (- 1ᶠ) ∘ⱽ M₂ᵀ ·ˡᵐ x ⟩
+        ≡˘⟨ ⟨x,y+z⟩≡⟨x,y⟩+⟨x,z⟩ y (M₁ᵀ ·ˡᵐ x) ((- 1ᶠ) ∘ⱽ M₂ᵀ ·ˡᵐ x) ⟩
+          ⟨ y , M₁ᵀ ·ˡᵐ x +ⱽ (- 1ᶠ) ∘ⱽ M₂ᵀ ·ˡᵐ x ⟩
+        ≡˘⟨ cong (λ a → ⟨ y , M₁ᵀ ·ˡᵐ x +ⱽ a ⟩) (-ⱽ≡-1ᶠ∘ⱽ (M₂ᵀ ·ˡᵐ x)) ⟩
           ⟨ y , (M₁ᵀ -ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
         ∎
 
