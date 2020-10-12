@@ -6,7 +6,7 @@ open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 
 open import Data.Nat using (ℕ)
-open import Data.Vec using (Vec; []; _∷_; _++_; foldr; map)
+open import Data.Vec using (Vec; []; _∷_; _++_; foldr; map; replicate)
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
@@ -38,6 +38,13 @@ module _ ⦃ F : Field A ⦄ where
       x₁ + x₂ ∷ vs₁ +ⱽ vs₂ ≡⟨ cong ((x₁ + x₂) ∷_) (+ⱽ-comm vs₁ vs₂) ⟩
       x₁ + x₂ ∷ vs₂ +ⱽ vs₁ ≡⟨ cong (_∷ vs₂ +ⱽ vs₁) (+-comm x₁ x₂) ⟩
       x₂ + x₁ ∷ vs₂ +ⱽ vs₁ ∎
+
+  v+0ᶠⱽ≡v : (v : Vec A n) → v +ⱽ (replicate 0ᶠ) ≡ v
+  v+0ᶠⱽ≡v [] = refl
+  v+0ᶠⱽ≡v (v ∷ vs) = cong₂ _∷_ (+-0 v) (v+0ᶠⱽ≡v vs)
+
+  0ᶠⱽ+v≡v : (v : Vec A n) → (replicate 0ᶠ) +ⱽ v ≡ v
+  0ᶠⱽ+v≡v v = trans (+ⱽ-comm (replicate 0ᶠ) v) (v+0ᶠⱽ≡v v)
 
   -- This should work for any linear function (I think), instead of just -_,
   *ⱽ-map--ⱽ : (a v : Vec A n)

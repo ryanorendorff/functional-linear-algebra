@@ -9,7 +9,8 @@ open ≡-Reasoning
 
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 open import Data.Nat.Properties
-open import Data.Vec using (Vec; _++_; take; drop; map)
+open import Data.Vec using (Vec; []; _∷_; _++_; take; drop; map; replicate)
+open import Data.Vec.Properties
 
 open import Function using (id)
 
@@ -326,6 +327,8 @@ module _ ⦃ F : Field A ⦄ where
 -- Example LinearMap values ---------------------------------------------------
 
 module _ ⦃ F : Field A ⦄ where
+  open Field F
+
   idₗₘ : n ⊸ n
   idₗₘ = record
     { f = id
@@ -339,3 +342,32 @@ module _ ⦃ F : Field A ⦄ where
     ; f[u+v]≡f[u]+f[v] = *ⱽ-distr-+ⱽ d
     ; f[c*v]≡c*f[v] = λ c v → *ⱽ∘ⱽ≡∘ⱽ*ⱽ c d v
     }
+
+  allones : n ⊸ m
+  allones = record
+    { f = λ v → replicate (sum v)
+    ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]
+    ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]
+    }
+    where
+      f[u+v]≡f[u]+f[v] : (u v : Vec A n)
+                       → replicate (sum (u +ⱽ v)) ≡
+                          replicate (sum u) +ⱽ replicate (sum v)
+      f[u+v]≡f[u]+f[v] [] [] = sym (v+0ᶠⱽ≡v (replicate 0ᶠ))
+      f[u+v]≡f[u]+f[v] (u ∷ us) (v ∷ vs) = begin
+          replicate (sum ((u ∷ us) +ⱽ (v ∷ vs)))
+        ≡⟨⟩
+          replicate ((u + v) + (sum (us +ⱽ vs)))
+        ≡⟨ {!!} ⟩ -- Need to prove replicate (u + v) ≡ replicate u +ⱽ replicate v
+                  -- And then use sum-distr-+ⱽ
+                  -- And then I don't need to do this by induction
+          replicate (u + v) +ⱽ replicate (sum (us +ⱽ vs))
+        ≡⟨ {!!} ⟩
+          replicate u +ⱽ replicate v +ⱽ replicate (sum us) +ⱽ replicate (sum vs)
+        ≡⟨ {!!} ⟩
+          replicate (sum (u ∷ us)) +ⱽ replicate (sum (v ∷ vs))
+        ∎
+
+      f[c*v]≡c*f[v] : (c : A) (v : Vec A n)
+                    → replicate (sum (c ∘ⱽ v)) ≡ c ∘ⱽ replicate (sum v)
+      f[c*v]≡c*f[v] c v = {!!}
