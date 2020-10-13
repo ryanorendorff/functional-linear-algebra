@@ -6,7 +6,7 @@ open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 
 open import Data.Nat using (ℕ)
-open import Data.Vec using (Vec; foldr; zipWith; map; replicate)
+open import Data.Vec using (Vec; foldr; zipWith; map)
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
