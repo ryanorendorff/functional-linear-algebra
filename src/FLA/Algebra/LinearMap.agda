@@ -9,7 +9,7 @@ open ≡-Reasoning
 
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 open import Data.Nat.Properties
-open import Data.Vec using (Vec; _++_; take; drop; map)
+open import Data.Vec using (Vec; []; _∷_; _++_; take; drop; map; replicate)
 
 open import Function using (id)
 
@@ -326,6 +326,8 @@ module _ ⦃ F : Field A ⦄ where
 -- Example LinearMap values ---------------------------------------------------
 
 module _ ⦃ F : Field A ⦄ where
+  open Field F
+
   idₗₘ : n ⊸ n
   idₗₘ = record
     { f = id
@@ -339,3 +341,25 @@ module _ ⦃ F : Field A ⦄ where
     ; f[u+v]≡f[u]+f[v] = *ⱽ-distr-+ⱽ d
     ; f[c*v]≡c*f[v] = λ c v → *ⱽ∘ⱽ≡∘ⱽ*ⱽ c d v
     }
+
+  allones : n ⊸ m
+  allones = record
+    { f = λ v → replicate (sum v)
+    ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]
+    ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]
+    }
+    where
+      f[u+v]≡f[u]+f[v] : (u v : Vec A n)
+                       → replicate (sum (u +ⱽ v)) ≡
+                          replicate (sum u) +ⱽ replicate (sum v)
+      f[u+v]≡f[u]+f[v] u v = begin
+        replicate (sum (u +ⱽ v))      ≡⟨ cong replicate (sum-distr-+ⱽ u v) ⟩
+        replicate ((sum u) + (sum v)) ≡⟨ replicate-distr-+ (sum u) (sum v) ⟩
+        replicate (sum u) +ⱽ replicate (sum v) ∎
+
+      f[c*v]≡c*f[v] : (c : A) (v : Vec A n)
+                    → replicate (sum (c ∘ⱽ v)) ≡ c ∘ⱽ replicate (sum v)
+      f[c*v]≡c*f[v] c v = begin
+        replicate (sum (c ∘ⱽ v)) ≡⟨ cong replicate (sum[c∘ⱽv]≡c*sum[v] c v) ⟩
+        replicate (c * sum v)    ≡⟨ replicate[a*b]≡a∘ⱽreplicate[b] c (sum v) ⟩
+        c ∘ⱽ replicate (sum v)   ∎
