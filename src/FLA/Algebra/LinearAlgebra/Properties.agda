@@ -5,12 +5,14 @@ open import Level using (Level)
 open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 
-open import Data.Nat using (ℕ)
+open import Data.Nat using (ℕ; zero; suc)
 open import Data.Vec using (Vec; []; _∷_; _++_; foldr; map; replicate)
+open import Data.Vec.Properties
 
 open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
 open import FLA.Algebra.LinearAlgebra
+open import FLA.Data.Vec.Properties
 
 module FLA.Algebra.LinearAlgebra.Properties where
 
@@ -45,6 +47,10 @@ module _ ⦃ F : Field A ⦄ where
 
   0ᶠⱽ+v≡v : (v : Vec A n) → (replicate 0ᶠ) +ⱽ v ≡ v
   0ᶠⱽ+v≡v v = trans (+ⱽ-comm (replicate 0ᶠ) v) (v+0ᶠⱽ≡v v)
+
+  replicate-distr-+ : {n : ℕ} → (u v : A)
+                    → replicate {n = n} (u + v) ≡ replicate u +ⱽ replicate v
+  replicate-distr-+ u v = sym (zipWith-replicate _+_ u v)
 
   -- This should work for any linear function (I think), instead of just -_,
   *ⱽ-map--ⱽ : (a v : Vec A n)
@@ -144,9 +150,14 @@ module _ ⦃ F : Field A ⦄ where
   ∘ⱽ-distr-++ c [] b = refl
   ∘ⱽ-distr-++ c (a ∷ as) b rewrite ∘ⱽ-distr-++ c as b = refl
 
-  ⟨⟩-comm : (v₁ v₂ : Vec A n)
-          → ⟨ v₁ , v₂ ⟩ ≡ ⟨ v₂ , v₁ ⟩
-  ⟨⟩-comm v₁ v₂ = cong sum (*ⱽ-comm v₁ v₂)
+  replicate[a*b]≡a∘ⱽreplicate[b] : {n : ℕ} (a b : A) →
+                                   replicate {n = n} (a * b) ≡ a ∘ⱽ replicate b
+  replicate[a*b]≡a∘ⱽreplicate[b] {n = n} a b = sym (map-replicate (a *_) b n)
+
+  replicate[a*b]≡b∘ⱽreplicate[a] : {n : ℕ} (a b : A) →
+                                   replicate {n = n} (a * b) ≡ b ∘ⱽ replicate a
+  replicate[a*b]≡b∘ⱽreplicate[a] a b = trans (cong replicate (*-comm a b))
+                                             (replicate[a*b]≡a∘ⱽreplicate[b] b a)
 
   sum-distr-+ⱽ : (v₁ v₂ : Vec A n) → sum (v₁ +ⱽ v₂) ≡ sum v₁ + sum v₂
   sum-distr-+ⱽ [] [] = sym (0ᶠ+0ᶠ≡0ᶠ)
@@ -158,6 +169,19 @@ module _ ⦃ F : Field A ⦄ where
     | +-assoc v₁ (foldr (λ v → A) _+_ 0ᶠ vs₁) v₂
     | sym (+-assoc (v₁ + (foldr (λ v → A) _+_ 0ᶠ vs₁)) v₂ (foldr (λ v → A) _+_ 0ᶠ vs₂))
     = refl
+
+  sum[c∘ⱽv]≡c*sum[v] : (c : A) (v : Vec A n) → sum (c ∘ⱽ v) ≡ c * sum v
+  sum[c∘ⱽv]≡c*sum[v] c [] = sym (a*0ᶠ≡0 c)
+  sum[c∘ⱽv]≡c*sum[v] c (v ∷ vs) = begin
+      sum (c ∘ⱽ (v ∷ vs))   ≡⟨⟩
+      c * v + sum (c ∘ⱽ vs) ≡⟨ cong (c * v +_) (sum[c∘ⱽv]≡c*sum[v] c vs) ⟩
+      c * v + c * sum vs    ≡⟨ sym (*-distr-+ c v (sum vs)) ⟩
+      c * (v + sum vs)      ≡⟨⟩
+      c * sum (v ∷ vs)      ∎
+
+  ⟨⟩-comm : (v₁ v₂ : Vec A n)
+          → ⟨ v₁ , v₂ ⟩ ≡ ⟨ v₂ , v₁ ⟩
+  ⟨⟩-comm v₁ v₂ = cong sum (*ⱽ-comm v₁ v₂)
 
   -- Should we show bilinearity?
   --   ∀ λ ∈ F, B(λv, w) ≡ B(v, λw) ≡ λB(v, w)

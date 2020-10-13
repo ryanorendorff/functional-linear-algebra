@@ -353,21 +353,14 @@ module _ ⦃ F : Field A ⦄ where
       f[u+v]≡f[u]+f[v] : (u v : Vec A n)
                        → replicate (sum (u +ⱽ v)) ≡
                           replicate (sum u) +ⱽ replicate (sum v)
-      f[u+v]≡f[u]+f[v] [] [] = sym (v+0ᶠⱽ≡v (replicate 0ᶠ))
-      f[u+v]≡f[u]+f[v] (u ∷ us) (v ∷ vs) = begin
-          replicate (sum ((u ∷ us) +ⱽ (v ∷ vs)))
-        ≡⟨⟩
-          replicate ((u + v) + (sum (us +ⱽ vs)))
-        ≡⟨ {!!} ⟩ -- Need to prove replicate (u + v) ≡ replicate u +ⱽ replicate v
-                  -- And then use sum-distr-+ⱽ
-                  -- And then I don't need to do this by induction
-          replicate (u + v) +ⱽ replicate (sum (us +ⱽ vs))
-        ≡⟨ {!!} ⟩
-          replicate u +ⱽ replicate v +ⱽ replicate (sum us) +ⱽ replicate (sum vs)
-        ≡⟨ {!!} ⟩
-          replicate (sum (u ∷ us)) +ⱽ replicate (sum (v ∷ vs))
-        ∎
+      f[u+v]≡f[u]+f[v] u v = begin
+        replicate (sum (u +ⱽ v))      ≡⟨ cong replicate (sum-distr-+ⱽ u v) ⟩
+        replicate ((sum u) + (sum v)) ≡⟨ replicate-distr-+ (sum u) (sum v) ⟩
+        replicate (sum u) +ⱽ replicate (sum v) ∎
 
       f[c*v]≡c*f[v] : (c : A) (v : Vec A n)
                     → replicate (sum (c ∘ⱽ v)) ≡ c ∘ⱽ replicate (sum v)
-      f[c*v]≡c*f[v] c v = {!!}
+      f[c*v]≡c*f[v] c v = begin
+        replicate (sum (c ∘ⱽ v)) ≡⟨ cong replicate (sum[c∘ⱽv]≡c*sum[v] c v) ⟩
+        replicate (c * sum v)    ≡⟨ replicate[a*b]≡a∘ⱽreplicate[b] c (sum v) ⟩
+        c ∘ⱽ replicate (sum v)   ∎

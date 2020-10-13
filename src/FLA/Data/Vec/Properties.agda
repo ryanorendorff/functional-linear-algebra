@@ -1,13 +1,5 @@
 {-# OPTIONS --without-K --safe #-}
 
-
--- open import Relation.Binary.HeterogeneousEquality using (_≅_; icong; ≅-to-≡)
---   renaming (refl to hrefl; cong to hcong)
--- ++-identityᵣ : (v : Vec A n) → v ++ [] ≅ v
--- ++-identityᵣ [] = hrefl
--- ++-identityᵣ {ℓ} {A} {suc n} (v ∷ vs) = icong (Vec A) (+-identityʳ n)
---                                               (v ∷_) (++-identityᵣ vs)
-
 open import Level using (Level)
 
 open import Relation.Binary.PropositionalEquality hiding (Extensionality)
@@ -17,7 +9,7 @@ open import Data.Nat using (ℕ; suc; zero; _+_)
 open import Data.Nat.Properties
 
 open import Data.Product using (_,_)
-open import Data.Vec using (Vec; foldr; zipWith; map; []; _∷_; _++_; take; drop; splitAt)
+open import Data.Vec using (Vec; foldr; zipWith; map; []; _∷_; _++_; take; drop; splitAt; replicate)
 
 module FLA.Data.Vec.Properties where
 
@@ -132,3 +124,8 @@ take-drop-id (suc m) (v ∷ vs) =
   ≡⟨ cong (v ∷_) (take-drop-id m vs) ⟩
     (v ∷ vs)
   ∎
+
+zipWith-replicate : ∀ {a b c : Level} {A : Set a} {B : Set b} {C : Set c} {n : ℕ} (_⊕_ : A → B → C) (x : A) (y : B)
+                  → zipWith {n = n} _⊕_ (replicate x) (replicate y) ≡ replicate (x ⊕ y)
+zipWith-replicate {n = zero} _⊕_ x y = refl
+zipWith-replicate {n = suc n} _⊕_ x y = cong (x ⊕ y ∷_) (zipWith-replicate _⊕_ x y)
