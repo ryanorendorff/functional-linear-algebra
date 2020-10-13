@@ -10,7 +10,6 @@ open ≡-Reasoning
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 open import Data.Nat.Properties
 open import Data.Vec using (Vec; []; _∷_; _++_; take; drop; map; replicate)
-open import Data.Vec.Properties
 
 open import Function using (id)
 
