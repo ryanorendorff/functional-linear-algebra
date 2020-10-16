@@ -1,3 +1,4 @@
+# nixpkgs unstable channel from October 15th, 2020
 import (builtins.fetchTarball {
   url =
     "https://github.com/NixOS/nixpkgs/archive/dfd0a64c1a25150092e1e6200fdc59da309466e5.tar.gz";
