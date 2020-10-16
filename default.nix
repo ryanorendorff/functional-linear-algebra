@@ -1,15 +1,8 @@
-# This package can be called with the nixpkg function
-# `agdaPackages.callPackage`, which is where the `standard-library` input comes
-# from.
-{ lib, stdenv, mkDerivation, standard-library }:
+# Since this package is already in nixpkgs, we just override the src.
+{ pkgs }:
 
-mkDerivation {
-  version = "0.1";
-  pname = "functional-linear-algebra";
-
-  buildInputs = [ standard-library ];
-
-  src = lib.sourceFilesBySuffices ./. [
+pkgs.agdaPackages.functional-linear-algebra.overrideAttrs (oldAttrs: rec {
+  src = pkgs.lib.sourceFilesBySuffices ./. [
     ".agda"
     ".lagda"
     ".lagda.md"
@@ -17,15 +10,4 @@ mkDerivation {
     ".lagda.tex"
     ".agda-lib"
   ];
-
-  meta = with stdenv.lib; {
-    homepage = "https://github.com/ryanorendorff/functional-linear-algebra";
-    description = ''
-      Formalizing linear algebra in Agda by representing matrices as functions
-      from one vector space to another.
-    '';
-    license = licenses.bsd3;
-    platforms = platforms.unix;
-    maintainers = with maintainers; [ ryanorendorff ];
-  };
-}
+})
