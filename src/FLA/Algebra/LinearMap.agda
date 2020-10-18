@@ -342,8 +342,8 @@ module _ ⦃ F : Field A ⦄ where
     ; f[c*v]≡c*f[v] = λ c v → *ⱽ∘ⱽ≡∘ⱽ*ⱽ c d v
     }
 
-  allones : n ⊸ m
-  allones = record
+  allonesₗₘ : n ⊸ m
+  allonesₗₘ = record
     { f = λ v → replicate (sum v)
     ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]
     ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]

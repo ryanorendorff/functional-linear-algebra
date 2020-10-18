@@ -3,7 +3,7 @@
 open import Level using (Level)
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 
-open import Data.Vec using (Vec; _++_; take; drop)
+open import Data.Vec using (Vec; []; _∷_; _++_; take; drop; replicate; map)
 open import Data.Vec.Properties
 
 open import Relation.Binary.PropositionalEquality
@@ -289,3 +289,29 @@ module _ ⦃ F : Field A ⦄ where
           sum ((y *ⱽ d) *ⱽ x)    ≡⟨ cong sum (*ⱽ-assoc y d x) ⟩
           sum (y *ⱽ (d *ⱽ x))    ≡⟨⟩
           ⟨ y , diagₗₘ d ·ˡᵐ x ⟩ ∎
+
+  allones : Mat m × n
+  allones = ⟦ allonesₗₘ , allonesₗₘ , allones-transpose  ⟧
+    where
+      allones-transpose : (x : Vec A m) (y : Vec A n)
+                        → ⟨ x , allonesₗₘ ·ˡᵐ y ⟩ ≡ ⟨ y , allonesₗₘ ·ˡᵐ x ⟩
+      allones-transpose x y = begin
+          ⟨ x , allonesₗₘ ·ˡᵐ y ⟩
+        ≡⟨⟩
+          sum (x *ⱽ replicate (sum y))
+        ≡⟨ cong sum (zipWith-replicate₂ _*_ x (sum y)) ⟩
+          sum (map (_* sum y) x)
+        ≡⟨ {!!} ⟩
+          sum (map (_* sum x) y)
+        ≡˘⟨ cong sum (zipWith-replicate₂ _*_ y (sum x)) ⟩
+          sum (y *ⱽ replicate (sum x))
+        ≡⟨⟩
+          ⟨ y , allonesₗₘ ·ˡᵐ x ⟩
+        ∎
+
+  something : (x : Vec A m) (y : Vec A n)
+            → sum (map (_* sum y) x) ≡ sum (map (_* sum x) y)
+  something [] [] = refl
+  something [] (y ∷ ys) rewrite a*0ᶠ≡0ᶠ y | 0ᶠ+ (sum (map (_* 0ᶠ) ys)) = {!!}
+  something (x ∷ xs) [] = {!!}
+  something (x ∷ xs) (y ∷ ys) = {!!}
