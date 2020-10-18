@@ -28,6 +28,9 @@ a*0ᶠ≡0ᶠ a = begin
   - a + a                 ≡⟨ +-inv a ⟩
   0ᶠ                      ∎
 
+0ᶠ*a≡0ᶠ : (a : A) → 0ᶠ * a ≡ 0ᶠ
+0ᶠ*a≡0ᶠ a = trans (*-comm 0ᶠ a) (a*0ᶠ≡0ᶠ a)
+
 -a≡-1ᶠ*a : (a : A) → - a ≡ - 1ᶠ * a
 -a≡-1ᶠ*a a = begin
   - a                        ≡˘⟨ +0ᶠ (- a) ⟩
