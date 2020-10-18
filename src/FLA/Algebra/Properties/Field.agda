@@ -10,35 +10,35 @@ module FLA.Algebra.Properties.Field {ℓ : Level } {A : Set ℓ} ⦃ F : Field A
 open Field F
 
 0ᶠ+0ᶠ≡0ᶠ : 0ᶠ + 0ᶠ ≡ 0ᶠ
-0ᶠ+0ᶠ≡0ᶠ = +-0 0ᶠ
+0ᶠ+0ᶠ≡0ᶠ = +0ᶠ 0ᶠ
 
-0-+ : (a : A) → 0ᶠ + a ≡ a
-0-+ a rewrite +-comm 0ᶠ a = +-0 a
+0ᶠ+ : (a : A) → 0ᶠ + a ≡ a
+0ᶠ+ a rewrite +-comm 0ᶠ a = +0ᶠ a
 
 
-a*0ᶠ≡0 : (a : A) → a * 0ᶠ ≡ 0ᶠ
-a*0ᶠ≡0 a = begin
-  a * 0ᶠ                  ≡˘⟨ 0-+ (a * 0ᶠ) ⟩
+a*0ᶠ≡0ᶠ : (a : A) → a * 0ᶠ ≡ 0ᶠ
+a*0ᶠ≡0ᶠ a = begin
+  a * 0ᶠ                  ≡˘⟨ 0ᶠ+ (a * 0ᶠ) ⟩
   0ᶠ + a * 0ᶠ             ≡⟨ cong (_+ a * 0ᶠ) (sym (+-inv a)) ⟩
-  - a + a + a * 0ᶠ        ≡⟨ cong (λ x → - a + x + a * 0ᶠ) (sym (*-1 a)) ⟩
+  - a + a + a * 0ᶠ        ≡⟨ cong (λ x → - a + x + a * 0ᶠ) (sym (*1ᶠ a)) ⟩
   - a + a * 1ᶠ + a * 0ᶠ   ≡˘⟨ +-assoc (- a) (a * 1ᶠ) (a * 0ᶠ) ⟩
   - a + (a * 1ᶠ + a * 0ᶠ) ≡⟨ cong (- a +_) (sym (*-distr-+ a 1ᶠ 0ᶠ)) ⟩
-  - a + (a * (1ᶠ + 0ᶠ))   ≡⟨ cong (λ x → - a + (a * x)) (+-0 1ᶠ) ⟩
-  - a + (a * 1ᶠ)          ≡⟨ cong (- a +_) (*-1 a) ⟩
+  - a + (a * (1ᶠ + 0ᶠ))   ≡⟨ cong (λ x → - a + (a * x)) (+0ᶠ 1ᶠ) ⟩
+  - a + (a * 1ᶠ)          ≡⟨ cong (- a +_) (*1ᶠ a) ⟩
   - a + a                 ≡⟨ +-inv a ⟩
   0ᶠ                      ∎
 
 -a≡-1ᶠ*a : (a : A) → - a ≡ - 1ᶠ * a
 -a≡-1ᶠ*a a = begin
-  - a                        ≡˘⟨ +-0 (- a) ⟩
-  - a + 0ᶠ                   ≡⟨ cong (- a +_) (sym (a*0ᶠ≡0 a)) ⟩
+  - a                        ≡˘⟨ +0ᶠ (- a) ⟩
+  - a + 0ᶠ                   ≡⟨ cong (- a +_) (sym (a*0ᶠ≡0ᶠ a)) ⟩
   - a + (a * 0ᶠ)             ≡⟨ cong (λ x → - a + (a * x)) (sym (+-inv 1ᶠ)) ⟩
   - a + (a * (- 1ᶠ + 1ᶠ))    ≡⟨ cong (- a +_) (*-distr-+ a (- 1ᶠ) 1ᶠ) ⟩
   - a + (a * - 1ᶠ + a * 1ᶠ)  ≡⟨ cong (- a +_) (+-comm (a * - 1ᶠ) (a * 1ᶠ)) ⟩
   - a + (a * 1ᶠ + a * - 1ᶠ ) ≡⟨ +-assoc (- a) (a * 1ᶠ) (a * - 1ᶠ) ⟩
-  - a + a * 1ᶠ + a * - 1ᶠ    ≡⟨ cong (λ x → - a + x + a * - 1ᶠ) (*-1 a) ⟩
+  - a + a * 1ᶠ + a * - 1ᶠ    ≡⟨ cong (λ x → - a + x + a * - 1ᶠ) (*1ᶠ a) ⟩
   - a + a + a * - 1ᶠ         ≡⟨ cong (_+ a * - 1ᶠ) (+-inv a) ⟩
-  0ᶠ + a * - 1ᶠ              ≡⟨ 0-+ (a * - 1ᶠ) ⟩
+  0ᶠ + a * - 1ᶠ              ≡⟨ 0ᶠ+ (a * - 1ᶠ) ⟩
   a * - 1ᶠ                   ≡⟨ *-comm a (- 1ᶠ) ⟩
   - 1ᶠ * a                   ∎
 

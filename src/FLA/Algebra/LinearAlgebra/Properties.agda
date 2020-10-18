@@ -43,7 +43,7 @@ module _ ⦃ F : Field A ⦄ where
 
   v+0ᶠⱽ≡v : (v : Vec A n) → v +ⱽ (replicate 0ᶠ) ≡ v
   v+0ᶠⱽ≡v [] = refl
-  v+0ᶠⱽ≡v (v ∷ vs) = cong₂ _∷_ (+-0 v) (v+0ᶠⱽ≡v vs)
+  v+0ᶠⱽ≡v (v ∷ vs) = cong₂ _∷_ (+0ᶠ v) (v+0ᶠⱽ≡v vs)
 
   0ᶠⱽ+v≡v : (v : Vec A n) → (replicate 0ᶠ) +ⱽ v ≡ v
   0ᶠⱽ+v≡v v = trans (+ⱽ-comm (replicate 0ᶠ) v) (v+0ᶠⱽ≡v v)
@@ -171,7 +171,7 @@ module _ ⦃ F : Field A ⦄ where
     = refl
 
   sum[c∘ⱽv]≡c*sum[v] : (c : A) (v : Vec A n) → sum (c ∘ⱽ v) ≡ c * sum v
-  sum[c∘ⱽv]≡c*sum[v] c [] = sym (a*0ᶠ≡0 c)
+  sum[c∘ⱽv]≡c*sum[v] c [] = sym (a*0ᶠ≡0ᶠ c)
   sum[c∘ⱽv]≡c*sum[v] c (v ∷ vs) = begin
       sum (c ∘ⱽ (v ∷ vs))   ≡⟨⟩
       c * v + sum (c ∘ⱽ vs) ≡⟨ cong (c * v +_) (sum[c∘ⱽv]≡c*sum[v] c vs) ⟩
@@ -219,7 +219,7 @@ module _ ⦃ F : Field A ⦄ where
 
   ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ : (a : Vec A m) → (b : Vec A n) → (c : Vec A m) → (d : Vec A n)
                           → ⟨ a ++ b , c ++ d ⟩ ≡ ⟨ a , c ⟩ + ⟨ b ,  d ⟩
-  ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ [] b [] d rewrite 0-+ (⟨ b , d ⟩) = refl
+  ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ [] b [] d rewrite 0ᶠ+ (⟨ b , d ⟩) = refl
   ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ (a ∷ as) b (c ∷ cs) d =
     begin
         ⟨ a ∷ as ++ b , c ∷ cs ++ d ⟩
