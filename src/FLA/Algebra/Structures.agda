@@ -32,11 +32,11 @@ record Field (A : Set ℓ) : Set ℓ where
 
     +-assoc   : (a b c : A) → a + (b + c) ≡ (a + b) + c
     +-comm    : (a b : A)   → a + b ≡ b + a
-    +-0       : (a : A)     → a + 0ᶠ ≡ a
+    +0ᶠ       : (a : A)     → a + 0ᶠ ≡ a
     +-inv     : (a : A)     → - a + a ≡ 0ᶠ
     *-assoc   : (a b c : A) → a * (b * c) ≡ (a * b) * c
     *-comm    : (a b : A)   → a * b ≡ b * a
-    *-1       : (a : A)     → a * 1ᶠ ≡ a
+    *1ᶠ       : (a : A)     → a * 1ᶠ ≡ a
     *-inv     : (a : A)     → (a ≢ 0ᶠ) → a ⁻¹ * a ≡ 1ᶠ
     *-distr-+ : (a b c : A) → a * (b + c) ≡ a * b + a * c
 
