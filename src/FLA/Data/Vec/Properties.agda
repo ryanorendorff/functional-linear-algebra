@@ -24,17 +24,6 @@ private
 
 
 -------------------------------------------------------------------------------
---                               zipWith proofs                              --
--------------------------------------------------------------------------------
-
-zipWith-comm : (f : A → A → A) → (f-comm : (a b : A) → f a b ≡ f b a)
-             → (x y : Vec A n) → zipWith f x y ≡ zipWith f y x
-zipWith-comm f f-comm [] [] = refl
-zipWith-comm f f-comm (x ∷ xs) (y ∷ ys) rewrite
-    zipWith-comm f f-comm xs ys
-  | f-comm x y = refl
-
--------------------------------------------------------------------------------
 --                              take/drop proofs                             --
 -------------------------------------------------------------------------------
 

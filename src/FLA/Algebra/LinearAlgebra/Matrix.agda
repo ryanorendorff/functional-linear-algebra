@@ -4,6 +4,7 @@ open import Level using (Level)
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 
 open import Data.Vec using (Vec; _++_; take; drop)
+open import Data.Vec.Properties
 
 open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
@@ -272,7 +273,7 @@ module _ ⦃ F : Field A ⦄ where
       id-transpose : (x y : Vec A n)
                    → ⟨ x , id y ⟩ ≡ ⟨ y , id x ⟩
       id-transpose x y rewrite
-          zipWith-comm (_*_) (*-comm) x y
+          zipWith-comm (*-comm) x y
         = refl
 
   diag : Vec A n → Mat n × n
