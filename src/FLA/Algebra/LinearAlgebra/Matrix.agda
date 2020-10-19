@@ -3,7 +3,7 @@
 open import Level using (Level)
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 
-open import Data.Vec using (Vec; _++_; take; drop)
+open import Data.Vec using (Vec; _++_; take; drop; replicate; map)
 open import Data.Vec.Properties
 
 open import Relation.Binary.PropositionalEquality
@@ -289,3 +289,22 @@ module _ ⦃ F : Field A ⦄ where
           sum ((y *ⱽ d) *ⱽ x)    ≡⟨ cong sum (*ⱽ-assoc y d x) ⟩
           sum (y *ⱽ (d *ⱽ x))    ≡⟨⟩
           ⟨ y , diagₗₘ d ·ˡᵐ x ⟩ ∎
+
+  allones : Mat m × n
+  allones = ⟦ allonesₗₘ , allonesₗₘ , allones-transpose  ⟧
+    where
+      zip-rep = zipWith-replicate₂
+
+      allones-transpose : (x : Vec A m) (y : Vec A n)
+                        → ⟨ x , allonesₗₘ ·ˡᵐ y ⟩ ≡ ⟨ y , allonesₗₘ ·ˡᵐ x ⟩
+      allones-transpose x y = begin
+          ⟨ x , allonesₗₘ ·ˡᵐ y ⟩      ≡⟨⟩
+          sum (x *ⱽ replicate (sum y)) ≡⟨ cong sum (zip-rep _*_ x (sum y)) ⟩
+          sum (map (_* sum y) x)       ≡⟨ cong sum (map-*c-≡c∘ⱽ (sum y) x) ⟩
+          sum (sum y ∘ⱽ x)             ≡⟨ sum[c∘ⱽv]≡c*sum[v] (sum y) x ⟩
+          sum y * sum x                ≡⟨ *-comm (sum y) (sum x) ⟩
+          sum x * sum y                ≡˘⟨ sum[c∘ⱽv]≡c*sum[v] (sum x) y ⟩
+          sum (sum x ∘ⱽ y)             ≡˘⟨ cong sum (map-*c-≡c∘ⱽ (sum x) y) ⟩
+          sum (map (_* sum x) y)       ≡˘⟨ cong sum (zip-rep _*_ y (sum x)) ⟩
+          sum (y *ⱽ replicate (sum x)) ≡⟨⟩
+          ⟨ y , allonesₗₘ ·ˡᵐ x ⟩      ∎

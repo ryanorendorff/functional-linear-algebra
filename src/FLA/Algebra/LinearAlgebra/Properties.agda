@@ -48,6 +48,14 @@ module _ ⦃ F : Field A ⦄ where
   0ᶠⱽ+v≡v : (v : Vec A n) → (replicate 0ᶠ) +ⱽ v ≡ v
   0ᶠⱽ+v≡v v = trans (+ⱽ-comm (replicate 0ᶠ) v) (v+0ᶠⱽ≡v v)
 
+  0ᶠ∘ⱽv≡0ᶠⱽ : (v : Vec A n) → 0ᶠ ∘ⱽ v ≡ replicate 0ᶠ
+  0ᶠ∘ⱽv≡0ᶠⱽ [] = refl
+  0ᶠ∘ⱽv≡0ᶠⱽ (v ∷ vs) = cong₂ _∷_ (0ᶠ*a≡0ᶠ v) (0ᶠ∘ⱽv≡0ᶠⱽ vs)
+
+  map-*c-≡c∘ⱽ : (c : A) (v : Vec A n) → map (_* c) v ≡ c ∘ⱽ v
+  map-*c-≡c∘ⱽ c [] = refl
+  map-*c-≡c∘ⱽ c (v ∷ vs) = cong₂ _∷_ (*-comm v c) (map-*c-≡c∘ⱽ c vs)
+
   replicate-distr-+ : {n : ℕ} → (u v : A)
                     → replicate {n = n} (u + v) ≡ replicate u +ⱽ replicate v
   replicate-distr-+ u v = sym (zipWith-replicate _+_ u v)
@@ -158,6 +166,14 @@ module _ ⦃ F : Field A ⦄ where
                                    replicate {n = n} (a * b) ≡ b ∘ⱽ replicate a
   replicate[a*b]≡b∘ⱽreplicate[a] a b = trans (cong replicate (*-comm a b))
                                              (replicate[a*b]≡a∘ⱽreplicate[b] b a)
+
+  sum[0ᶠⱽ]≡0ᶠ : {n : ℕ} → sum (replicate {n = n} 0ᶠ) ≡ 0ᶠ
+  sum[0ᶠⱽ]≡0ᶠ {n = zero} = refl
+  sum[0ᶠⱽ]≡0ᶠ {n = suc n} = begin
+      sum (0ᶠ ∷ replicate {n = n} 0ᶠ) ≡⟨⟩
+      0ᶠ + sum (replicate {n = n} 0ᶠ) ≡⟨ cong (0ᶠ +_) (sum[0ᶠⱽ]≡0ᶠ {n})  ⟩
+      0ᶠ + 0ᶠ                         ≡⟨ 0ᶠ+0ᶠ≡0ᶠ ⟩
+      0ᶠ                              ∎
 
   sum-distr-+ⱽ : (v₁ v₂ : Vec A n) → sum (v₁ +ⱽ v₂) ≡ sum v₁ + sum v₂
   sum-distr-+ⱽ [] [] = sym (0ᶠ+0ᶠ≡0ᶠ)
