@@ -1,5 +1,6 @@
 # Agda
 *.agdai
+Everything.agda
 MAlonzo/**
 
 # Nix
