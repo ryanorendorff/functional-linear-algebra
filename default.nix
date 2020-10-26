@@ -9,5 +9,12 @@ pkgs.agdaPackages.functional-linear-algebra.overrideAttrs (oldAttrs: rec {
     ".lagda.rst"
     ".lagda.tex"
     ".agda-lib"
+    "generate-everything.sh"
   ];
+
+  preConfigure = ''
+    # Find all .agda files in the src/ directory and put it in Everything.agda
+    ls
+    ./generate-everything.sh
+  '';
 })
