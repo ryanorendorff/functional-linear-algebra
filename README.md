@@ -58,6 +58,18 @@ This library can be included in other Agda packages using either the
 [nixpkgs][nixpkgs]. More details on how to package Agda with [nix][nix] can
 be found in the [Agda section of the nixpkgs manual][nixpkgs-agda].
 
+
+Want to contribute?
+-------------------
+
+If you want to learn more Agda (from a fellow Agda beginner) or have a new idea,
+please submit a pull request! I would like to get to the following at some point:
+
+1. Proving that a matrix is positive semidefinite. This should be possible by
+   using the inner product definition.
+2. Prove a transformation of an optimization problem preserves the problem
+   solution.
+
 <!-- Other material related to this project on my github -->
 [PyOp]: https://github.com/ryanorendorff/pyop
 [convex]: https://github.com/ryanorendorff/convex
