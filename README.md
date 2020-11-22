@@ -59,6 +59,15 @@ This library can be included in other Agda packages using either the
 be found in the [Agda section of the nixpkgs manual][nixpkgs-agda].
 
 
+### Cachix
+
+This library uses cachix. To use the cache, install cachix and then run
+
+```
+cachix use functional-linear-algebra
+```
+
+
 Want to contribute?
 -------------------
 
@@ -69,6 +78,7 @@ please submit a pull request! I would like to get to the following at some point
    using the inner product definition.
 2. Prove a transformation of an optimization problem preserves the problem
    solution.
+
 
 <!-- Other material related to this project on my github -->
 [PyOp]: https://github.com/ryanorendorff/pyop
