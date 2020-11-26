@@ -10,6 +10,7 @@ open import Data.Nat.Properties
 
 open import Data.Product using (_,_)
 open import Data.Vec using (Vec; foldr; zipWith; map; []; _∷_; _++_; take; drop; splitAt; replicate)
+open import Data.Vec.Properties
 
 module FLA.Data.Vec.Properties where
 
@@ -26,18 +27,6 @@ private
 -------------------------------------------------------------------------------
 --                              take/drop proofs                             --
 -------------------------------------------------------------------------------
-
--- TODO: replace with Agda stdlib 1.4 version once released.
-unfold-take : ∀ n {m} x (xs : Vec A (n + m))
-            → take (suc n) (x ∷ xs) ≡ x ∷ take n xs
-unfold-take n x xs with splitAt n xs
-unfold-take n x .(xs ++ ys) | xs , ys , refl = refl
-
--- TODO: replace with Agda stdlib 1.4 version once released.
-unfold-drop : ∀ n {m} x (xs : Vec A (n + m))
-            → drop (suc n) (x ∷ xs) ≡ drop n xs
-unfold-drop n x xs with splitAt n xs
-unfold-drop n x .(xs ++ ys) | xs , ys , refl = refl
 
 take-distr-zipWith : (f : A → B → C)
                    → (u : Vec A (m + n))
