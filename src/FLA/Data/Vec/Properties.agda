@@ -10,6 +10,7 @@ open import Data.Nat.Properties
 
 open import Data.Product using (_,_)
 open import Data.Vec using (Vec; foldr; zipWith; map; []; _∷_; _++_; take; drop; splitAt; replicate)
+open import Data.Vec.Properties
 
 module FLA.Data.Vec.Properties where
 
@@ -27,18 +28,7 @@ private
 --                              take/drop proofs                             --
 -------------------------------------------------------------------------------
 
--- TODO: replace with Agda stdlib 1.4 version once released.
-unfold-take : ∀ n {m} x (xs : Vec A (n + m))
-            → take (suc n) (x ∷ xs) ≡ x ∷ take n xs
-unfold-take n x xs with splitAt n xs
-unfold-take n x .(xs ++ ys) | xs , ys , refl = refl
-
--- TODO: replace with Agda stdlib 1.4 version once released.
-unfold-drop : ∀ n {m} x (xs : Vec A (n + m))
-            → drop (suc n) (x ∷ xs) ≡ drop n xs
-unfold-drop n x xs with splitAt n xs
-unfold-drop n x .(xs ++ ys) | xs , ys , refl = refl
-
+-- TODO: Remove with agda-stdlib 1.5. Merged upstream in that release.
 take-distr-zipWith : (f : A → B → C)
                    → (u : Vec A (m + n))
                    → (v : Vec B (m + n))
@@ -59,6 +49,7 @@ take-distr-zipWith {m = suc m} f (u ∷ us) (v ∷ vs) =
       zipWith f (take (suc m) (u ∷ us)) (take (suc m) (v ∷ vs))
   ∎
 
+-- TODO: Remove with agda-stdlib 1.5. Merged upstream in that release.
 drop-distr-zipWith : (f : A → B → C)
                    → (u : Vec A (m + n))
                    → (v : Vec B (m + n))
@@ -77,6 +68,7 @@ drop-distr-zipWith {m = suc m} f (u ∷ us) (v ∷ vs) =
       zipWith f (drop (suc m) (u ∷ us)) (drop (suc m) (v ∷ vs))
   ∎
 
+-- TODO: Remove with agda-stdlib 1.5. Merged upstream in that release.
 take-distr-map : (f : A → B) → (m : ℕ) → (v : Vec A (m + n))
                → take m (map f v) ≡ map f (take m v)
 take-distr-map f zero v = refl
@@ -89,6 +81,7 @@ take-distr-map f (suc m) (v ∷ vs) =
     map f (v ∷ take m vs)         ≡⟨ cong (map f) (sym (unfold-take m v vs)) ⟩
     map f (take (suc m) (v ∷ vs)) ∎
 
+-- TODO: Remove with agda-stdlib 1.5. Merged upstream in that release.
 drop-distr-map : (f : A → B) → (m : ℕ) → (v : Vec A (m + n))
                → drop m (map f v) ≡ map f (drop m v)
 drop-distr-map f zero v = refl
@@ -100,7 +93,7 @@ drop-distr-map f (suc m) (v ∷ vs) =
     map f (drop m vs)             ≡⟨ cong (map f) (sym (unfold-drop m v vs)) ⟩
     map f (drop (suc m) (v ∷ vs)) ∎
 
-
+-- TODO: Remove with agda-stdlib 1.5. Merged upstream in that release.
 take-drop-id : (m : ℕ) → (v : Vec A (m + n)) → take m v ++ drop m v ≡ v
 take-drop-id zero v = refl
 take-drop-id (suc m) (v ∷ vs) =
@@ -114,6 +107,7 @@ take-drop-id (suc m) (v ∷ vs) =
     (v ∷ vs)
   ∎
 
+-- TODO: Remove with agda-stdlib 1.5. Merged upstream in that release.
 zipWith-replicate : ∀ {a b c : Level} {A : Set a} {B : Set b} {C : Set c} {n : ℕ} (_⊕_ : A → B → C) (x : A) (y : B)
                   → zipWith {n = n} _⊕_ (replicate x) (replicate y) ≡ replicate (x ⊕ y)
 zipWith-replicate {n = zero} _⊕_ x y = refl
