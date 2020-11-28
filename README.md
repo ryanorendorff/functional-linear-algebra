@@ -68,6 +68,13 @@ cachix use functional-linear-algebra
 ```
 
 
+### Dependencies
+
+The following Agda libraries are used:
+
+- `agda-stdlib==1.4`
+
+
 Want to contribute?
 -------------------
 
