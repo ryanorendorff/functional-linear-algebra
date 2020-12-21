@@ -363,3 +363,9 @@ module _ ⦃ F : Field A ⦄ where
         replicate (sum (c ∘ⱽ v)) ≡⟨ cong replicate (sum[c∘ⱽv]≡c*sum[v] c v) ⟩
         replicate (c * sum v)    ≡⟨ replicate[a*b]≡a∘ⱽreplicate[b] c (sum v) ⟩
         c ∘ⱽ replicate (sum v)   ∎
+
+  -- It doesn't matter which transformation is the second argument, so we
+  -- may as well choose the only one defined thus far that has the right
+  -- dimensions.
+  zerosₗₘ : n ⊸ m
+  zerosₗₘ =  0ᶠ ∘ˡᵐ allonesₗₘ
