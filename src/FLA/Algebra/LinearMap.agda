@@ -363,3 +363,14 @@ module _ ⦃ F : Field A ⦄ where
         replicate (sum (c ∘ⱽ v)) ≡⟨ cong replicate (sum[c∘ⱽv]≡c*sum[v] c v) ⟩
         replicate (c * sum v)    ≡⟨ replicate[a*b]≡a∘ⱽreplicate[b] c (sum v) ⟩
         c ∘ⱽ replicate (sum v)   ∎
+
+  -- This could be defined as 0ᶠ ∘ˡᵐ allonesₗₘ, but then that would make
+  -- some later proofs more difficult, since they would then have more than
+  -- just replicate 0ᶠ to replace zerosₗₘ with.
+  zerosₗₘ : n ⊸ m
+  zerosₗₘ =  record
+    { f = λ v → replicate 0ᶠ
+    ; f[u+v]≡f[u]+f[v] = λ u v → sym (trans (zipWith-replicate _+_ 0ᶠ 0ᶠ)
+                                             (cong replicate 0ᶠ+0ᶠ≡0ᶠ))
+    ; f[c*v]≡c*f[v] = λ c v → sym (c∘ⱽ0ᶠⱽ≡0ᶠⱽ c)
+    }

@@ -52,6 +52,10 @@ module _ ⦃ F : Field A ⦄ where
   0ᶠ∘ⱽv≡0ᶠⱽ [] = refl
   0ᶠ∘ⱽv≡0ᶠⱽ (v ∷ vs) = cong₂ _∷_ (0ᶠ*a≡0ᶠ v) (0ᶠ∘ⱽv≡0ᶠⱽ vs)
 
+  c∘ⱽ0ᶠⱽ≡0ᶠⱽ : {n : ℕ} → (c : A) → c ∘ⱽ replicate {n = n} 0ᶠ ≡ replicate 0ᶠ
+  c∘ⱽ0ᶠⱽ≡0ᶠⱽ {zero} c = refl
+  c∘ⱽ0ᶠⱽ≡0ᶠⱽ {suc n} c = cong₂ _∷_ (a*0ᶠ≡0ᶠ c) (c∘ⱽ0ᶠⱽ≡0ᶠⱽ c)
+
   map-*c-≡c∘ⱽ : (c : A) (v : Vec A n) → map (_* c) v ≡ c ∘ⱽ v
   map-*c-≡c∘ⱽ c [] = refl
   map-*c-≡c∘ⱽ c (v ∷ vs) = cong₂ _∷_ (*-comm v c) (map-*c-≡c∘ⱽ c vs)
