@@ -3,7 +3,7 @@
 open import Level using (Level)
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 
-open import Data.Vec using (Vec; _++_; take; drop; replicate; map)
+open import Data.Vec using (Vec; _++_; take; drop; replicate; map; foldr)
 open import Data.Vec.Properties
 
 open import Relation.Binary.PropositionalEquality

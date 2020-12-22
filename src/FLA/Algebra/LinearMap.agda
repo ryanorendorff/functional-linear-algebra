@@ -364,8 +364,13 @@ module _ ⦃ F : Field A ⦄ where
         replicate (c * sum v)    ≡⟨ replicate[a*b]≡a∘ⱽreplicate[b] c (sum v) ⟩
         c ∘ⱽ replicate (sum v)   ∎
 
-  -- It doesn't matter which transformation is the second argument, so we
-  -- may as well choose the only one defined thus far that has the right
-  -- dimensions.
+  -- This could be defined as 0ᶠ ∘ˡᵐ allonesₗₘ, but then that would make
+  -- some later proofs more difficult, since they would then have more than
+  -- just replicate 0ᶠ to replace zerosₗₘ with.
   zerosₗₘ : n ⊸ m
-  zerosₗₘ =  0ᶠ ∘ˡᵐ allonesₗₘ
+  zerosₗₘ =  record
+    { f = λ v → replicate 0ᶠ
+    ; f[u+v]≡f[u]+f[v] = λ u v → sym (trans (zipWith-replicate _+_ 0ᶠ 0ᶠ)
+                                             (cong replicate 0ᶠ+0ᶠ≡0ᶠ))
+    ; f[c*v]≡c*f[v] = λ c v → sym (c∘ⱽ0ᶠⱽ≡0ᶠⱽ c)
+    }
