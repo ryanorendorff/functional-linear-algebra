@@ -308,3 +308,17 @@ module _ ⦃ F : Field A ⦄ where
           sum (map (_* sum x) y)       ≡˘⟨ cong sum (zip-rep _*_ y (sum x)) ⟩
           sum (y *ⱽ replicate (sum x)) ≡⟨⟩
           ⟨ y , allonesₗₘ ·ˡᵐ x ⟩      ∎
+
+  zeros : Mat m × n
+  zeros = ⟦ zerosₗₘ , zerosₗₘ , zeros-transpose ⟧
+    where
+      zeros-transpose : (x : Vec A m) (y : Vec A n)
+                      → ⟨ x , zerosₗₘ ·ˡᵐ y ⟩ ≡ ⟨ y , zerosₗₘ ·ˡᵐ x ⟩
+      zeros-transpose {m = m} {n = n} x y = begin
+        ⟨ x , zerosₗₘ ·ˡᵐ y ⟩           ≡⟨⟩
+        sum (x *ⱽ replicate 0ᶠ)         ≡⟨ cong sum (v*ⱽ0ᶠⱽ≡0ᶠⱽ x) ⟩
+        sum (replicate {n = m} 0ᶠ)      ≡⟨ sum[0ᶠⱽ]≡0ᶠ {n = m} ⟩
+        0ᶠ                              ≡˘⟨ sum[0ᶠⱽ]≡0ᶠ {n = n} ⟩
+        sum (replicate {n = n} 0ᶠ)      ≡˘⟨ cong sum (v*ⱽ0ᶠⱽ≡0ᶠⱽ y) ⟩
+        sum (y *ⱽ replicate {n = n} 0ᶠ) ≡⟨⟩
+        ⟨ y , zerosₗₘ ·ˡᵐ x ⟩           ∎
