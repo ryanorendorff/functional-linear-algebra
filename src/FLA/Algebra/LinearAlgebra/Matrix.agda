@@ -290,15 +290,15 @@ module _ ⦃ F : Field A ⦄ where
           sum (y *ⱽ (d *ⱽ x))    ≡⟨⟩
           ⟨ y , diagₗₘ d ·ˡᵐ x ⟩ ∎
 
-  allones : Mat m × n
-  allones = ⟦ allonesₗₘ , allonesₗₘ , allones-transpose  ⟧
+  1ᴹ : Mat m × n
+  1ᴹ = ⟦ 1ₗₘ , 1ₗₘ , 1ₗₘ-transpose  ⟧
     where
       zip-rep = zipWith-replicate₂
 
-      allones-transpose : (x : Vec A m) (y : Vec A n)
-                        → ⟨ x , allonesₗₘ ·ˡᵐ y ⟩ ≡ ⟨ y , allonesₗₘ ·ˡᵐ x ⟩
-      allones-transpose x y = begin
-          ⟨ x , allonesₗₘ ·ˡᵐ y ⟩      ≡⟨⟩
+      1ₗₘ-transpose : (x : Vec A m) (y : Vec A n)
+                    → ⟨ x , 1ₗₘ ·ˡᵐ y ⟩ ≡ ⟨ y , 1ₗₘ ·ˡᵐ x ⟩
+      1ₗₘ-transpose x y = begin
+          ⟨ x , 1ₗₘ ·ˡᵐ y ⟩            ≡⟨⟩
           sum (x *ⱽ replicate (sum y)) ≡⟨ cong sum (zip-rep _*_ x (sum y)) ⟩
           sum (map (_* sum y) x)       ≡⟨ cong sum (map-*c-≡c∘ⱽ (sum y) x) ⟩
           sum (sum y ∘ⱽ x)             ≡⟨ sum[c∘ⱽv]≡c*sum[v] (sum y) x ⟩
@@ -307,4 +307,18 @@ module _ ⦃ F : Field A ⦄ where
           sum (sum x ∘ⱽ y)             ≡˘⟨ cong sum (map-*c-≡c∘ⱽ (sum x) y) ⟩
           sum (map (_* sum x) y)       ≡˘⟨ cong sum (zip-rep _*_ y (sum x)) ⟩
           sum (y *ⱽ replicate (sum x)) ≡⟨⟩
-          ⟨ y , allonesₗₘ ·ˡᵐ x ⟩      ∎
+          ⟨ y , 1ₗₘ ·ˡᵐ x ⟩            ∎
+
+  0ᴹ : Mat m × n
+  0ᴹ = ⟦ 0ₗₘ , 0ₗₘ , 0ₗₘ-transpose ⟧
+    where
+      0ₗₘ-transpose : (x : Vec A m) (y : Vec A n)
+                    → ⟨ x , 0ₗₘ ·ˡᵐ y ⟩ ≡ ⟨ y , 0ₗₘ ·ˡᵐ x ⟩
+      0ₗₘ-transpose {m = m} {n = n} x y = begin
+        ⟨ x , 0ₗₘ ·ˡᵐ y ⟩               ≡⟨⟩
+        sum (x *ⱽ replicate 0ᶠ)         ≡⟨ cong sum (v*ⱽ0ᶠⱽ≡0ᶠⱽ x) ⟩
+        sum (replicate {n = m} 0ᶠ)      ≡⟨ sum[0ᶠⱽ]≡0ᶠ {n = m} ⟩
+        0ᶠ                              ≡˘⟨ sum[0ᶠⱽ]≡0ᶠ {n = n} ⟩
+        sum (replicate {n = n} 0ᶠ)      ≡˘⟨ cong sum (v*ⱽ0ᶠⱽ≡0ᶠⱽ y) ⟩
+        sum (y *ⱽ replicate {n = n} 0ᶠ) ≡⟨⟩
+        ⟨ y , 0ₗₘ ·ˡᵐ x ⟩               ∎

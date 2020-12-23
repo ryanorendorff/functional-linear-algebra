@@ -342,8 +342,8 @@ module _ ⦃ F : Field A ⦄ where
     ; f[c*v]≡c*f[v] = λ c v → *ⱽ∘ⱽ≡∘ⱽ*ⱽ c d v
     }
 
-  allonesₗₘ : n ⊸ m
-  allonesₗₘ = record
+  1ₗₘ : n ⊸ m
+  1ₗₘ = record
     { f = λ v → replicate (sum v)
     ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]
     ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]
@@ -367,8 +367,8 @@ module _ ⦃ F : Field A ⦄ where
   -- This could be defined as 0ᶠ ∘ˡᵐ allonesₗₘ, but then that would make
   -- some later proofs more difficult, since they would then have more than
   -- just replicate 0ᶠ to replace zerosₗₘ with.
-  zerosₗₘ : n ⊸ m
-  zerosₗₘ =  record
+  0ₗₘ : n ⊸ m
+  0ₗₘ =  record
     { f = λ v → replicate 0ᶠ
     ; f[u+v]≡f[u]+f[v] = λ u v → sym (trans (zipWith-replicate _+_ 0ᶠ 0ᶠ)
                                              (cong replicate 0ᶠ+0ᶠ≡0ᶠ))
