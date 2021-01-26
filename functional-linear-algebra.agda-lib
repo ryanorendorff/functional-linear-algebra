@@ -1,3 +1,3 @@
 name: functional-linear-algebra
-depend: standard-library
+depend: standard-library-1.5
 include: src
