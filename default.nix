@@ -14,7 +14,6 @@ pkgs.agdaPackages.functional-linear-algebra.overrideAttrs (oldAttrs: rec {
 
   preConfigure = ''
     # Find all .agda files in the src/ directory and put it in Everything.agda
-    ls
     ./generate-everything.sh
   '';
 })
