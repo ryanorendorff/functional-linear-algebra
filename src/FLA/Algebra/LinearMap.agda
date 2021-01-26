@@ -10,6 +10,7 @@ open ≡-Reasoning
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
 open import Data.Nat.Properties
 open import Data.Vec using (Vec; []; _∷_; _++_; take; drop; map; replicate)
+open import Data.Vec.Properties
 
 open import Function using (id)
 
@@ -17,7 +18,6 @@ open import FLA.Algebra.Structures
 open import FLA.Algebra.Properties.Field
 open import FLA.Algebra.LinearAlgebra
 open import FLA.Algebra.LinearAlgebra.Properties
-open import FLA.Data.Vec.Properties
 
 module FLA.Algebra.LinearMap where
 
