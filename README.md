@@ -72,7 +72,7 @@ cachix use functional-linear-algebra
 
 The following Agda libraries are used:
 
-- `agda-stdlib==1.4`
+- `agda-stdlib==1.6`
 
 
 Want to contribute?
