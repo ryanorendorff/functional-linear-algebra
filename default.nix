@@ -2,6 +2,8 @@
 { pkgs }:
 
 pkgs.agdaPackages.functional-linear-algebra.overrideAttrs (oldAttrs: rec {
+  version = "0.3";
+
   src = pkgs.lib.sourceFilesBySuffices ./. [
     ".agda"
     ".lagda"
