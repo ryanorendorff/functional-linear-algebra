@@ -86,9 +86,11 @@ Want to contribute?
 If you want to learn more Agda (from a fellow Agda beginner) or have a new idea,
 please submit a pull request! I would like to get to the following at some point:
 
-1. Proving that a matrix is positive semidefinite. This should be possible by
+1. Square root of a matrix. This should be finding a matrix A^(1/2) such that
+   B = A^(1/2)A^(1/2) is held.
+2. Proving that a matrix is positive semidefinite. This should be possible by
    using the inner product definition.
-2. Prove a transformation of an optimization problem preserves the problem
+3. Prove a transformation of an optimization problem preserves the problem
    solution.
 
 
