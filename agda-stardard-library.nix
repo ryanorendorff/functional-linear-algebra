@@ -1,6 +1,6 @@
 let
 
-  use-overlay-standard-library = true;
+  use-overlay-standard-library = false;
 
 in pkgs:
 if use-overlay-standard-library then {
