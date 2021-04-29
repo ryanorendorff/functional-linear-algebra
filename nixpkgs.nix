@@ -3,7 +3,7 @@
 let
 
   # Temporary workaround while Agda standard library is an RC.
-  agda-standard-library-1-6-overlay = (self: super: {
+  agda-standard-library-overlay = (self: super: {
     agdaPackages = super.agdaPackages // {
       standard-library = super.agdaPackages.standard-library.overrideAttrs
         (old: import ./agda-stardard-library.nix super);
@@ -17,6 +17,6 @@ let
 
 in import (builtins.fetchTarball {
   url =
-    "https://github.com/NixOS/nixpkgs/archive/e5cc06a1e806070693add4f231060a62b962fc44.tar.gz";
-  sha256 = "04543i332fx9m7jf6167ac825s4qb8is0d0x0pz39il979mlc87v";
-}) { overlays = [ agda-standard-library-1-6-overlay ]; }
+    "https://github.com/NixOS/nixpkgs/archive/1c65a509fbbc17a2853a657ea1391de0aab9e793.tar.gz";
+  sha256 = "16393rlq9zq8cs3hapd614bjchmxzkfzn9nawa81rxc7zb2khwqm";
+}) { overlays = [ agda-standard-library-overlay ]; }
