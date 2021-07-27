@@ -72,7 +72,7 @@ cachix use functional-linear-algebra
 
 The following Agda libraries are used:
 
-- `standard-library-1.6`
+- `standard-library` (tested up to v1.7)
 
 You can override which specific version of the standard library is being used
 through Nix by changing the `use-overlay-standard-library` boolean in
