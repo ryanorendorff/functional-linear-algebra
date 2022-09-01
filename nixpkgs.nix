@@ -1,5 +1,4 @@
-# nixpkgs unstable channel from July 24th, 2021
-# specifically set to test the bump to the agda-stdlib 1.7
+# nixpkgs 22.05 from 31st Aug 2022
 
 let
 
@@ -18,6 +17,6 @@ let
 
 in import (builtins.fetchTarball {
   url =
-    "https://github.com/NixOS/nixpkgs/archive/703882fb577fc939ace7cdc3197440f306380b9b.tar.gz";
-  sha256 = "0141ip3wfaj1pvh2681kdhhj4lwwwjdrchmgg5xnd9zmazvk2nsc";
+    "https://github.com/NixOS/nixpkgs/archive/067d5d5b89133efcda060bba31f9941c6396e3ee.tar.gz";
+  sha256 = "0wyrwrw5fr5b1ss2za37cgwk7hzydy184a49wbqrks5vhpjvfkg7";
 }) { overlays = [ agda-standard-library-overlay ]; }
