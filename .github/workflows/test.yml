@@ -16,4 +16,4 @@ jobs:
       with:
         name: functional-linear-algebra
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - run: nix-build release.nix
+    - run: nix build
