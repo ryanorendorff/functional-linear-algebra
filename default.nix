@@ -1,10 +1,13 @@
 # Since this package is already in nixpkgs, we just override the src.
-{ pkgs }:
+{ agdaPackages, lib }:
 
-pkgs.agdaPackages.functional-linear-algebra.overrideAttrs (oldAttrs: rec {
+agdaPackages.functional-linear-algebra.overrideAttrs (oldAttrs: rec {
   version = "0.4";
 
-  src = pkgs.lib.sourceFilesBySuffices ./. [
+  src = lib.sourceFilesBySuffices (builtins.path {
+    path = ./.;
+    name = "functional-linear-algebra";
+  }) [
     ".agda"
     ".lagda"
     ".lagda.md"
