@@ -87,19 +87,48 @@ private
   L↓≡→L≡ : ⦃ F : Field A ⦄ → (C D : m ⊸ n)
           → (L→L↓ C ≡ L→L↓ D) → C ≡ D
   L↓≡→L≡ record { f = f
-                 ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᶜ
-                 ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]ᶜ
-                 }
-          record { f = .f
-                 ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᵈ
-                 ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]ᵈ
-                 }
-          refl
-    rewrite
-      f[u+v]≡f[u]+f[v]-UIP f f[u+v]≡f[u]+f[v]ᶜ f[u+v]≡f[u]+f[v]ᵈ
-    | f[c*v]≡c*f[v]-UIP f f[c*v]≡c*f[v]ᶜ f[c*v]≡c*f[v]ᵈ
-    = refl
+                ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᶜ
+                ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]ᶜ
+                }
+         record { f = .f
+                ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᵈ
+                ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]ᵈ
+                }
+         refl
+    =
+        record
+        { f = f
+        ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᶜ
+        ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]ᶜ
+        }
+      ≡⟨ cong (λ x → record
+                { f = f
+                ; f[u+v]≡f[u]+f[v] = x
+                ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]ᶜ
+                })
+              (f[u+v]≡f[u]+f[v]-UIP f f[u+v]≡f[u]+f[v]ᶜ f[u+v]≡f[u]+f[v]ᵈ) ⟩
+        record
+        { f = f
+        ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᵈ
+        ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]ᶜ
+        }
+      ≡⟨ cong (λ x → record
+                { f = f
+                ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᵈ
+                ; f[c*v]≡c*f[v] = x
+                })
+              (f[c*v]≡c*f[v]-UIP f f[c*v]≡c*f[v]ᶜ f[c*v]≡c*f[v]ᵈ) ⟩
+        record
+        { f = f
+        ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]ᵈ
+        ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]ᵈ
+        }
+      ∎
 
+
+    -- rewrite
+    --   f[u+v]≡f[u]+f[v]-UIP f f[u+v]≡f[u]+f[v]ᶜ f[u+v]≡f[u]+f[v]ᵈ
+    -- | f[c*v]≡c*f[v]-UIP f f[c*v]≡c*f[v]ᶜ f[c*v]≡c*f[v]ᵈ
 
 -------------------------------------------------------------------------------
 --                   LinearMap Proofs via LinearMap↓ Proofs                  --
