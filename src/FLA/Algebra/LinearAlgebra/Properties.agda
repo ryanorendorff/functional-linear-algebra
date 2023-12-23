@@ -41,22 +41,22 @@ module _ ⦃ F : Field A ⦄ where
       x₁ + x₂ ∷ vs₂ +ⱽ vs₁ ≡⟨ cong (_∷ vs₂ +ⱽ vs₁) (+-comm x₁ x₂) ⟩
       x₂ + x₁ ∷ vs₂ +ⱽ vs₁ ∎
 
-  v+0ᶠⱽ≡v : (v : Vec A n) → v +ⱽ (replicate 0ᶠ) ≡ v
+  v+0ᶠⱽ≡v : (v : Vec A n) → v +ⱽ (replicate n 0ᶠ) ≡ v
   v+0ᶠⱽ≡v [] = refl
   v+0ᶠⱽ≡v (v ∷ vs) = cong₂ _∷_ (+0ᶠ v) (v+0ᶠⱽ≡v vs)
 
-  0ᶠⱽ+v≡v : (v : Vec A n) → (replicate 0ᶠ) +ⱽ v ≡ v
-  0ᶠⱽ+v≡v v = trans (+ⱽ-comm (replicate 0ᶠ) v) (v+0ᶠⱽ≡v v)
+  0ᶠⱽ+v≡v : (v : Vec A n) → (replicate n 0ᶠ) +ⱽ v ≡ v
+  0ᶠⱽ+v≡v {n = n} v = trans (+ⱽ-comm (replicate n 0ᶠ) v) (v+0ᶠⱽ≡v v)
 
-  0ᶠ∘ⱽv≡0ᶠⱽ : (v : Vec A n) → 0ᶠ ∘ⱽ v ≡ replicate 0ᶠ
+  0ᶠ∘ⱽv≡0ᶠⱽ : (v : Vec A n) → 0ᶠ ∘ⱽ v ≡ replicate n 0ᶠ
   0ᶠ∘ⱽv≡0ᶠⱽ [] = refl
   0ᶠ∘ⱽv≡0ᶠⱽ (v ∷ vs) = cong₂ _∷_ (0ᶠ*a≡0ᶠ v) (0ᶠ∘ⱽv≡0ᶠⱽ vs)
 
-  c∘ⱽ0ᶠⱽ≡0ᶠⱽ : {n : ℕ} → (c : A) → c ∘ⱽ replicate {n = n} 0ᶠ ≡ replicate 0ᶠ
+  c∘ⱽ0ᶠⱽ≡0ᶠⱽ : {n : ℕ} → (c : A) → c ∘ⱽ replicate n 0ᶠ ≡ replicate n 0ᶠ
   c∘ⱽ0ᶠⱽ≡0ᶠⱽ {zero} c = refl
   c∘ⱽ0ᶠⱽ≡0ᶠⱽ {suc n} c = cong₂ _∷_ (a*0ᶠ≡0ᶠ c) (c∘ⱽ0ᶠⱽ≡0ᶠⱽ c)
 
-  v*ⱽ0ᶠⱽ≡0ᶠⱽ : {n : ℕ} → (v : Vec A n) → v *ⱽ replicate 0ᶠ ≡ replicate 0ᶠ
+  v*ⱽ0ᶠⱽ≡0ᶠⱽ : {n : ℕ} → (v : Vec A n) → v *ⱽ replicate n 0ᶠ ≡ replicate n 0ᶠ
   v*ⱽ0ᶠⱽ≡0ᶠⱽ [] = refl
   v*ⱽ0ᶠⱽ≡0ᶠⱽ (v ∷ vs) = cong₂ _∷_ (a*0ᶠ≡0ᶠ v) (v*ⱽ0ᶠⱽ≡0ᶠⱽ vs)
 
@@ -65,7 +65,7 @@ module _ ⦃ F : Field A ⦄ where
   map-*c-≡c∘ⱽ c (v ∷ vs) = cong₂ _∷_ (*-comm v c) (map-*c-≡c∘ⱽ c vs)
 
   replicate-distr-+ : {n : ℕ} → (u v : A)
-                    → replicate {n = n} (u + v) ≡ replicate u +ⱽ replicate v
+                    → replicate n (u + v) ≡ replicate n u +ⱽ replicate n v
   replicate-distr-+ u v = sym (zipWith-replicate _+_ u v)
 
   -- This should work for any linear function (I think), instead of just -_,
@@ -167,21 +167,21 @@ module _ ⦃ F : Field A ⦄ where
   ∘ⱽ-distr-++ c (a ∷ as) b rewrite ∘ⱽ-distr-++ c as b = refl
 
   replicate[a*b]≡a∘ⱽreplicate[b] : {n : ℕ} (a b : A) →
-                                   replicate {n = n} (a * b) ≡ a ∘ⱽ replicate b
+                                   replicate n (a * b) ≡ a ∘ⱽ replicate n b
   replicate[a*b]≡a∘ⱽreplicate[b] {n = n} a b = sym (map-replicate (a *_) b n)
 
   replicate[a*b]≡b∘ⱽreplicate[a] : {n : ℕ} (a b : A) →
-                                   replicate {n = n} (a * b) ≡ b ∘ⱽ replicate a
-  replicate[a*b]≡b∘ⱽreplicate[a] a b = trans (cong replicate (*-comm a b))
-                                             (replicate[a*b]≡a∘ⱽreplicate[b] b a)
+                                   replicate n (a * b) ≡ b ∘ⱽ replicate n a
+  replicate[a*b]≡b∘ⱽreplicate[a] {n = n} a b = trans (cong (replicate n) (*-comm a b))
+                                               (replicate[a*b]≡a∘ⱽreplicate[b] b a)
 
-  sum[0ᶠⱽ]≡0ᶠ : {n : ℕ} → sum (replicate {n = n} 0ᶠ) ≡ 0ᶠ
+  sum[0ᶠⱽ]≡0ᶠ : {n : ℕ} → sum (replicate n 0ᶠ) ≡ 0ᶠ
   sum[0ᶠⱽ]≡0ᶠ {n = zero} = refl
   sum[0ᶠⱽ]≡0ᶠ {n = suc n} = begin
-      sum (0ᶠ ∷ replicate {n = n} 0ᶠ) ≡⟨⟩
-      0ᶠ + sum (replicate {n = n} 0ᶠ) ≡⟨ cong (0ᶠ +_) (sum[0ᶠⱽ]≡0ᶠ {n})  ⟩
-      0ᶠ + 0ᶠ                         ≡⟨ 0ᶠ+0ᶠ≡0ᶠ ⟩
-      0ᶠ                              ∎
+      sum (0ᶠ ∷ replicate n 0ᶠ) ≡⟨⟩
+      0ᶠ + sum (replicate n 0ᶠ) ≡⟨ cong (0ᶠ +_) (sum[0ᶠⱽ]≡0ᶠ {n})  ⟩
+      0ᶠ + 0ᶠ                   ≡⟨ 0ᶠ+0ᶠ≡0ᶠ ⟩
+      0ᶠ                        ∎
 
   sum-distr-+ⱽ : (v₁ v₂ : Vec A n) → sum (v₁ +ⱽ v₂) ≡ sum v₁ + sum v₂
   sum-distr-+ⱽ [] [] = sym (0ᶠ+0ᶠ≡0ᶠ)
