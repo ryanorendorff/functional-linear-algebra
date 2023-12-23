@@ -1,0 +1,36 @@
+From 38baa1f3af43f967824b1b3ecfadf94717dfe2e1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Na=C3=AFm=20Favier?= <n@monade.li>
+Date: Tue, 12 Dec 2023 15:02:12 +0100
+Subject: [PATCH] agdaPackages.standard-library: 1.7.3 -> 2.0
+
+https://github.com/agda/agda-stdlib/blob/v2.0/CHANGELOG.md
+---
+ .../development/libraries/agda/standard-library/default.nix | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/pkgs/development/libraries/agda/standard-library/default.nix b/pkgs/development/libraries/agda/standard-library/default.nix
+index 10fd1034ebe2a2..d7b49893b96f79 100644
+--- a/pkgs/development/libraries/agda/standard-library/default.nix
++++ b/pkgs/development/libraries/agda/standard-library/default.nix
+@@ -2,18 +2,18 @@
+ 
+ mkDerivation rec {
+   pname = "standard-library";
+-  version = "1.7.3";
++  version = "2.0";
+ 
+   src = fetchFromGitHub {
+     repo = "agda-stdlib";
+     owner = "agda";
+     rev = "v${version}";
+-    hash = "sha256-vtL6VPvTXhl/mepulUm8SYyTjnGsqno4RHDmTIy22Xg=";
++    hash = "sha256-TjGvY3eqpF+DDwatT7A78flyPcTkcLHQ1xcg+MKgCoE=";
+   };
+ 
+   nativeBuildInputs = [ (ghcWithPackages (self : [ self.filemanip ])) ];
+   preConfigure = ''
+-    runhaskell GenerateEverything.hs
++    runhaskell GenerateEverything.hs --include-deprecated
+     # We will only build/consider Everything.agda, in particular we don't want Everything*.agda
+     # do be copied to the store.
+     rm EverythingSafe.agda
