@@ -43,12 +43,11 @@ installed.
 
 ### Use Nix to get Agda installed
 
-This repository includes a shell file that will make the `agda` 2.6.1 binary
+This repository includes a shell file that will make the `agda` 2.6.4.1 binary
 available. Simply type `nix-shell` to get started.
 
 It is recommended that you use emacs to write Agda code, although any editor
-with [agda-mode][agda-mode] support will work. If you have `spacemacs` you
-can activate the `agda` configuration layer.
+with [agda-mode][agda-mode] support will work.
 
 
 ### How to include this library in other Agda libraries
@@ -59,20 +58,11 @@ This library can be included in other Agda packages using either the
 be found in the [Agda section of the nixpkgs manual][nixpkgs-agda].
 
 
-### Cachix
-
-This library uses cachix. To use the cache, install cachix and then run
-
-```
-cachix use functional-linear-algebra
-```
-
-
 ### Dependencies
 
 The following Agda libraries are used:
 
-- `standard-library` (tested up to v1.7)
+- `standard-library` (version 2.0 only, does not work with the 1.x series)
 
 You can override which specific version of the standard library is being used
 through Nix by changing the `use-overlay-standard-library` boolean in
@@ -100,8 +90,7 @@ please submit a pull request! I would like to get to the following at some point
 [presentation]: https://github.com/ryanorendorff/lc-2020-linear-algebra-agda
 
 <!-- References -->
-[agda-mode]: https://agda.readthedocs.io/en/v2.6.1/tools/emacs-mode.html
+[agda-mode]: https://agda.readthedocs.io/en/v2.6.4.1/tools/emacs-mode.html
 [nix]: https://nixos.org
 [nixpkgs]: https://github.com/nixos/nixpkgs
 [nixpkgs-agda]: https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/agda.section.md
-[spacemacs]: https://www.spacemacs.org/
