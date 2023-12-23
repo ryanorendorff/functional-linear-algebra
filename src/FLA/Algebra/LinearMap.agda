@@ -4,7 +4,7 @@
 -- for the fields that we want (real numbers)
 open import Level using (Level)
 
-open import Relation.Binary.PropositionalEquality hiding (Extensionality)
+open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 
 open import Data.Nat using (ℕ) renaming (_+_ to _+ᴺ_)
@@ -204,7 +204,7 @@ module _ ⦃ F : Field A ⦄ where
         f[u+v]≡f[u]+f[v]' {m} T B u v = begin
             T ·ˡᵐ (take m (u +ⱽ v)) +ⱽ B ·ˡᵐ (drop m (u +ⱽ v))
           ≡⟨ cong₂ (λ x y → T ·ˡᵐ x +ⱽ B ·ˡᵐ y)
-                   (take-distr-zipWith _+_ u v) (drop-distr-zipWith _+_ u v)⟩
+                   (take-zipWith _+_ u v) (drop-zipWith _+_ u v)⟩
             T ·ˡᵐ (take m u +ⱽ take m v) +ⱽ B ·ˡᵐ (drop m u +ⱽ drop m v)
           ≡⟨ cong₂ _+ⱽ_ (f[u+v]≡f[u]+f[v] T (take m u) (take m v))
                         (f[u+v]≡f[u]+f[v] B (drop m u) (drop m v)) ⟩
@@ -241,8 +241,8 @@ module _ ⦃ F : Field A ⦄ where
                           c ∘ⱽ (T ·ˡᵐ take m v +ⱽ B ·ˡᵐ drop m v)
         f[c*v]≡c*f[v]' {m} T B c v = begin
             T ·ˡᵐ take m (c ∘ⱽ v) +ⱽ B ·ˡᵐ drop m (c ∘ⱽ v)
-          ≡⟨ cong₂ (λ x y → T ·ˡᵐ x +ⱽ B ·ˡᵐ y) (take-distr-map (c *_) m v)
-                                                 (drop-distr-map (c *_) m v) ⟩
+          ≡⟨ cong₂ (λ x y → T ·ˡᵐ x +ⱽ B ·ˡᵐ y) (take-map (c *_) m v)
+                                                 (drop-map (c *_) m v) ⟩
             T ·ˡᵐ (c ∘ⱽ take m v) +ⱽ B ·ˡᵐ (c ∘ⱽ drop m v)
           ≡⟨ cong₂ _+ⱽ_ (f[c*v]≡c*f[v] T c (take m v))
                         (f[c*v]≡c*f[v] B c (drop m v)) ⟩
@@ -270,7 +270,7 @@ module _ ⦃ F : Field A ⦄ where
           begin
               T ·ˡᵐ take m (u +ⱽ v) ++ B ·ˡᵐ drop m (u +ⱽ v)
             ≡⟨ cong₂ (λ x y → T ·ˡᵐ x ++ B ·ˡᵐ y)
-                     (take-distr-zipWith _+_ u v) (drop-distr-zipWith _+_ u v)⟩
+                     (take-zipWith _+_ u v) (drop-zipWith _+_ u v)⟩
               T ·ˡᵐ (take m u +ⱽ take m v) ++ B ·ˡᵐ (drop m u +ⱽ drop m v)
             ≡⟨ cong₂ _++_ (f[u+v]≡f[u]+f[v] T (take m u) (take m v))
                           (f[u+v]≡f[u]+f[v] B (drop m u) (drop m v)) ⟩
@@ -290,8 +290,8 @@ module _ ⦃ F : Field A ⦄ where
         f[c*v]≡c*f[v]' {m} T B c v =
           begin
               T ·ˡᵐ take m (c ∘ⱽ v) ++ B ·ˡᵐ drop m (c ∘ⱽ v)
-            ≡⟨ cong₂ (λ x y → T ·ˡᵐ x ++ B ·ˡᵐ y) (take-distr-map (c *_) m v)
-                                                   (drop-distr-map (c *_) m v) ⟩
+            ≡⟨ cong₂ (λ x y → T ·ˡᵐ x ++ B ·ˡᵐ y) (take-map (c *_) m v)
+                                                   (drop-map (c *_) m v) ⟩
               T ·ˡᵐ (c ∘ⱽ take m v) ++ B ·ˡᵐ (c ∘ⱽ (drop m v))
             ≡⟨ cong₂ _++_ (f[c*v]≡c*f[v] T c (take m v))
                           (f[c*v]≡c*f[v] B c (drop m v)) ⟩
@@ -342,35 +342,44 @@ module _ ⦃ F : Field A ⦄ where
     ; f[c*v]≡c*f[v] = λ c v → *ⱽ∘ⱽ≡∘ⱽ*ⱽ c d v
     }
 
-  1ₗₘ : n ⊸ m
+  1ₗₘ : m ⊸ n
   1ₗₘ = record
-    { f = λ v → replicate (sum v)
+    { f = f
     ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]
     ; f[c*v]≡c*f[v] = f[c*v]≡c*f[v]
     }
     where
-      f[u+v]≡f[u]+f[v] : (u v : Vec A n)
-                       → replicate (sum (u +ⱽ v)) ≡
-                          replicate (sum u) +ⱽ replicate (sum v)
-      f[u+v]≡f[u]+f[v] u v = begin
-        replicate (sum (u +ⱽ v))      ≡⟨ cong replicate (sum-distr-+ⱽ u v) ⟩
-        replicate ((sum u) + (sum v)) ≡⟨ replicate-distr-+ (sum u) (sum v) ⟩
-        replicate (sum u) +ⱽ replicate (sum v) ∎
+      f : (Vec A m → Vec A n)
+      f {n = n} v = replicate n (sum v)
 
-      f[c*v]≡c*f[v] : (c : A) (v : Vec A n)
-                    → replicate (sum (c ∘ⱽ v)) ≡ c ∘ⱽ replicate (sum v)
-      f[c*v]≡c*f[v] c v = begin
-        replicate (sum (c ∘ⱽ v)) ≡⟨ cong replicate (sum[c∘ⱽv]≡c*sum[v] c v) ⟩
-        replicate (c * sum v)    ≡⟨ replicate[a*b]≡a∘ⱽreplicate[b] c (sum v) ⟩
-        c ∘ⱽ replicate (sum v)   ∎
+      f[u+v]≡f[u]+f[v] : (u v : Vec A m)
+                       → replicate n (sum (u +ⱽ v)) ≡
+                          replicate n (sum u) +ⱽ replicate n (sum v)
+      f[u+v]≡f[u]+f[v] {n = n} u v = begin
+        replicate n (sum (u +ⱽ v))      ≡⟨ cong (replicate n) (sum-distr-+ⱽ u v) ⟩
+        replicate n ((sum u) + (sum v)) ≡⟨ replicate-distr-+ (sum u) (sum v) ⟩
+        replicate n (sum u) +ⱽ replicate n (sum v) ∎
+
+      f[c*v]≡c*f[v] : (c : A) (v : Vec A m)
+                    → replicate n (sum (c ∘ⱽ v)) ≡ c ∘ⱽ replicate n (sum v)
+      f[c*v]≡c*f[v] {n = n} c v = begin
+        replicate n (sum (c ∘ⱽ v)) ≡⟨ cong (replicate n) (sum[c∘ⱽv]≡c*sum[v] c v) ⟩
+        replicate n (c * sum v)    ≡⟨ replicate[a*b]≡a∘ⱽreplicate[b] c (sum v) ⟩
+        c ∘ⱽ replicate n (sum v)   ∎
 
   -- This could be defined as 0ᶠ ∘ˡᵐ allonesₗₘ, but then that would make
   -- some later proofs more difficult, since they would then have more than
   -- just replicate 0ᶠ to replace zerosₗₘ with.
-  0ₗₘ : n ⊸ m
-  0ₗₘ =  record
-    { f = λ v → replicate 0ᶠ
-    ; f[u+v]≡f[u]+f[v] = λ u v → sym (trans (zipWith-replicate _+_ 0ᶠ 0ᶠ)
-                                             (cong replicate 0ᶠ+0ᶠ≡0ᶠ))
+  0ₗₘ : m ⊸ n
+  0ₗₘ {n = n} = record
+    { f = f
+    ; f[u+v]≡f[u]+f[v] = f[u+v]≡f[u]+f[v]
     ; f[c*v]≡c*f[v] = λ c v → sym (c∘ⱽ0ᶠⱽ≡0ᶠⱽ c)
     }
+   where
+     f : (Vec A m → Vec A n)
+     f v = replicate n 0ᶠ
+
+     f[u+v]≡f[u]+f[v] : (u v : Vec A m) → f (u +ⱽ v) ≡ f u +ⱽ f v
+     f[u+v]≡f[u]+f[v] u v = sym (trans (zipWith-replicate _+_ 0ᶠ 0ᶠ)
+                                       (cong (replicate n) 0ᶠ+0ᶠ≡0ᶠ))

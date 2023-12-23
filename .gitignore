@@ -6,11 +6,11 @@ MAlonzo/**
 # Nix
 result
 
-# direnv
-.direnv/
+# Created by https://www.toptal.com/developers/gitignore/api/emacs,vim,visualstudiocode,macos,linux,windows,direnv
+# Edit at https://www.toptal.com/developers/gitignore?templates=emacs,vim,visualstudiocode,macos,linux,windows,direnv
 
-# Created by https://www.toptal.com/developers/gitignore/api/emacs,vim,visualstudiocode,macos
-# Edit at https://www.toptal.com/developers/gitignore?templates=emacs,vim,visualstudiocode,macos
+### direnv ###
+.direnv
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
@@ -63,6 +63,20 @@ flycheck_*.el
 /network-security.data
 
 
+### Linux ###
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+
 ### macOS ###
 # General
 .DS_Store
@@ -92,6 +106,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### macOS Patch ###
+# iCloud generated files
+*.icloud
+
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
@@ -114,13 +132,47 @@ tags
 
 ### VisualStudioCode ###
 .vscode/*
+!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
-*.code-workspace
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
 .ionide
 
-# End of https://www.toptal.com/developers/gitignore/api/emacs,vim,visualstudiocode,macos
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# End of https://www.toptal.com/developers/gitignore/api/emacs,vim,visualstudiocode,macos,linux,windows,direnv

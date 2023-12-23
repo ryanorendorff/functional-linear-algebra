@@ -2,7 +2,7 @@
 
 open import Axiom.UniquenessOfIdentityProofs.WithK using (uip)
 
-open import Relation.Binary.PropositionalEquality hiding (Extensionality)
+open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 
 open import Level using (Level)

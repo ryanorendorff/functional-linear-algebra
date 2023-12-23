@@ -2,7 +2,8 @@
 
 open import Level using (Level)
 
-open import Relation.Binary.PropositionalEquality hiding (Extensionality)
+open import Relation.Binary.PropositionalEquality
+
 open ≡-Reasoning
 
 open import Data.Nat using (ℕ; suc; zero; _+_)

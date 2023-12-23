@@ -177,7 +177,7 @@ module _ ⦃ F : Field A ⦄ where
           ≡⟨ ⟨a,b⟩+⟨c,d⟩≡⟨a++c,b++d⟩ (take n y) (M₁ᵀ ·ˡᵐ x)
                                      (drop n y) (M₂ᵀ ·ˡᵐ x) ⟩
             ⟨ take n y ++ drop n y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩
-          ≡⟨ cong (λ a → ⟨ a , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩) (take-drop-id n y) ⟩
+          ≡⟨ cong (λ a → ⟨ a , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩) (take++drop≡id n y) ⟩
             ⟨ y , M₁ᵀ ·ˡᵐ x ++ M₂ᵀ ·ˡᵐ x ⟩
           ≡⟨⟩
             ⟨ y , (M₁ᵀ —ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
@@ -208,7 +208,7 @@ module _ ⦃ F : Field A ⦄ where
           ≡⟨⟩
             ⟨ x , M₁ ·ˡᵐ take n y ++ M₂ ·ˡᵐ drop n y ⟩
           ≡⟨ cong (λ x → ⟨ x , M₁ ·ˡᵐ take n y ++ M₂ ·ˡᵐ drop n y ⟩)
-                  (sym (take-drop-id m x)) ⟩
+                  (sym (take++drop≡id m x)) ⟩
             ⟨ take m x ++ drop m x , M₁ ·ˡᵐ (take n y) ++ M₂ ·ˡᵐ drop n y ⟩
           ≡⟨ ⟨a++b,c++d⟩≡⟨a,c⟩+⟨b,d⟩ (take m x) (drop m x)
                                      (M₁ ·ˡᵐ (take n y)) (M₂ ·ˡᵐ drop n y) ⟩
@@ -220,7 +220,7 @@ module _ ⦃ F : Field A ⦄ where
                                      (drop n y) (M₂ᵀ ·ˡᵐ  drop m x) ⟩
             ⟨ take n y ++ drop n y , M₁ᵀ ·ˡᵐ take m x ++ M₂ᵀ ·ˡᵐ  drop m x ⟩
           ≡⟨ cong (λ y → ⟨ y , M₁ᵀ ·ˡᵐ take m x ++ M₂ᵀ ·ˡᵐ  drop m x ⟩)
-                  (take-drop-id n y) ⟩
+                  (take++drop≡id n y) ⟩
             ⟨ y , M₁ᵀ ·ˡᵐ (take m x) ++ M₂ᵀ ·ˡᵐ (drop m x) ⟩
           ≡⟨⟩
             ⟨ y , (M₁ᵀ /ˡᵐ M₂ᵀ) ·ˡᵐ x ⟩
@@ -297,17 +297,17 @@ module _ ⦃ F : Field A ⦄ where
 
       1ₗₘ-transpose : (x : Vec A m) (y : Vec A n)
                     → ⟨ x , 1ₗₘ ·ˡᵐ y ⟩ ≡ ⟨ y , 1ₗₘ ·ˡᵐ x ⟩
-      1ₗₘ-transpose x y = begin
+      1ₗₘ-transpose {m = m} {n = n} x y = begin
           ⟨ x , 1ₗₘ ·ˡᵐ y ⟩            ≡⟨⟩
-          sum (x *ⱽ replicate (sum y)) ≡⟨ cong sum (zip-rep _*_ x (sum y)) ⟩
-          sum (map (_* sum y) x)       ≡⟨ cong sum (map-*c-≡c∘ⱽ (sum y) x) ⟩
-          sum (sum y ∘ⱽ x)             ≡⟨ sum[c∘ⱽv]≡c*sum[v] (sum y) x ⟩
-          sum y * sum x                ≡⟨ *-comm (sum y) (sum x) ⟩
-          sum x * sum y                ≡˘⟨ sum[c∘ⱽv]≡c*sum[v] (sum x) y ⟩
-          sum (sum x ∘ⱽ y)             ≡˘⟨ cong sum (map-*c-≡c∘ⱽ (sum x) y) ⟩
-          sum (map (_* sum x) y)       ≡˘⟨ cong sum (zip-rep _*_ y (sum x)) ⟩
-          sum (y *ⱽ replicate (sum x)) ≡⟨⟩
-          ⟨ y , 1ₗₘ ·ˡᵐ x ⟩            ∎
+          sum (x *ⱽ replicate m (sum y)) ≡⟨ cong sum (zip-rep _*_ x (sum y)) ⟩
+          sum (map (_* sum y) x)         ≡⟨ cong sum (map-*c-≡c∘ⱽ (sum y) x) ⟩
+          sum (sum y ∘ⱽ x)               ≡⟨ sum[c∘ⱽv]≡c*sum[v] (sum y) x ⟩
+          sum y * sum x                  ≡⟨ *-comm (sum y) (sum x) ⟩
+          sum x * sum y                  ≡˘⟨ sum[c∘ⱽv]≡c*sum[v] (sum x) y ⟩
+          sum (sum x ∘ⱽ y)               ≡˘⟨ cong sum (map-*c-≡c∘ⱽ (sum x) y) ⟩
+          sum (map (_* sum x) y)         ≡˘⟨ cong sum (zip-rep _*_ y (sum x)) ⟩
+          sum (y *ⱽ replicate n (sum x)) ≡⟨⟩
+          ⟨ y , 1ₗₘ ·ˡᵐ x ⟩              ∎
 
   0ᴹ : Mat m × n
   0ᴹ = ⟦ 0ₗₘ , 0ₗₘ , 0ₗₘ-transpose ⟧
@@ -315,10 +315,10 @@ module _ ⦃ F : Field A ⦄ where
       0ₗₘ-transpose : (x : Vec A m) (y : Vec A n)
                     → ⟨ x , 0ₗₘ ·ˡᵐ y ⟩ ≡ ⟨ y , 0ₗₘ ·ˡᵐ x ⟩
       0ₗₘ-transpose {m = m} {n = n} x y = begin
-        ⟨ x , 0ₗₘ ·ˡᵐ y ⟩               ≡⟨⟩
-        sum (x *ⱽ replicate 0ᶠ)         ≡⟨ cong sum (v*ⱽ0ᶠⱽ≡0ᶠⱽ x) ⟩
-        sum (replicate {n = m} 0ᶠ)      ≡⟨ sum[0ᶠⱽ]≡0ᶠ {n = m} ⟩
-        0ᶠ                              ≡˘⟨ sum[0ᶠⱽ]≡0ᶠ {n = n} ⟩
-        sum (replicate {n = n} 0ᶠ)      ≡˘⟨ cong sum (v*ⱽ0ᶠⱽ≡0ᶠⱽ y) ⟩
-        sum (y *ⱽ replicate {n = n} 0ᶠ) ≡⟨⟩
-        ⟨ y , 0ₗₘ ·ˡᵐ x ⟩               ∎
+        ⟨ x , 0ₗₘ ·ˡᵐ y ⟩         ≡⟨⟩
+        sum (x *ⱽ replicate m 0ᶠ) ≡⟨ cong sum (v*ⱽ0ᶠⱽ≡0ᶠⱽ x) ⟩
+        sum (replicate m 0ᶠ)      ≡⟨ sum[0ᶠⱽ]≡0ᶠ {n = m} ⟩
+        0ᶠ                        ≡˘⟨ sum[0ᶠⱽ]≡0ᶠ {n = n} ⟩
+        sum (replicate n 0ᶠ)      ≡˘⟨ cong sum (v*ⱽ0ᶠⱽ≡0ᶠⱽ y) ⟩
+        sum (y *ⱽ replicate n 0ᶠ) ≡⟨⟩
+        ⟨ y , 0ₗₘ ·ˡᵐ x ⟩         ∎

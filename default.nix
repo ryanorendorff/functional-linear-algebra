@@ -2,7 +2,7 @@
 { agdaPackages, lib }:
 
 agdaPackages.functional-linear-algebra.overrideAttrs (oldAttrs: rec {
-  version = "0.4.1";
+  version = "0.5.0";
 
   src = lib.sourceFilesBySuffices (builtins.path {
     path = ./.;
